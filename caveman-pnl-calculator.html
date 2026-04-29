@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0a0f1e">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="P&L Calc">
+<title>P&L Calculator — Caveman Energy</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="icon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="icon-16.png">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a0f1e;padding:20px;color:#e2e8f0;}
+h1{font-size:1.3em;font-weight:800;color:#e2e8f0;margin-bottom:6px;}
+.subtitle{font-size:0.8em;color:#475569;margin-bottom:20px;}
+.card{background:#0f172a;border:2px solid #334155;border-radius:12px;padding:22px 24px;margin-bottom:20px;}
+</style>
+</head>
+<body>
+<h1>📊 P&L Calculator & Price Lookup</h1>
+<p class="subtitle">Caveman Energy · Internal Tool · 2026</p>
+
+<!-- P&L CALCULATOR -->
+<div class="card" style="border:2px solid #334155;background:#0f172a;color:#e2e8f0;">
+  <h2 style="color:#e2e8f0;">📊 P&L Calculator <span style="font-size:0.5em;color:#475569;margin-left:8px;">2026 Post May 1st — Internal Tool</span></h2>
+
+  <!-- Top config row -->
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px;font-size:0.82em;">
+    <div style="background:#1e293b;border-radius:8px;padding:8px 10px;">
+      <div style="color:#64748b;font-size:0.75em;font-weight:700;text-transform:uppercase;margin-bottom:4px;">What are we quoting?</div>
+      <select onchange="void 0" style="width:100%;background:#0f172a;color:#e2e8f0;border:1px solid #334155;border-radius:5px;padding:4px 6px;">
+        <option>Battery only</option><option>Solar and Battery</option><option>Solar Only</option>
+      </select>
+    </div>
+    <div style="background:#1e293b;border-radius:8px;padding:8px 10px;">
+      <div style="color:#64748b;font-size:0.75em;font-weight:700;text-transform:uppercase;margin-bottom:4px;">Installation Type</div>
+      <select style="width:100%;background:#0f172a;color:#e2e8f0;border:1px solid #334155;border-radius:5px;padding:4px 6px;">
+        <option>New Installation</option><option>Extension System</option><option>Replacement System</option>
+      </select>
+    </div>
+    <div style="background:#1e293b;border-radius:8px;padding:8px 10px;">
+      <div style="color:#64748b;font-size:0.75em;font-weight:700;text-transform:uppercase;margin-bottom:4px;">How many Phases?</div>
+      <select style="width:100%;background:#0f172a;color:#e2e8f0;border:1px solid #334155;border-radius:5px;padding:4px 6px;">
+        <option value="1">1 — Single Phase</option><option value="3">3 — Three Phase</option>
+      </select>
+    </div>
+    <div style="background:#1e293b;border-radius:8px;padding:8px 10px;">
+      <div style="color:#64748b;font-size:0.75em;font-weight:700;text-transform:uppercase;margin-bottom:4px;">Difficulty / Balance</div>
+      <select id="plc_sel_balance" onchange="PLC_STATE.balance.hrs=parseFloat(this.value)||0;plcUpdate();"
+        style="width:100%;background:#0f172a;color:#e2e8f0;border:1px solid #334155;border-radius:5px;padding:4px 6px;">
+        <option value="0" selected>Add 0 Hours</option>
+        <option value="1">Add 1 Hour</option>
+        <option value="2">Add 2 Hours</option>
+        <option value="3">Add 3 Hours</option>
+        <option value="4">Add 4 Hours</option>
+        <option value="5">Add 5 Hours</option>
+        <option value="6">Add 6 Hours</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Main grid: line items LEFT, P&L summary RIGHT -->
+  <div style="display:grid;grid-template-columns:1fr 320px;gap:16px;">
+
+    <!-- LEFT: Line items table -->
+    <div>
+      <table style="width:100%;border-collapse:collapse;font-size:0.84em;">
+        <thead>
+          <tr style="background:#1e3a5f;color:#94a3b8;font-size:0.72em;text-transform:uppercase;letter-spacing:0.04em;">
+            <th style="padding:7px 10px;text-align:left;">What are we quoting?</th>
+            <th style="padding:7px 8px;text-align:left;min-width:180px;">Select From Dropdown</th>
+            <th style="padding:7px 8px;text-align:center;width:70px;">How Many?</th>
+            <th style="padding:7px 8px;text-align:right;width:90px;">Unit Price</th>
+            <th style="padding:7px 8px;text-align:right;width:90px;">Total</th>
+            <th style="padding:7px 8px;text-align:right;width:60px;">W/kWh</th>
+          </tr>
+        </thead>
+        <tbody id="plcBody">
+        <!-- PANELS -->
+        <tr style="border-bottom:1px solid #1e293b;">
+          <td style="padding:6px 10px;color:#94a3b8;font-size:0.88em;">Select Solar Panels</td>
+          <td style="padding:4px 6px;"><select data-slot="panel" onchange="plcSel('panel',this)" style="width:100%;background:#1e293b;color:#fbbf24;border:1px solid #334155;border-radius:5px;padding:4px 6px;font-size:0.88em;font-weight:600;">
+            <option value="">— None —</option>
+          </select></td>
+          <td style="padding:4px 6px;text-align:center;"><input id="plc_panel_qty" type="number" value="0" min="0" onchange="plcQty('panel',this)" style="width:62px;text-align:center;background:#1e293b;color:#fbbf24;border:1.5px solid #334155;border-radius:5px;padding:4px;font-size:0.9em;font-weight:700;"></td>
+          <td style="padding:4px 6px;text-align:right;"><input id="plc_panel_price" type="number" value="100" onchange="plcPrice('panel',this)" style="width:80px;text-align:right;background:#1e293b;color:#e2e8f0;border:1px solid #334155;border-radius:5px;padding:3px 5px;font-size:0.85em;"></td>
+          <td style="padding:6px 8px;text-align:right;font-weight:700;" id="plc_panel_tot">$0</td>
+          <td style="padding:6px 8px;text-align:right;color:#64748b;font-size:0.82em;">475W</td>
+        </tr>
+        <!-- INVERTER -->
+        <tr style="border-bottom:1px solid #1e293b;">
+          <td style="padding:6px 10px;color:#94a3b8;font-size:0.88em;">Select EC or Inverter</td>
+          <td style="padding:4px 6px;"><select data-slot="inverter" onchange="plcSel('inverter',this)" style="width:100%;background:#1e293b;color:#93c5fd;border:1px solid #334155;border-radius:5px;padding:4px 6px;font-size:0.88em;font-weight:600;">
+            <option value="">— None —</option>
+          </select></td>
+          <td style="padding:4px 6px;text-align:center;"><input id="plc_inv_qty" type="number" value="1" min="0" onchange="plcQty('inverter',this)" style="width:62px;text-align:center;background:#1e293b;color:#93c5fd;border:1.5px solid #93c5fd33;border-radius:5px;padding:4px;font-size:0.9em;font-weight:700;"></td>
+          <td style="padding:4px 6px;text-align:right;"><input id="plc_inv_price" type="number" value="1973" onchange="plcPrice('inverter',this)" style="width:80px;text-align:right;background:#1e293b;color:#e2e8f0;border:1px solid #334155;border-radius:5px;padding:3px 5px;font-size:0.85em;"></td>
+          <td style="padding:6px 8px;text-align:right;font-weight:700;" id="plc_inv_tot">$1,973</td>
+          <td style="padding:6px 8px;text-align:right;color:#64748b;font-size:0.82em;"></td>
+        </tr>
+        <!-- BATTERY -->
+        <tr style="border-bottom:1px solid #1e293b;">
+          <td style="padding:6px 10px;color:#94a3b8;font-size:0.88em;">Select Battery Type</td>
+          <td style="padding:4px 6px;"><select data-slot="battery" onchange="plcSel('battery',this)" style="width:100%;background:#1e293b;color:#a78bfa;border:1px solid #334155;border-radius:5px;padding:4px 6px;font-size:0.88em;font-weight:600;">
+            <option value="">— None —</option>
+          </select></td>
+          <td style="padding:4px 6px;text-align:center;"><input id="plc_batt_qty" type="number" value="0" min="0" onchange="plcQty('battery',this)" style="width:62px;text-align:center;background:#1e293b;color:#a78bfa;border:1.5px solid #a78bfa33;border-radius:5px;padding:4px;font-size:0.9em;font-weight:700;"></td>
+          <td style="padding:4px 6px;text-align:right;"><input id="plc_batt_price" type="number" value="2484" onchange="plcPrice('battery',this)" style="width:80px;text-align:right;background:#1e293b;color:#e2e8f0;border:1px solid #334155;border-radius:5px;padding:3px 5px;font-size:0.85em;"></td>
+          <td style="padding:6px 8px;text-align:right;font-weight:700;" id="plc_batt_tot">$0</td>
+          <td style="padding:6px 8px;text-align:right;color:#64748b;font-size:0.82em;" id="plc_battKwh">0 kWh</td>
+        </tr>
+        <!-- MOUNT -->
+        <tr style="border-bottom:1px solid #1e293b;">
+          <td style="padding:6px 10px;color:#94a3b8;font-size:0.88em;">Ground or Wall Mount</td>
+          <td style="padding:4px 6px;"><select data-slot="mount" onchange="plcSel('mount',this)" style="width:100%;background:#1e293b;color:#e2e8f0;border:1px solid #334155;border-radius:5px;padding:4px 6px;font-size:0.88em;">
+            <option value="">— None —</option>
+          </select></td>
+          <td style="padding:4px 6px;text-align:center;"><input id="plc_mnt_qty" type="number" value="1" min="0" onchange="plcQty('mount',this)" style="width:62px;text-align:center;background:#1e293b;color:#94a3b8;border:1.5px solid #94a3b833;border-radius:5px;padding:4px;font-size:0.9em;font-weight:700;"></td>
+          <td style="padding:4px 6px;text-align:right;"><input id="plc_mnt_price" type="number" value="252" onchange="plcPrice('mount',this)" style="width:80px;text-align:right;background:#1e293b;color:#e2e8f0;border:1px solid #334155;border-radius:5px;padding:3px 5px;font-size:0.85em;"></td>
+          <td style="padding:6px 8px;text-align:right;font-weight:700;" id="plc_mnt_tot">$252</td>
+          <td></td>
+        </tr>
+        <!-- GATEWAY -->
+        <tr style="border-bottom:1px solid #1e293b;">
+          <td style="padding:6px 10px;color:#94a3b8;font-size:0.88em;">Gateway</td>
+          <td style="padding:4px 6px;"><select data-slot="gateway" onchange="plcSel('gateway',this)" style="width:100%;background:#1e293b;color:#34d399;border:1px solid #334155;border-radius:5px;padding:4px 6px;font-size:0.88em;">
+            <option value="">— None —</option>
+          </select></td>
+          <td style="padding:4px 6px;text-align:center;"><input id="plc_gw_qty" type="number" value="0" min="0" onchange="plcQty('gateway',this)" style="width:62px;text-align:center;background:#1e293b;color:#34d399;border:1.5px solid #34d39933;border-radius:5px;padding:4px;font-size:0.9em;font-weight:700;"></td>
+          <td style="padding:4px 6px;text-align:right;"><input id="plc_gw_price" type="number" value="664" onchange="plcPrice('gateway',this)" style="width:80px;text-align:right;background:#1e293b;color:#e2e8f0;border:1px solid #334155;border-radius:5px;padding:3px 5px;font-size:0.85em;"></td>
+          <td style="padding:6px 8px;text-align:right;font-weight:700;" id="plc_gw_tot">$0</td>
+          <td></td>
+        </tr>
+        <!-- RCBOs -->
+        <tr style="border-bottom:1px solid #1e293b;">
+          <td style="padding:6px 10px;color:#94a3b8;font-size:0.88em;">RCBOs Single Phase</td>
+          <td style="padding:4px 6px;"><select data-slot="rcboSP" onchange="plcSel('rcboSP',this)" style="width:100%;background:#1e293b;color:#fb923c;border:1px solid #334155;border-radius:5px;padding:4px 6px;font-size:0.88em;font-weight:600;">
+            <option value="rc1" selected>RCBO Single Phase — $30</option>
+          </select></td>
+          <td style="padding:4px 6px;text-align:center;"><input id="plc_rcbosp_qty" type="number" value="0" min="0" onchange="plcQty('rcboSP',this)" style="width:62px;text-align:center;background:#1e293b;color:#fb923c;border:1.5px solid #fb923c33;border-radius:5px;padding:4px;font-size:0.9em;font-weight:700;"></td>
+          <td style="padding:4px 6px;text-align:right;"><input id="plc_rcbosp_price" type="number" value="30" onchange="plcPrice('rcboSP',this)" style="width:80px;text-align:right;background:#1e293b;color:#e2e8f0;border:1px solid #334155;border-radius:5px;padding:3px 5px;font-size:0.85em;"></td>
+          <td style="padding:6px 8px;text-align:right;font-weight:700;" id="plc_rcbosp_tot">$0</td>
+          <td></td>
+        </tr>
+        <tr style="border-bottom:1px solid #1e293b;">
+          <td style="padding:6px 10px;color:#94a3b8;font-size:0.88em;">RCBOs Three Phase</td>
+          <td style="padding:4px 6px;"><select data-slot="rcboTP" onchange="plcSel('rcboTP',this)" style="width:100%;background:#1e293b;color:#fbbf24;border:1px solid #334155;border-radius:5px;padding:4px 6px;font-size:0.88em;font-weight:600;">
+            <option value="rc2" selected>RCBO Three Phase — $40</option>
+          </select></td>
+          <td style="padding:4px 6px;text-align:center;"><input id="plc_rcbotp_qty" type="number" value="0" min="0" onchange="plcQty('rcboTP',this)" style="width:62px;text-align:center;background:#1e293b;color:#fbbf24;border:1.5px solid #fbbf2433;border-radius:5px;padding:4px;font-size:0.9em;font-weight:700;"></td>
+          <td style="padding:4px 6px;text-align:right;"><input id="plc_rcbotp_price" type="number" value="40" onchange="plcPrice('rcboTP',this)" style="width:80px;text-align:right;background:#1e293b;color:#e2e8f0;border:1px solid #334155;border-radius:5px;padding:3px 5px;font-size:0.85em;"></td>
+          <td style="padding:6px 8px;text-align:right;font-weight:700;" id="plc_rcbotp_tot">$0</td>
+          <td></td>
+        </tr>
+        <!-- EV Charger -->
+        <tr style="border-bottom:1px solid #1e293b;">
+          <td style="padding:6px 10px;color:#94a3b8;font-size:0.88em;">EV Charger / Parts</td>
+          <td style="padding:4px 6px;"><select data-slot="ev" onchange="plcSel('ev',this)" style="width:100%;background:#1e293b;color:#e2e8f0;border:1px solid #334155;border-radius:5px;padding:4px 6px;font-size:0.88em;">
+            <option value="ev0" selected>NONE</option>
+          </select></td>
+          <td style="padding:4px 6px;text-align:center;"><input id="plc_ev_qty" type="number" value="0" min="0" onchange="plcQty('ev',this)" style="width:62px;text-align:center;background:#1e293b;color:#f472b6;border:1.5px solid #f472b633;border-radius:5px;padding:4px;font-size:0.9em;font-weight:700;"></td>
+          <td style="padding:4px 6px;text-align:right;"><input id="plc_ev_price" type="number" value="0" onchange="plcPrice('ev',this)" style="width:80px;text-align:right;background:#1e293b;color:#e2e8f0;border:1px solid #334155;border-radius:5px;padding:3px 5px;font-size:0.85em;"></td>
+          <td style="padding:6px 8px;text-align:right;font-weight:700;" id="plc_ev_tot">$0</td>
+          <td></td>
+        </tr>
+        <!-- Sigenergy Parts (separate from EV) -->
+        <tr style="border-bottom:1px solid #1e293b;">
+          <td style="padding:6px 10px;color:#94a3b8;font-size:0.88em;">Sig Parts / Sensors</td>
+          <td style="padding:4px 6px;"><select data-slot="sig_parts" onchange="plcSel('sig_parts',this)" style="width:100%;background:#1e293b;color:#e2e8f0;border:1px solid #334155;border-radius:5px;padding:4px 6px;font-size:0.88em;">
+            <option value="sp0" selected>NONE</option>
+          </select></td>
+          <td style="padding:4px 6px;text-align:center;"><input id="plc_sp_qty" type="number" value="0" min="0" onchange="plcQty('sig_parts',this)" style="width:62px;text-align:center;background:#1e293b;color:#67e8f9;border:1.5px solid #67e8f933;border-radius:5px;padding:4px;font-size:0.9em;font-weight:700;"></td>
+          <td style="padding:4px 6px;text-align:right;"><input id="plc_sp_price" type="number" value="0" onchange="plcPrice('sig_parts',this)" style="width:80px;text-align:right;background:#1e293b;color:#e2e8f0;border:1px solid #334155;border-radius:5px;padding:3px 5px;font-size:0.85em;"></td>
+          <td style="padding:6px 8px;text-align:right;font-weight:700;" id="plc_sp_tot">$0</td>
+          <td></td>
+        </tr>
+        <!-- Switchboard -->
+        <tr style="border-bottom:1px solid #1e293b;">
+          <td style="padding:6px 10px;color:#94a3b8;font-size:0.88em;">Switchboard Upgrade</td>
+          <td style="padding:4px 6px;"><select data-slot="switchboard" onchange="plcSel('switchboard',this)" style="width:100%;background:#1e293b;color:#e2e8f0;border:1px solid #334155;border-radius:5px;padding:4px 6px;font-size:0.88em;">
+            <option value="">NONE</option>
+          </select></td>
+          <td style="padding:4px 6px;text-align:center;"><input id="plc_sw_qty" type="number" value="0" min="0" onchange="plcQty('switchboard',this)" style="width:62px;text-align:center;background:#1e293b;color:#fde68a;border:1.5px solid #fde68a33;border-radius:5px;padding:4px;font-size:0.9em;font-weight:700;"></td>
+          <td style="padding:4px 6px;text-align:right;"><input id="plc_sw_price" type="number" value="0" onchange="plcPrice('switchboard',this)" style="width:80px;text-align:right;background:#1e293b;color:#e2e8f0;border:1px solid #334155;border-radius:5px;padding:3px 5px;font-size:0.85em;"></td>
+          <td style="padding:6px 8px;text-align:right;font-weight:700;" id="plc_sw_tot">$0</td>
+          <td></td>
+        </tr>
+        <!-- Cabling -->
+        <tr style="background:#0f172a;">
+          <td colspan="6" style="padding:5px 10px;font-size:0.72em;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#7c3aed;">⚡ Cabling (per metre)</td>
+        </tr>
+        <tr style="border-bottom:1px solid #1e293b;">
+          <td style="padding:6px 10px;color:#94a3b8;font-size:0.88em;">DC Cable</td>
+          <td style="padding:4px 6px;"><select data-slot="dcCable" onchange="plcSel('dcCable',this)" style="width:100%;background:#1e293b;color:#c4b5fd;border:1px solid #334155;border-radius:5px;padding:4px 6px;font-size:0.88em;font-weight:600;">
+            <option value="cb1" selected>DC Cable — $20/m</option>
+          </select></td>
+          <td style="padding:4px 6px;text-align:center;"><input id="plc_dccable_qty" type="number" value="0" min="0" step="1" onchange="plcQty('dcCable',this)" style="width:62px;text-align:center;background:#1e293b;color:#c4b5fd;border:1.5px solid #c4b5fd33;border-radius:5px;padding:4px;font-size:0.9em;font-weight:700;" placeholder="m"></td>
+          <td style="padding:4px 6px;text-align:right;"><input id="plc_dccable_price" type="number" value="20" onchange="plcPrice('dcCable',this)" style="width:80px;text-align:right;background:#1e293b;color:#e2e8f0;border:1px solid #334155;border-radius:5px;padding:3px 5px;font-size:0.85em;"></td>
+          <td style="padding:6px 8px;text-align:right;font-weight:700;" id="plc_dccable_tot">$0</td>
+          <td style="padding:6px 8px;text-align:right;color:#64748b;font-size:0.82em;">$50/m sell</td>
+        </tr>
+        <tr style="border-bottom:1px solid #1e293b;">
+          <td style="padding:6px 10px;color:#94a3b8;font-size:0.88em;">AC Cable</td>
+          <td style="padding:4px 6px;"><select data-slot="acCable" onchange="plcSel('acCable',this)" style="width:100%;background:#1e293b;color:#a5b4fc;border:1px solid #334155;border-radius:5px;padding:4px 6px;font-size:0.88em;font-weight:600;">
+            <option value="cb2" selected>AC Cable — $20/m</option>
+          </select></td>
+          <td style="padding:4px 6px;text-align:center;"><input id="plc_accable_qty" type="number" value="0" min="0" step="1" onchange="plcQty('acCable',this)" style="width:62px;text-align:center;background:#1e293b;color:#a5b4fc;border:1.5px solid #a5b4fc33;border-radius:5px;padding:4px;font-size:0.9em;font-weight:700;" placeholder="m"></td>
+          <td style="padding:4px 6px;text-align:right;"><input id="plc_accable_price" type="number" value="20" onchange="plcPrice('acCable',this)" style="width:80px;text-align:right;background:#1e293b;color:#e2e8f0;border:1px solid #334155;border-radius:5px;padding:3px 5px;font-size:0.85em;"></td>
+          <td style="padding:6px 8px;text-align:right;font-weight:700;" id="plc_accable_tot">$0</td>
+          <td style="padding:6px 8px;text-align:right;color:#64748b;font-size:0.82em;">$50/m sell</td>
+        </tr>
+        <tr style="border-bottom:1px solid #1e293b;">
+          <td style="padding:6px 10px;color:#94a3b8;font-size:0.88em;">Trenching</td>
+          <td style="padding:4px 6px;"><select data-slot="trench" onchange="plcSel('trench',this)" style="width:100%;background:#1e293b;color:#6ee7b7;border:1px solid #334155;border-radius:5px;padding:4px 6px;font-size:0.88em;font-weight:600;">
+            <option value="cb3" selected>Trenching — $20/m</option>
+          </select></td>
+          <td style="padding:4px 6px;text-align:center;"><input id="plc_trench_qty" type="number" value="0" min="0" step="1" onchange="plcQty('trench',this)" style="width:62px;text-align:center;background:#1e293b;color:#6ee7b7;border:1.5px solid #6ee7b733;border-radius:5px;padding:4px;font-size:0.9em;font-weight:700;" placeholder="m"></td>
+          <td style="padding:4px 6px;text-align:right;"><input id="plc_trench_price" type="number" value="20" onchange="plcPrice('trench',this)" style="width:80px;text-align:right;background:#1e293b;color:#e2e8f0;border:1px solid #334155;border-radius:5px;padding:3px 5px;font-size:0.85em;"></td>
+          <td style="padding:6px 8px;text-align:right;font-weight:700;" id="plc_trench_tot">$0</td>
+          <td style="padding:6px 8px;text-align:right;color:#64748b;font-size:0.82em;">$30/m sell</td>
+        </tr>
+        <!-- Total material cost -->
+        <tr style="background:#1e293b;">
+          <td colspan="3" style="padding:7px 10px;font-size:0.82em;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;">Total Material Cost</td>
+          <td colspan="2" style="padding:7px 8px;text-align:right;font-size:1em;font-weight:800;" id="plc_matTotal">$0</td>
+          <td></td>
+        </tr>
+        </tbody>
+      </table>
+
+      <!-- Summary left section: labour config -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px;">
+        <div style="background:#1e293b;border-radius:8px;padding:12px;">
+          <div style="font-size:0.7em;font-weight:700;text-transform:uppercase;color:#475569;margin-bottom:8px;">Labour Configuration</div>
+          <div style="font-size:0.8em;color:#94a3b8;line-height:2;">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <span>Labour per Hour</span>
+              <input type="number" value="226" onchange="plcCfg('labourRate',this)" style="width:70px;text-align:right;background:#0f172a;color:#fbbf24;border:1px solid #334155;border-radius:4px;padding:2px 5px;font-weight:700;">
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <span>Overheads per Day</span>
+              <input type="number" value="800" onchange="plcCfg('overheadRate',this)" style="width:70px;text-align:right;background:#0f172a;color:#e2e8f0;border:1px solid #334155;border-radius:4px;padding:2px 5px;">
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <span>Other Wages/Day (non-GST)</span>
+              <input type="number" value="800" onchange="plcCfg('otherWagesRate',this)" style="width:70px;text-align:right;background:#0f172a;color:#e2e8f0;border:1px solid #334155;border-radius:4px;padding:2px 5px;">
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <span>Commission %</span>
+              <input type="number" value="7" step="0.5" onchange="plcCfg('commissionPct',this)" style="width:70px;text-align:right;background:#0f172a;color:#e2e8f0;border:1px solid #334155;border-radius:4px;padding:2px 5px;">
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid #334155;padding-top:6px;margin-top:4px;">
+              <span style="color:#a5b4fc;font-weight:700;">Crews Running Today</span>
+              <div style="display:flex;align-items:center;gap:4px;">
+                <button onclick="PLC_CREWS=Math.max(1,PLC_CREWS-1);document.getElementById('plcCrewsDisp').textContent=PLC_CREWS;plcUpdate();updateCrewLabel();" style="width:22px;height:22px;background:#334155;color:white;border:none;border-radius:4px;cursor:pointer;font-weight:700;font-size:1em;line-height:1;">−</button>
+                <span id="plcCrewsDisp" style="color:#a5b4fc;font-weight:800;min-width:18px;text-align:center;font-size:1.1em;">2</span>
+                <button onclick="PLC_CREWS=Math.min(6,PLC_CREWS+1);document.getElementById('plcCrewsDisp').textContent=PLC_CREWS;plcUpdate();updateCrewLabel();" style="width:22px;height:22px;background:#334155;color:white;border:none;border-radius:4px;cursor:pointer;font-weight:700;font-size:1em;line-height:1;">+</button>
+              </div>
+            </div>
+            <div id="plcCrewLabel" style="font-size:0.75em;color:#64748b;text-align:right;margin-top:-4px;"></div>
+          </div>
+        </div>
+        <div style="background:#1e293b;border-radius:8px;padding:12px;">
+          <div style="font-size:0.7em;font-weight:700;text-transform:uppercase;color:#475569;margin-bottom:8px;">Estimated Hours</div>
+          <div style="font-size:0.82em;color:#94a3b8;line-height:2.2;">
+            <div style="display:flex;justify-content:space-between;"><span>Solar (Automated)</span><span id="plc_solarAuto" style="color:#fbbf24;font-weight:700;">0</span></div>
+            <div style="display:flex;justify-content:space-between;"><span>Inverter</span><span id="plc_invHrs" style="color:#fbbf24;font-weight:700;">1</span></div>
+            <div style="display:flex;justify-content:space-between;"><span>Battery (Automated)</span><span id="plc_battAuto" style="color:#fbbf24;font-weight:700;">0</span></div>
+            <div style="display:flex;justify-content:space-between;"><span>Travel</span><span style="color:#fbbf24;font-weight:700;">1</span></div>
+            <div style="display:flex;justify-content:space-between;border-top:1px solid #334155;padding-top:4px;font-weight:700;color:#e2e8f0;"><span>Job Estimated Hours</span><span id="plc_totalHrs" style="color:#4ade80;font-size:1.1em;">2</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: P&L Summary column -->
+    <div style="background:#1e293b;border-radius:10px;padding:0;overflow:hidden;">
+      <div style="background:#1e3a5f;padding:8px 12px;font-size:0.72em;font-weight:700;text-transform:uppercase;color:#64748b;letter-spacing:0.06em;">P&L Summary</div>
+      <div style="padding:0 12px;font-size:0.82em;">
+        <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #334155;color:#f87171;"><span style="color:#94a3b8;">Materials Total</span><span id="plc_matR">$0</span></div>
+        <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #334155;color:#f87171;"><span style="color:#94a3b8;">Overheads <span id="plc_ohMult" style="font-size:0.75em;color:#6366f1;"></span></span><span id="plc_ohR">-$800</span></div>
+        <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #334155;color:#f87171;"><span style="color:#94a3b8;">Sale Coms</span><span id="plc_comsR">$0</span></div>
+        <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #334155;color:#f87171;"><span style="color:#94a3b8;">Battery Materials (Auto)</span><span id="plc_battmatR">$0</span></div>
+        <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #334155;color:#f87171;"><span style="color:#94a3b8;">Solar Materials (Auto)</span><span id="plc_solmatR">$0</span></div>
+        <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #334155;color:#f87171;"><span style="color:#94a3b8;">Racking (Auto)</span><span id="plc_rackR">$0</span></div>
+        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:2px solid #334155;font-weight:700;color:#f87171;"><span style="color:#e2e8f0;">Sum</span><span id="plc_sumR">$0</span></div>
+        <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #334155;color:#4ade80;"><span style="color:#94a3b8;">Sale Price Ex GST</span><span id="plc_saleExGst">$0</span></div>
+        <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #334155;color:#f87171;"><span style="color:#94a3b8;">Labour</span><span id="plc_labourR">$0</span></div>
+        <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #334155;color:#f87171;"><span style="color:#94a3b8;">Other Wages (non GST)</span><span id="plc_otherWagesR">-$800</span></div>
+        <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #334155;color:#4ade80;"><span style="color:#94a3b8;">Battery Rebate</span><span id="plc_battRebR">$0</span></div>
+        <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:2px solid #475569;color:#4ade80;"><span style="color:#94a3b8;">STC Rebate</span><span id="plc_stcRebR">$0</span></div>
+        <!-- Key P&L outputs -->
+        <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #334155;">
+          <span style="font-size:1.05em;font-weight:800;color:#e2e8f0;">Gross Profit</span>
+          <span id="plc_gp" style="font-size:1.2em;font-weight:900;color:#4ade80;">$0</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #334155;color:#94a3b8;font-size:0.9em;">
+          <span>Company Tax (25%)</span><span>auto</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #334155;">
+          <span style="font-size:1em;font-weight:800;color:#e2e8f0;">Net Profit — After Tax</span>
+          <span id="plc_np" style="font-size:1.2em;font-weight:900;color:#4ade80;">$0</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:2px solid #475569;">
+          <span id="plc_margin" style="font-weight:700;color:#4ade80;">Margin 0%</span>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <span style="font-size:0.78em;color:#475569;">Rating:</span>
+            <button onclick="plcNudgeRating(-1)" style="width:24px;height:24px;background:#334155;color:#e2e8f0;border:none;border-radius:5px;font-size:1em;cursor:pointer;font-weight:700;line-height:1;">▼</button>
+            <input id="plc_ratingInput" type="number" value="5" step="0.5" min="0" max="30"
+              title="Target net profit (×$1000). Adjusts sale price automatically."
+              oninput="plcSetRating(parseFloat(this.value)||0)"
+              style="width:52px;text-align:center;background:#1e293b;color:#fbbf24;border:1.5px solid #fbbf24;border-radius:6px;padding:3px 4px;font-size:1.05em;font-weight:900;outline:none;">
+            <button onclick="plcNudgeRating(1)" style="width:24px;height:24px;background:#334155;color:#e2e8f0;border:none;border-radius:5px;font-size:1em;cursor:pointer;font-weight:700;line-height:1;">▲</button>
+            <strong id="plc_rating" style="color:#4ade80;font-size:1.1em;display:none;">0.0</strong>
+          </div>
+        </div>
+      </div>
+      <!-- Sale Price toggle -->
+      <div style="background:#0f172a;padding:12px;border-top:2px solid #334155;">
+        <div style="font-size:0.7em;font-weight:700;text-transform:uppercase;color:#475569;margin-bottom:6px;">Sale Price (toggle up and down)</div>
+        <input id="plc_saleToggle" type="number" value="18000" step="250" oninput="plcCfg('salePrice',this);plcUpdate();"
+          style="width:100%;font-size:2em;font-weight:900;text-align:right;background:transparent;color:#fbbf24;border:none;border-bottom:2px solid #334155;padding:4px 0;outline:none;">
+        <div style="font-size:0.7em;color:#475569;margin-top:4px;">Adjust to find the right margin</div>
+      </div>
+      <!-- Rebate rates (editable) -->
+      <div style="padding:10px 12px;background:#0c1929;font-size:0.76em;color:#64748b;">
+        <div style="font-weight:700;text-transform:uppercase;margin-bottom:8px;letter-spacing:0.04em;color:#94a3b8;">STC Rebate Period</div>
+        <select id="plc_period" onchange="setPeriod(parseInt(this.value));this.style.color='#fbbf24';"
+          style="width:100%;background:#1e293b;color:#fbbf24;border:1.5px solid #334155;border-radius:6px;padding:5px 8px;font-size:0.88em;font-weight:700;margin-bottom:10px;">
+        </select>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px;">
+          <div>
+            <div style="font-size:0.82em;color:#475569;margin-bottom:3px;">Solar deeming yrs</div>
+            <input id="plc_deemYears" type="number" value="5" min="1" max="6" onchange="PLC_STATE.stcDeemYears=parseFloat(this.value)||5;plcUpdate();"
+              style="width:100%;background:#1e293b;color:#e2e8f0;border:1px solid #334155;border-radius:5px;padding:4px 6px;font-size:0.9em;">
+          </div>
+          <div>
+            <div style="font-size:0.82em;color:#475569;margin-bottom:3px;">Solar $/STC</div>
+            <input id="plc_stcPrice" type="number" value="40" step="0.5" onchange="PLC_STATE.stcPrice=parseFloat(this.value)||40;plcUpdate();"
+              style="width:100%;background:#1e293b;color:#e2e8f0;border:1px solid #334155;border-radius:5px;padding:4px 6px;font-size:0.9em;">
+          </div>
+          <div>
+            <div style="font-size:0.82em;color:#475569;margin-bottom:3px;">Batt factor /kWh</div>
+            <input id="plc_battFactor" type="number" value="6.8" step="0.1" onchange="PLC_STATE.battStcFactor=parseFloat(this.value)||6.8;plcUpdate();"
+              style="width:100%;background:#1e293b;color:#e2e8f0;border:1px solid #334155;border-radius:5px;padding:4px 6px;font-size:0.9em;">
+          </div>
+          <div>
+            <div style="font-size:0.82em;color:#475569;margin-bottom:3px;">Batt $/STC</div>
+            <input id="plc_battStcPrice" type="number" value="40" step="0.5" onchange="PLC_STATE.battStcPrice=parseFloat(this.value)||37;plcUpdate();"
+              style="width:100%;background:#1e293b;color:#e2e8f0;border:1px solid #334155;border-radius:5px;padding:4px 6px;font-size:0.9em;">
+          </div>
+        </div>
+        <div id="plc_tapNote" style="color:#475569;font-size:0.85em;line-height:1.5;padding:5px 8px;background:#1e293b;border-radius:6px;">
+          Tapering ON: 0-14kWh 100% · 15-28kWh 60% · 29-50kWh 15%
+        </div>
+        <div style="color:#334155;font-size:0.78em;margin-top:6px;">Zone 3 (SEQ) 1.382 · <input id="plc_stcZone" type="number" value="1.382" step="0.001" onchange="PLC_STATE.stcZone=parseFloat(this.value)||1.382;plcUpdate();" style="width:60px;background:#1e293b;color:#64748b;border:1px solid #334155;border-radius:4px;padding:2px 4px;font-size:0.95em;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LOOKUP TABLE -->
+<div class="card" style="border:2px solid #334155;background:#0f172a;margin-top:16px;">
+  <h2 style="color:#e2e8f0;">🔍 Price Lookup Table <span style="font-size:0.55em;color:#475569;font-weight:500;margin-left:8px;">Edit prices — changes update P&L Calculator live</span></h2>
+  <div style="overflow-x:auto;">
+    <table style="width:100%;border-collapse:collapse;font-size:0.86em;">
+      <thead>
+        <tr style="background:#1e293b;color:#94a3b8;">
+          <th style="padding:8px 10px;text-align:left;font-size:0.72em;text-transform:uppercase;letter-spacing:0.05em;">Product Name</th>
+          <th style="padding:8px 8px;text-align:right;width:100px;font-size:0.72em;text-transform:uppercase;letter-spacing:0.05em;">Cost Price $</th>
+          <th style="padding:8px 8px;text-align:right;width:100px;font-size:0.72em;text-transform:uppercase;letter-spacing:0.05em;">Sell Price $</th>
+          <th style="padding:8px 8px;text-align:center;width:70px;font-size:0.72em;text-transform:uppercase;letter-spacing:0.05em;">Unit</th>
+          <th style="padding:8px 8px;text-align:left;font-size:0.72em;text-transform:uppercase;letter-spacing:0.05em;">Notes / Action</th>
+        </tr>
+      </thead>
+      <tbody id="lookupBody" style="background:#0f172a;color:#e2e8f0;"></tbody>
+    </table>
+  </div>
+  <div style="margin-top:14px;padding:10px 14px;background:#1e293b;border-radius:8px;font-size:0.78em;color:#64748b;line-height:1.8;">
+    <strong style="color:#94a3b8;">How prices flow:</strong> Cost Price = what we pay (from LOOKUP tab) → used in P&L Calculator for profit calculations.
+    Sell Price = RRP or customer quote basis (from LOOKUP sell column). Changes here update live in the P&L Calculator.
+  </div>
+</div>
+
+</div><!-- end #internalTools -->
+
+<script>
+function g(id){return document.getElementById(id);}
+function renderPackages(){}
+function wirePackageInputs(){}
+
+/* ── Crew count ── */
+var PLC_CREWS=2;
+
+var COST_DB = {
+inv: {
+goodwe_sp:  {10:1973},                                        // ESA 9.9kW SP
+goodwe_tp:  {15:2339.18, 20:2419.03, 25:2491.03, 30:2599.67},// GW ETA series
+sig_sp:     {5:1284.80, 6:1389.30, 8:2373.80, 10:2558.60, 12:2744.50},
+sig_tp:     {5:2200, 10:2547.60, 15:3358.30, 20:3832.40, 25:4400, 30:4840}
+},
+batt: {goodwe:2484, sigenergy:3174},    // cost per 8kWh module
+gateway: {'1':664.40, '3':821.70},      // Sigen gateway SP/TP
+mount:   252,                           // ground mount kit
+panel:   {cost:100, watts:475},          // JA 475 default
+panelByBrand: {'':{cost:100,watts:475},'aiko':{cost:120,watts:475},'trina':{cost:125,watts:475},'risen':{cost:96,watts:475}}
+};
+
+var LOOKUP_NEXT_ID=200;
+var LOOKUP_DATA=[];
+
+var STC_PERIODS=[
+{label:'Jul–Dec 2025',  solar:6, battFactor:9.3,  tapering:false, battPrice:40},
+{label:'Jan–Apr 2026',  solar:5, battFactor:8.4,  tapering:false, battPrice:40},
+{label:'May–Dec 2026',  solar:5, battFactor:6.8,  tapering:true,  battPrice:40, current:true},
+{label:'Jan–Jun 2027',  solar:4, battFactor:5.7,  tapering:true,  battPrice:40},
+{label:'Jul–Dec 2027',  solar:4, battFactor:5.2,  tapering:true,  battPrice:40},
+{label:'Jan–Jun 2028',  solar:3, battFactor:4.6,  tapering:true,  battPrice:40},
+{label:'Jul–Dec 2028',  solar:3, battFactor:4.1,  tapering:true,  battPrice:40},
+{label:'Jan–Jun 2029',  solar:2, battFactor:3.6,  tapering:true,  battPrice:40},
+{label:'Jul–Dec 2029',  solar:2, battFactor:3.1,  tapering:true,  battPrice:40},
+{label:'Jan–Jun 2030',  solar:1, battFactor:2.6,  tapering:true,  battPrice:40},
+{label:'Jul–Dec 2030',  solar:1, battFactor:2.1,  tapering:true,  battPrice:40},
+];
+
+
+var PLC_STATE={
+panel:      {lid:'p1',  qty:0,  unitCost:100},
+inverter:   {lid:'i1',  qty:1,  unitCost:1973},
+battery:    {lid:'b1',  qty:0,  unitCost:2484},
+mount:      {lid:'m1',  qty:1,  unitCost:252},
+gateway:    {lid:'g1',  qty:0,  unitCost:664.40},
+rcboSP:     {qty:0,  unitCost:30, lid:"rc1"},  /* rc1=SP $30 */
+rcboTP:     {qty:0,  unitCost:40, lid:"rc2"},  /* rc2=TP $40 */
+dcCable:    {qty:0,  unitCost:20, lid:"cb1"},
+acCable:    {qty:0,  unitCost:20, lid:"cb2"},
+trench:     {qty:0,  unitCost:20, lid:"cb3"},
+ev:         {lid:'ev0', qty:0,  unitCost:0},
+sig_parts:  {lid:'sp0', qty:0,  unitCost:0},
+balance:    {hrs:0},
+switchboard:{lid:'sw0', qty:0,  unitCost:0},
+salePrice:  18000,
+labourRate: 226,
+overheadRate:800,
+otherWagesRate:800,
+commissionPct:7,
+battStcFactor:6.8,         // STC factor per kWh (May-Dec 2026)
+battStcPrice:40,           // $/STC for battery
+battTapering:true,         // size tapering active (post May 2026)
+stcZone:1.382,             // legacy — overridden per system type by CONFIG.stcZone*
+stcDeemYears:5,            // 2026 = 5 remaining years
+stcPrice:40                // $/STC for solar
+};
+
+function escHtml(s){
+return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function lookupById(lid){
+if(!lid)return null;
+for(var _i=0;_i<LOOKUP_DATA.length;_i++){if(LOOKUP_DATA[_i].id===lid)return LOOKUP_DATA[_i];}
+return null;
+}
+function plcLookup(lid){return lookupById(lid)||{cost:0,notes:'',unit:'',watts:475};}
+function plcSetRating(targetRating){
+/* Reverse-calculate sale price from target rating (net profit in $k) */
+var targetNet=targetRating*1000;
+var s=PLC_STATE;
+var plu=plcLookup(s.panel.lid);
+var blu=plcLookup(s.battery.lid);
+var panelT =s.panel.qty      * s.panel.unitCost;
+var invT   =s.inverter.qty   * s.inverter.unitCost;
+var battT  =s.battery.qty    * s.battery.unitCost;
+var mntT   =s.mount.qty      * s.mount.unitCost;
+var gwT    =s.gateway.qty    * s.gateway.unitCost;
+var rcboSPT=s.rcboSP.qty     * s.rcboSP.unitCost;
+var rcboTPT=s.rcboTP.qty     * s.rcboTP.unitCost;
+var dcCableT=s.dcCable?s.dcCable.qty * s.dcCable.unitCost:0;
+var acCableT=s.acCable?s.acCable.qty * s.acCable.unitCost:0;
+var trenchT =s.trench ?s.trench.qty  * s.trench.unitCost:0;
+var evT    =s.ev.qty         * s.ev.unitCost;
+var spT    =s.sig_parts.qty  * s.sig_parts.unitCost;
+var swT    =s.switchboard.qty* s.switchboard.unitCost;
+var totalMat=panelT+invT+battT+mntT+gwT+rcboSPT+rcboTPT+evT+spT+swT+dcCableT+acCableT+trenchT;
+var plu2=plcLookup(s.panel.lid);
+var panelW =plu2.watts||475;
+var solKw  =s.panel.qty*panelW/1000;
+var blu2=plcLookup(s.battery.lid);
+var battKwhPerMod=blu2&&blu2.kwh?blu2.kwh:8;
+var battKwh=s.battery.qty*battKwhPerMod;
+var solMat=Math.round(solKw*80);
+var racking=Math.round(solKw*60);
+var battMat=s.battery.qty>0?500:0;
+var solarAuto=solKw>0?Math.ceil(solKw/6.6)*2:0;
+var battAuto =s.battery.qty>0?2:0;
+var invHrs   =s.inverter.qty>0?1:0;
+var totalHrs =solarAuto+battAuto+invHrs+1+s.balance.hrs;
+var labourCost=Math.round(totalHrs*s.labourRate);
+/* Fixed cost multiplier: half-day for battery-only or solar-only, divided by crews */
+var _plcHalfDay=(s.panel.qty<=0||s.battery.qty<=0);
+var _plcMult=(_plcHalfDay?0.5:1.0)/(PLC_CREWS||1);
+var overheads =Math.round(s.overheadRate*_plcMult);
+var otherWages=Math.round(s.otherWagesRate*_plcMult);
+var stcRebate=calcSolarRebate(solKw,s.stcZone,s.stcDeemYears,s.stcPrice);
+var battRebate=calcBattRebate(battKwh,s.battStcFactor,s.battStcPrice,s.battTapering);
+var fixedCosts=totalMat+overheads+battMat+solMat+racking+labourCost+otherWages;
+var commDeduct=(s.commissionPct/100)*1.1;
+/* Solve: targetNet = (grossEx*(1-commDeduct) + stcRebate + battRebate - fixedCosts)*0.75 */
+var grossEx=(targetNet/0.75 - stcRebate - battRebate + fixedCosts)/(1-commDeduct);
+var grossInc=grossEx*1.1;
+var rnd=250; /* P&L uses $250 steps */
+var newPrice=Math.max(0,Math.round(grossInc/rnd)*rnd);
+s.salePrice=newPrice;
+var spEl=g('plc_saleToggle');
+if(spEl)spEl.value=newPrice;
+plcUpdate();
+}
+function plcNudgeRating(delta){
+/* delta: +1 = up, -1 = down. Adjusts sale price by $500 per click. */
+var s=PLC_STATE;
+var step=500;
+var newPrice=Math.max(0,(s.salePrice||0)+delta*step);
+s.salePrice=newPrice;
+var spEl=g('plc_saleToggle');
+if(spEl)spEl.value=newPrice;
+plcUpdate();
+}
+function plcUpdate(){
+updateCrewLabel();
+var s=PLC_STATE;
+var plu=plcLookup(s.panel.lid);
+var blu=plcLookup(s.battery.lid);
+var panelT =s.panel.qty      * s.panel.unitCost;
+var invT   =s.inverter.qty   * s.inverter.unitCost;
+var battT  =s.battery.qty    * s.battery.unitCost;
+var mntT   =s.mount.qty      * s.mount.unitCost;
+var gwT    =s.gateway.qty    * s.gateway.unitCost;
+var rcboSPT=s.rcboSP.qty     * s.rcboSP.unitCost;
+var rcboTPT=s.rcboTP.qty     * s.rcboTP.unitCost;
+var dcCableT=s.dcCable?s.dcCable.qty * s.dcCable.unitCost:0;
+var acCableT=s.acCable?s.acCable.qty * s.acCable.unitCost:0;
+var trenchT =s.trench ?s.trench.qty  * s.trench.unitCost:0;
+var evT    =s.ev.qty         * s.ev.unitCost;
+var spT    =s.sig_parts.qty  * s.sig_parts.unitCost;
+var swT    =s.switchboard.qty* s.switchboard.unitCost;
+var totalMat=panelT+invT+battT+mntT+gwT+rcboSPT+rcboTPT+evT+spT+swT+dcCableT+acCableT+trenchT;
+var panelW =plu.watts||475;
+var solKw  =s.panel.qty*panelW/1000;
+/* Battery kWh — from lookup kwh field (BAT5=5, BAT8=8, BAT10=10, etc) */
+var battKwhPerMod=blu&&blu.kwh?blu.kwh:8;
+var battKwh=s.battery.qty*battKwhPerMod;
+var totalW =s.panel.qty*panelW;
+var solMat=Math.round(solKw*80);
+var racking=Math.round(solKw*60);
+var battMat=s.battery.qty>0?500:0;
+/* Labour — Battery = 2hrs FIXED (not per module), matches Excel */
+var solarAuto=solKw>0?Math.ceil(solKw/6.6)*2:0;
+var battAuto =s.battery.qty>0?2:0;
+var invHrs   =s.inverter.qty>0?1:0;
+var totalHrs =solarAuto+battAuto+invHrs+1+s.balance.hrs; /* +1 travel */
+var labourCost=Math.round(totalHrs*s.labourRate);
+/* Fixed cost multiplier: half-day for battery-only or solar-only, divided by crews */
+var _plcHalfDay=(s.panel.qty<=0||s.battery.qty<=0);
+var _plcMult=(_plcHalfDay?0.5:1.0)/(PLC_CREWS||1);
+var overheads =Math.round(s.overheadRate*_plcMult);
+var otherWages=Math.round(s.otherWagesRate*_plcMult);
+var grossInc  =s.salePrice;
+var grossEx   =grossInc/1.1;
+var commission=Math.round(grossInc*s.commissionPct/100);
+var sumCosts  =totalMat+overheads+commission+battMat+solMat+racking;
+var totalCost =sumCosts+labourCost+otherWages;
+/* Solar STC: zone × deeming years × price (2026: zone3 SEQ 1.382×5yrs×$40=$276/kW) */
+var stcRebate =calcSolarRebate(solKw,s.stcZone,s.stcDeemYears,s.stcPrice);
+/* Battery rebate: post-May-2026 tiered (6.8/kWh at $37 with size tapering) */
+var battRebate=calcBattRebate(battKwh,s.battStcFactor,s.battStcPrice,s.battTapering);
+var gp =grossEx+stcRebate+battRebate-totalCost;
+var tax=Math.max(0,gp*0.25);
+var np =gp-tax;
+var margin=grossEx>0?np/grossEx:0;
+var fc=function(n){return Math.round(Math.abs(n)).toLocaleString();};
+var sv=function(id,txt){var el=g(id);if(el)el.textContent=txt;};
+var sv$=function(id,n,red){var el=g(id);if(!el)return;el.textContent=(n<0?'-':'')+'$'+fc(n);el.style.color=red&&n<0?'#f87171':'#4ade80';};
+/* Line totals */
+sv$('plc_panel_tot',  panelT,  false);
+sv$('plc_inv_tot',    invT,    false);
+sv$('plc_batt_tot',   battT,   false);
+sv$('plc_mnt_tot',    mntT,    false);
+sv$('plc_gw_tot',     gwT,     false);
+sv$('plc_rcbosp_tot', rcboSPT, false);
+sv$('plc_rcbotp_tot', rcboTPT, false);
+sv$('plc_ev_tot',     evT,     false);
+sv$('plc_sp_tot',     spT,     false);
+sv$('plc_sw_tot',     swT,     false);
+sv$('plc_matTotal',   totalMat, true);
+sv('plc_totalW',  totalW?totalW.toLocaleString():'0');
+sv('plc_solKw',   solKw.toFixed(1));
+sv('plc_battKwh', battKwh?battKwh+' kWh':'0');
+sv('plc_totalHrs',totalHrs);
+sv('plc_solarAuto',solarAuto); sv('plc_battAuto',battAuto);
+sv('plc_invHrs',invHrs);
+/* Right column */
+sv$('plc_matR',      -totalMat,   true);
+sv$('plc_ohR',       -overheads,  true);
+sv$('plc_comsR',     -commission, true);
+sv$('plc_battmatR',  -battMat,    true);
+sv$('plc_solmatR',   -solMat,     true);
+sv$('plc_rackR',     -racking,    true);
+sv$('plc_sumR',      -sumCosts,   true);
+sv$('plc_saleExGst',  grossEx,    false);
+sv$('plc_labourR',   -labourCost, true);
+sv$('plc_otherWagesR',-otherWages,true);
+sv$('plc_battRebR',   battRebate, false);
+sv$('plc_stcRebR',    stcRebate,  false);
+var gpEl=g('plc_gp'),npEl=g('plc_np'),mEl=g('plc_margin'),rEl=g('plc_rating'),spEl=g('plc_saleToggle');
+if(gpEl){gpEl.textContent='$'+fc(gp);gpEl.style.color=gp>=4000?'#4ade80':gp>=1500?'#fbbf24':'#f87171';}
+if(npEl){npEl.textContent='$'+fc(np);npEl.style.color=np>=3000?'#4ade80':np>=1000?'#fbbf24':'#f87171';}
+if(mEl){mEl.textContent='Margin '+(margin*100).toFixed(0)+'%';mEl.style.color=margin>=0.35?'#4ade80':margin>=0.20?'#fbbf24':'#f87171';}
+var rat=Math.round(np/100)/10;
+if(rEl){rEl.textContent=rat.toFixed(1);rEl.style.color=rat>=4.5?'#4ade80':rat>=2.5?'#fbbf24':'#f87171';}
+/* Sync rating input to actual rating (when sale price is changed manually) */
+var riEl=g('plc_ratingInput');
+if(riEl&&riEl!==document.activeElement)riEl.value=rat.toFixed(1);
+if(riEl)riEl.style.color=rat>=4.5?'#4ade80':rat>=2.5?'#fbbf24':'#f87171';
+if(spEl&&spEl!==document.activeElement)spEl.value=s.salePrice;
+}
+function plcSel(slot,el){
+/* Handle RCBO slots which update unit cost like other slots */
+if(slot==='rcboSP'||slot==='rcboTP'){
+var lu=plcLookup(el.value);
+if(lu&&lu.cost>0){PLC_STATE[slot].lid=el.value;PLC_STATE[slot].unitCost=lu.cost;
+var prEl=document.getElementById(slot==='rcboSP'?'plc_rcbosp_price':'plc_rcbotp_price');
+if(prEl)prEl.value=lu.cost;}plcUpdate();return;}
+var lid=el.value; PLC_STATE[slot].lid=lid;
+var lu=lookupById(lid);
+if(lu){PLC_STATE[slot].unitCost=lu.cost;
+/* Map slot name to abbreviated HTML element ID */
+var _idMap={battery:'batt',inverter:'inv',mount:'mnt',gateway:'gw',panel:'panel',ev:'ev',sig_parts:'sp',switchboard:'sw'};
+var _abbr=_idMap[slot]||slot;
+var pi=g('plc_'+_abbr+'_price');if(pi)pi.value=lu.cost;}
+plcUpdate();
+}
+function plcQty(slot,el){PLC_STATE[slot].qty=parseFloat(el.value)||0;plcUpdate();}
+function plcPrice(slot,el){PLC_STATE[slot].unitCost=parseFloat(el.value)||0;plcUpdate();}
+function plcCfg(field,el){PLC_STATE[field]=parseFloat(el.value)||0;plcUpdate();}
+function plcDiff(el){PLC_STATE.balance.hrs=parseInt(el.value)||0;plcUpdate();}
+function renderLookup(){
+var el=g('lookupBody');if(!el)return;
+var cats=[
+['Panels (rows 3-6)',         'panel',       '#fbbf24'],
+['Inverters (rows 14-30)',    'inverter',    '#93c5fd'],
+['Battery Modules (rows 39-44)','battery',  '#a78bfa'],
+['Gateway (rows 45-48)',      'gateway',     '#34d399'],
+['Add Labour Hours (rows 55-61)','labour_add','#fb923c'],
+['Switchboard (rows 66-70)', 'switchboard', '#f472b6'],
+['Sigenergy Parts (rows 72-79)','sig_parts', '#67e8f9'],
+['Mounts (rows 80-82)',       'mount',       '#94a3b8'],
+['EV Chargers (rows 83-97)', 'ev',           '#86efac'],
+['RCBOs SP',                 'rcbo',         '#fb923c'],
+['RCBOs TP',                 'rcbo',         '#fb923c']
+];
+var h='';
+for(var c=0;c<cats.length;c++){
+var label=cats[c][0],cat=cats[c][1],col=cats[c][2];
+var items=LOOKUP_DATA.filter(function(x){return x.cat===cat;});
+h+='<tr><td colspan="5" style="background:#1e293b;color:'+col+';font-size:0.7em;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;padding:6px 12px;border-left:3px solid '+col+';">'+label+'</td></tr>';
+for(var i=0;i<items.length;i++){
+var it=items[i];
+var INP='width:100%;border:1px solid #334155;border-radius:4px;padding:3px 6px;font-size:0.85em;background:#0f172a;color:'+col+';';
+var INP_N='width:86px;border:1px solid #334155;border-radius:5px;padding:3px 6px;text-align:right;font-size:0.85em;background:#0f172a;color:#e2e8f0;';
+h+='<tr style="border-bottom:1px solid #1e293b;border-left:3px solid '+col+'20;">';
+h+='<td style="padding:5px 10px;"><input value="'+escHtml(it.name)+'" data-lid="'+it.id+'" data-field="name" onchange="lookupItemChange(this)" style="'+INP+'"></td>';
+h+='<td style="padding:5px 6px;"><input type="number" value="'+it.cost+'" data-lid="'+it.id+'" data-field="cost" onchange="lookupItemChange(this)" style="'+INP_N+'"></td>';
+h+='<td style="padding:5px 6px;"><input type="number" value="'+it.sell+'" data-lid="'+it.id+'" data-field="sell" onchange="lookupItemChange(this)" style="'+INP_N+'"></td>';
+h+='<td style="padding:5px 6px;text-align:center;color:#475569;font-size:0.78em;">'+it.unit+'</td>';
+h+='<td style="padding:5px 6px;text-align:right;">'
++'<button onclick="lookupDeleteItem(\''+it.id+'\')" style="background:#450a0a;color:#fca5a5;border:none;border-radius:4px;padding:1px 7px;cursor:pointer;font-size:0.74em;">✕</button>'
++'</td>';
+h+='</tr>';
+}
+h+='<tr><td colspan="5" style="padding:4px 10px 8px;border-left:3px solid '+col+'40;">'
++'<button onclick="lookupAddItem(\''+cat+'\')" style="background:#0f172a;color:'+col+';border:1.5px dashed '+col+'60;border-radius:6px;padding:3px 12px;font-size:0.76em;font-weight:700;cursor:pointer;">+ Add row</button>'
++'</td></tr>';
+}
+el.innerHTML=h;
+}
+function plcInitDropdowns(){
+/* Use data-slot attribute for reliable slot matching */
+var slotDefs={
+panel:       {cat:'panel',       def:'p1'},
+inverter:    {cat:'inverter',    def:'i12'},
+battery:     {cat:'battery',     def:''},
+mount:       {cat:'mount',       def:'m1'},
+gateway:     {cat:'gateway',     def:'g0'},
+ev:          {cat:'ev',          def:'ev0'},
+sig_parts:   {cat:'sig_parts',   def:'sp0'},
+switchboard: {cat:'switchboard', def:'sw0'},
+rcboSP:      {cat:'rcbo',        def:'rc1'},
+rcboTP:      {cat:'rcbo',        def:'rc2'},
+dcCable:     {cat:'cabling',     def:'cb1'},
+acCable:     {cat:'cabling',     def:'cb2'},
+trench:      {cat:'cabling',     def:'cb3'}
+};
+/* Find all selects with data-slot */
+var sels=document.querySelectorAll('[data-slot]');
+for(var qi=0;qi<sels.length;qi++){
+var slot=sels[qi].getAttribute('data-slot');
+var sd=slotDefs[slot]; if(!sd)continue;
+var items=LOOKUP_DATA.filter(function(x){return x.cat===sd.cat;});
+var h='';
+for(var j=0;j<items.length;j++){
+h+='<option value="'+items[j].id+'"'+(items[j].id===sd.def?' selected':'')+'>'+items[j].name+'</option>';
+}
+sels[qi].innerHTML=h;
+if(sd.def){
+var lu=lookupById(sd.def);
+if(lu&&PLC_STATE[slot]){PLC_STATE[slot].unitCost=lu.cost;PLC_STATE[slot].lid=sd.def;}
+}
+}
+/* Populate STC period dropdowns (packages tab + P&L calculator) */
+var currentIdx=2; // default: May-Dec 2026
+for(var pi=0;pi<STC_PERIODS.length;pi++){if(STC_PERIODS[pi].current){currentIdx=pi;break;}}
+var ph='';
+for(var p2=0;p2<STC_PERIODS.length;p2++){
+ph+='<option value="'+p2+'"'+(p2===currentIdx?' selected':'')+'>'+STC_PERIODS[p2].label+'</option>';
+}
+['plc_period','pkg_stc_period'].forEach(function(id){
+var el=g(id); if(el){el.innerHTML=ph;el.value=currentIdx;}
+});
+setPeriod(currentIdx);
+/* Also populate the balance/labour-add dropdown */
+var balSel=g('plc_sel_balance');
+if(balSel){
+var laItems=LOOKUP_DATA.filter(function(x){return x.cat==='labour_add';});
+var lh='';
+for(var k=0;k<laItems.length;k++){
+lh+='<option value="'+laItems[k].cost+'"'+(laItems[k].cost===0?' selected':'')+'>'+laItems[k].name+'</option>';
+}
+balSel.innerHTML=lh;
+/* Sync PLC_STATE.balance.hrs from selected dropdown value on init */
+PLC_STATE.balance.hrs=parseFloat(balSel.value)||0;
+}
+plcUpdate();
+}
+function calcBattRebate(battKwh, stcFactor, stcPrice, tapering){
+if(battKwh<=0)return 0;
+if(!tapering){
+/* Pre-May 2026: flat rate, no size tapering */
+return Math.round(Math.min(battKwh,50)*stcFactor*stcPrice);
+}
+var t1=Math.min(battKwh,14)*stcFactor*stcPrice;
+var t2=Math.min(Math.max(battKwh-14,0),14)*stcFactor*0.80*stcPrice;  /* 80% for kWh 15-28 */
+var t3=Math.min(Math.max(battKwh-28,0),22)*stcFactor*0.15*stcPrice;  /* 15% above 28kWh */
+return Math.round(t1+t2+t3);
+}
+function calcSolarRebate(solKw, zoneRating, deemingYears, stcPrice){
+return Math.round(solKw*zoneRating*deemingYears*stcPrice);
+}
+function snapBattS(kw){
+/* If customer/call has a preferred battery size, use it */
+if(CBA_INTENT.battSize>0)return CBA_INTENT.battSize;
+var s=[8,16,24,32,40,48];for(var j=s.length-1;j>=0;j--){if(s[j]<=kw)return s[j];}return 8;
+}
+function setPeriod(idx){
+var p=STC_PERIODS[idx]; if(!p)return;
+PLC_STATE.stcDeemYears  = p.solar;
+PLC_STATE.battStcFactor = p.battFactor;
+PLC_STATE.battStcPrice  = p.battPrice;
+PLC_STATE.battTapering  = p.tapering;
+/* Sync both period dropdowns (packages tab + P&L calculator) */
+['plc_period','pkg_stc_period'].forEach(function(id){
+var el=g(id); if(el)el.value=idx;
+});
+/* Update visible rate inputs in P&L calculator */
+var dEl=g('plc_deemYears'); if(dEl)dEl.value=p.solar;
+var fEl=g('plc_battFactor');if(fEl)fEl.value=p.battFactor;
+var tEl=g('plc_tapNote');
+if(tEl)tEl.textContent=p.tapering
+?'Tapering ON: 0-14kWh 100% · 15-28kWh 60% · 29-50kWh 15%'
+:'Tapering OFF — flat rate per kWh (pre-May 2026)';
+/* Re-render packages so Gross/STC/Net and Rating update */
+renderPackages();wirePackageInputs();
+plcUpdate();
+}
+function updateCrewLabel(){
+var s=PLC_STATE;
+var halfDay=(s.panel.qty<=0||s.battery.qty<=0);
+var mult=(halfDay?0.5:1.0)/(PLC_CREWS||1);
+var jobType=halfDay?(s.panel.qty<=0?'Battery-only':'Solar-only'):'Combo';
+var lbl=document.getElementById('plcCrewLabel');
+if(lbl)lbl.textContent=jobType+' × '+PLC_CREWS+' crew'+(PLC_CREWS>1?'s':'')+' = '+Math.round(mult*100)+'% of daily fixed';
+var mb=document.getElementById('plc_ohMult');
+if(mb)mb.textContent='(×'+mult.toFixed(2)+')';
+}
+
+window.addEventListener('DOMContentLoaded', function(){
+  LOOKUP_DATA=[{"id":"p1","cat":"panel","name":"JA 475","cost":100,"sell":131,"unit":"panel","notes":"475W"},{"id":"p2","cat":"panel","name":"Aiko 475","cost":120,"sell":165,"unit":"panel","notes":"475W"},{"id":"p3","cat":"panel","name":"Trina 475","cost":125,"sell":167,"unit":"panel","notes":"475W"},{"id":"p4","cat":"panel","name":"Risen 475","cost":96,"sell":190,"unit":"panel","notes":"475W"},{"id":"i1","cat":"inverter","name":"SigenStor EC 5.0 SP","cost":1284.8,"sell":1670.24,"unit":"unit","notes":"SP 5kW"},{"id":"i2","cat":"inverter","name":"SigenStor EC 6.0 SP","cost":1389.3,"sell":1806.09,"unit":"unit","notes":"SP 6kW"},{"id":"i3","cat":"inverter","name":"SigenStor EC 8.0 SP","cost":2373.8,"sell":3085.94,"unit":"unit","notes":"SP 8kW"},{"id":"i4","cat":"inverter","name":"SigenStor EC 10.0 SP","cost":2558.6,"sell":3326.18,"unit":"unit","notes":"SP 10kW"},{"id":"i5","cat":"inverter","name":"SigenStor EC 12.0 SP","cost":2744.5,"sell":3567.85,"unit":"unit","notes":"SP 12kW"},{"id":"i6","cat":"inverter","name":"SigenStor EC 5.0 TP","cost":2200,"sell":2860,"unit":"unit","notes":"TP 5kW"},{"id":"i7","cat":"inverter","name":"SigenStor EC 10.0 TP","cost":2547.6,"sell":3311.88,"unit":"unit","notes":"TP 10kW"},{"id":"i8","cat":"inverter","name":"SigenStor EC 15.0 TP","cost":3358.3,"sell":4365.79,"unit":"unit","notes":"TP 15kW"},{"id":"i9","cat":"inverter","name":"SigenStor EC 20.0 TP","cost":3832.4,"sell":4982.12,"unit":"unit","notes":"TP 20kW"},{"id":"i10","cat":"inverter","name":"SigenStor EC 25.0 TP","cost":4400,"sell":5720,"unit":"unit","notes":"TP 25kW"},{"id":"i11","cat":"inverter","name":"SigenStor EC 30.0 TP","cost":4840,"sell":6292,"unit":"unit","notes":"TP 30kW"},{"id":"i12","cat":"inverter","name":"ESA Single Phase Inv 9.9kW","cost":1973,"sell":2535,"unit":"unit","notes":"SP 9.9kW \u2014 std P&L"},{"id":"i13","cat":"inverter","name":"ESA GW10.0-ETA","cost":2192.3,"sell":2590.9,"unit":"unit","notes":"SP 10kW"},{"id":"i14","cat":"inverter","name":"ESA GW15.0-ETA","cost":2339.18,"sell":2764.49,"unit":"unit","notes":"TP 15kW"},{"id":"i15","cat":"inverter","name":"ESA GW20.0-ETA","cost":2419.03,"sell":2858.86,"unit":"unit","notes":"TP 20kW"},{"id":"i16","cat":"inverter","name":"ESA GW25.0-ETA","cost":2491.03,"sell":2943.94,"unit":"unit","notes":"TP 25kW"},{"id":"i17","cat":"inverter","name":"ESA GW30.0-ETA","cost":2599.67,"sell":3072.34,"unit":"unit","notes":"TP 30kW"},{"id":"b1","cat":"battery","name":"SigenStor BAT 5","cost":2778.6,"sell":0,"unit":"module","notes":"5kWh","kwh":5},{"id":"b2","cat":"battery","name":"SigenStor BAT 6","cost":2864.4,"sell":3743,"unit":"module","notes":"6kWh","kwh":6},{"id":"b3","cat":"battery","name":"SigenStor BAT 8","cost":3174,"sell":4127,"unit":"module","notes":"8kWh","kwh":8},{"id":"b4","cat":"battery","name":"SigenStor BAT 10","cost":3566.2,"sell":4662,"unit":"module","notes":"10kWh","kwh":10},{"id":"b5","cat":"battery","name":"Lynx D 5kWh Battery","cost":2283,"sell":2283,"unit":"module","notes":"5kWh","kwh":5},{"id":"b6","cat":"battery","name":"Lynx D 8kWh Battery","cost":2484,"sell":3185,"unit":"module","notes":"8kWh","kwh":8},{"id":"g0","cat":"gateway","name":"NONE","cost":0,"sell":0,"unit":"unit","notes":""},{"id":"g1","cat":"gateway","name":"Sigen Gateway Home SP (Pro)","cost":664.4,"sell":864,"unit":"unit","notes":"Single phase"},{"id":"g2","cat":"gateway","name":"Sigen Gateway Home TP (Pro)","cost":821.7,"sell":1068,"unit":"unit","notes":"Three phase"},{"id":"g3","cat":"gateway","name":"Sigen Gateway C60 AU","cost":1691.8,"sell":2200,"unit":"unit","notes":"Commercial"},{"id":"lh0","cat":"labour_add","name":"Add 0 Hrs","cost":0,"sell":0,"unit":"hrs","notes":""},{"id":"lh1","cat":"labour_add","name":"Add 1 Hour","cost":1,"sell":1,"unit":"hrs","notes":""},{"id":"lh2","cat":"labour_add","name":"Add 2 Hours","cost":2,"sell":2,"unit":"hrs","notes":""},{"id":"lh3","cat":"labour_add","name":"Add 3 Hours","cost":3,"sell":3,"unit":"hrs","notes":""},{"id":"lh4","cat":"labour_add","name":"Add 4 Hours","cost":4,"sell":4,"unit":"hrs","notes":""},{"id":"lh5","cat":"labour_add","name":"Add 5 Hours","cost":5,"sell":5,"unit":"hrs","notes":""},{"id":"lh6","cat":"labour_add","name":"Add 6 Hours","cost":6,"sell":6,"unit":"hrs","notes":""},{"id":"sw0","cat":"switchboard","name":"None","cost":0,"sell":0,"unit":"unit","notes":""},{"id":"sw1","cat":"switchboard","name":"Single Phase Basic","cost":1500,"sell":1500,"unit":"unit","notes":""},{"id":"sw2","cat":"switchboard","name":"Single Phase Relocation","cost":2500,"sell":2500,"unit":"unit","notes":""},{"id":"sw3","cat":"switchboard","name":"3 Phase Basic","cost":2000,"sell":2000,"unit":"unit","notes":""},{"id":"sw4","cat":"switchboard","name":"3 Phase Relocation","cost":3500,"sell":3500,"unit":"unit","notes":""},{"id":"sp0","cat":"sig_parts","name":"NONE","cost":0,"sell":0,"unit":"unit","notes":""},{"id":"sp1","cat":"sig_parts","name":"Sigen Sensor SP-CT120-DH","cost":148.72,"sell":148.72,"unit":"unit","notes":""},{"id":"sp2","cat":"sig_parts","name":"Sigen Sensor TP-CT120-DH","cost":283.14,"sell":283.14,"unit":"unit","notes":""},{"id":"sp3","cat":"sig_parts","name":"Sigen Sensor TP-CT300-DH","cost":361.79,"sell":361.79,"unit":"unit","notes":""},{"id":"sp4","cat":"sig_parts","name":"Sigen Sensor TP-CT600-DH","cost":424.71,"sell":424.71,"unit":"unit","notes":""},{"id":"sp5","cat":"sig_parts","name":"Sigen Sensor TPX-CH","cost":377,"sell":377,"unit":"unit","notes":""},{"id":"sp6","cat":"sig_parts","name":"Sigen Sensor Sub1G Kit AU","cost":157.3,"sell":157.3,"unit":"unit","notes":""},{"id":"sp7","cat":"sig_parts","name":"Sigen CommMod GL","cost":220.22,"sell":220.22,"unit":"unit","notes":""},{"id":"m1","cat":"mount","name":"Ground Mount Kit (Standard)","cost":251.68,"sell":251.68,"unit":"unit","notes":""},{"id":"m2","cat":"mount","name":"Ground Mount Kit (Economy)","cost":220.22,"sell":220.22,"unit":"unit","notes":""},{"id":"m3","cat":"mount","name":"Wall Mount Kit","cost":251.68,"sell":251.68,"unit":"unit","notes":""},{"id":"ev0","cat":"ev","name":"NONE","cost":0,"sell":0,"unit":"unit","notes":""},{"id":"ev1","cat":"ev","name":"GoodWe 7kW SP AC EV","cost":830,"sell":830,"unit":"unit","notes":"1ph AC"},{"id":"ev2","cat":"ev","name":"GoodWe 22kW TP AC EV","cost":1030,"sell":1030,"unit":"unit","notes":"3ph AC"},{"id":"ev3","cat":"ev","name":"SigenStor EVDC 12 10S2","cost":2588,"sell":3364.4,"unit":"unit","notes":"DC charger"},{"id":"ev4","cat":"ev","name":"SigenStor EVDC 25 10S2","cost":3416,"sell":4440.8,"unit":"unit","notes":"DC charger"},{"id":"ev5","cat":"ev","name":"EVDC Cable 7.5S2","cost":496.1,"sell":644.93,"unit":"unit","notes":"Cable"},{"id":"ev6","cat":"ev","name":"EVDC Cable 10S2","cost":591.8,"sell":769.34,"unit":"unit","notes":"Cable"},{"id":"ev7","cat":"ev","name":"Sigen RFID Card","cost":15.6,"sell":15.6,"unit":"unit","notes":""},{"id":"ev8","cat":"ev","name":"Sigen EVAC 7 4G T2-WH","cost":867.9,"sell":1128.27,"unit":"unit","notes":"AC charger"},{"id":"ev9","cat":"ev","name":"Sigen EVAC 11 4G T2-WH","cost":1219.79,"sell":1219.79,"unit":"unit","notes":"AC charger"},{"id":"ev10","cat":"ev","name":"Sigen EVAC 22 4G T2-WH","cost":1041.7,"sell":1354.21,"unit":"unit","notes":"AC charger"},{"id":"ev11","cat":"ev","name":"Sigen EVAC 7 4G T2SH WH","cost":748,"sell":972.4,"unit":"unit","notes":"AC shutter"},{"id":"ev12","cat":"ev","name":"Sigen EVAC 11 4G T2SH WH","cost":825,"sell":1072.5,"unit":"unit","notes":"AC shutter"},{"id":"ev13","cat":"ev","name":"Sigen EVAC 22 4G T2SH WH","cost":891,"sell":1158.3,"unit":"unit","notes":"AC shutter"},{"id":"rc1","cat":"rcbo","name":"RCBO Single Phase","cost":30,"sell":30,"unit":"unit","notes":"Per circuit"},{"id":"rc2","cat":"rcbo","name":"RCBO Three Phase","cost":40,"sell":40,"unit":"unit","notes":"Per circuit"},{"id":"cb1","cat":"cabling","name":"DC Cable","cost":20,"sell":50,"unit":"m","notes":"Per metre"},{"id":"cb2","cat":"cabling","name":"AC Cable","cost":20,"sell":50,"unit":"m","notes":"Per metre"},{"id":"cb3","cat":"cabling","name":"Trenching","cost":20,"sell":30,"unit":"m","notes":"Per metre"}];
+
+  plcInitDropdowns();
+  renderLookup();
+  plcUpdate();
+});
+</script>
+
+<script>
+if('serviceWorker' in navigator){
+  window.addEventListener('load', function(){
+    navigator.serviceWorker.register('sw.js');
+  });
+}
+</script>
+</body>
+</html>
