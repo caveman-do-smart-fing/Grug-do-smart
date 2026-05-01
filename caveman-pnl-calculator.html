@@ -26,7 +26,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="P&L Calc">
-<title>P&L Calculator — Caveman Energy</title>
+<title>Sales Tool — Caveman Energy</title>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="icon" type="image/x-icon" href="favicon.ico">
@@ -41,11 +41,160 @@ h1{font-size:1.3em;font-weight:800;color:#e2e8f0;margin-bottom:6px;}
 </style>
 </head>
 <body>
-<h1>📊 P&L Calculator & Price Lookup</h1>
+<h1>📊 Sales Tool</h1>
 <p class="subtitle">Caveman Energy · Internal Tool · 2026</p>
 
+<!-- SECTION TOGGLES -->
+<div style="display:flex;gap:10px;margin-bottom:16px;align-items:center;flex-wrap:wrap;background:#0f172a;border:1px solid #334155;border-radius:8px;padding:10px 14px;">
+  <span style="font-size:0.82em;color:#94a3b8;font-weight:600;">Show:</span>
+  <button id="tg_pkg" onclick="toggleSection('pkg')" style="padding:6px 14px;border-radius:6px;border:2px solid #0d9488;background:#042f2e;color:#5eead4;cursor:pointer;font-size:0.82em;font-weight:700;">📦 Price Map</button>
+  <button id="tg_pnl" onclick="toggleSection('pnl')" style="padding:6px 14px;border-radius:6px;border:2px solid #6366f1;background:#1e1b4b;color:#a5b4fc;cursor:pointer;font-size:0.82em;font-weight:700;">📊 P&amp;L Calc</button>
+  <button id="tg_lookup" onclick="toggleSection('lookup')" style="padding:6px 14px;border-radius:6px;border:2px solid #f59e0b;background:#451a03;color:#fcd34d;cursor:pointer;font-size:0.82em;font-weight:700;opacity:0.45;text-decoration:line-through;">💲 Price Table</button>
+</div>
+
+<!-- PACKAGES MIND MAP -->
+<div class="card" id="pkgSection" style="border:2px solid #334155;background:#0f172a;margin-top:16px;">
+  <h2 style="color:#e2e8f0;">&#128230; Package Price Map <span style="font-size:0.5em;color:#475569;margin-left:8px;">GoodWe &amp; Sigenergy &middot; crew labour model &middot; 2026</span></h2>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 6px;">
+    <div>
+      <div style="font-size:10px;color:#475569;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;">Brand</div>
+      <div style="display:flex;gap:6px;" id="pkg_brandRow">
+        <button id="pkg_b_gw" style="padding:5px 12px;border-radius:6px;border:1px solid #334155;background:#1e293b;color:#64748b;cursor:pointer;font-size:12px;">GoodWe</button>
+        <button id="pkg_b_sg" style="padding:5px 12px;border-radius:6px;border:1px solid #334155;background:#1e293b;color:#64748b;cursor:pointer;font-size:12px;">Sigenergy</button>
+        <button id="pkg_b_su" style="padding:5px 12px;border-radius:6px;border:1px solid #334155;background:#1e293b;color:#64748b;cursor:pointer;font-size:12px;">Sungrow</button>
+        <button id="pkg_b_all" style="padding:5px 12px;border-radius:6px;border:2px solid #94a3b8;background:#334155;color:#e2e8f0;cursor:pointer;font-size:12px;font-weight:600;">All &middot; Compare</button>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:10px;color:#475569;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;">Job type</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;" id="pkg_jobRow">
+        <button id="pkg_j_batt" style="padding:5px 12px;border-radius:6px;border:2px solid #64748b;background:#1e293b;color:#e2e8f0;cursor:pointer;font-size:12px;font-weight:600;">Battery only</button>
+        <button id="pkg_j_combo" style="padding:5px 12px;border-radius:6px;border:1px solid #334155;background:#1e293b;color:#64748b;cursor:pointer;font-size:12px;">Solar + battery</button>
+        <button id="pkg_j_solar" style="padding:5px 12px;border-radius:6px;border:1px solid #334155;background:#1e293b;color:#64748b;cursor:pointer;font-size:12px;">Solar only</button>
+        <button id="pkg_j_addsolar" style="padding:5px 12px;border-radius:6px;border:1px solid #334155;background:#1e293b;color:#64748b;cursor:pointer;font-size:12px;">Add panels</button>
+      </div>
+    </div>
+    <div id="pkg_solWrap" style="display:none;">
+      <div style="font-size:10px;color:#475569;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;">Solar size</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;" id="pkg_solRow">
+        <button id="pkg_s_33"  style="padding:5px 10px;border-radius:6px;border:1px solid #334155;background:#1e293b;color:#64748b;cursor:pointer;font-size:12px;">3.3</button>
+        <button id="pkg_s_66"  style="padding:5px 10px;border-radius:6px;border:1px solid #334155;background:#1e293b;color:#64748b;cursor:pointer;font-size:12px;">6.6</button>
+        <button id="pkg_s_99"  style="padding:5px 10px;border-radius:6px;border:1px solid #334155;background:#1e293b;color:#64748b;cursor:pointer;font-size:12px;">9.9</button>
+        <button id="pkg_s_133" style="padding:5px 10px;border-radius:6px;border:2px solid #64748b;background:#1e293b;color:#e2e8f0;cursor:pointer;font-size:12px;font-weight:600;">13.3</button>
+        <button id="pkg_s_165" style="padding:5px 10px;border-radius:6px;border:1px solid #334155;background:#1e293b;color:#64748b;cursor:pointer;font-size:12px;">16.5</button>
+        <button id="pkg_s_198" style="padding:5px 10px;border-radius:6px;border:1px solid #334155;background:#1e293b;color:#64748b;cursor:pointer;font-size:12px;">19.8</button>
+        <button id="pkg_s_231" style="padding:5px 10px;border-radius:6px;border:1px solid #334155;background:#1e293b;color:#64748b;cursor:pointer;font-size:12px;">23.1</button>
+        <button id="pkg_s_264" style="padding:5px 10px;border-radius:6px;border:1px solid #334155;background:#1e293b;color:#64748b;cursor:pointer;font-size:12px;">26.4</button>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:10px;color:#475569;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;">Inverter</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;" id="pkg_phRow">
+        <button id="pkg_p_sp" style="padding:5px 12px;border-radius:6px;border:2px solid #64748b;background:#1e293b;color:#e2e8f0;cursor:pointer;font-size:12px;font-weight:600;">SP 9.9 kW</button>
+        <button id="pkg_p_tp15" style="padding:5px 12px;border-radius:6px;border:1px solid #334155;background:#1e293b;color:#64748b;cursor:pointer;font-size:12px;">TP 15 kW</button>
+        <button id="pkg_p_tp20" style="padding:5px 12px;border-radius:6px;border:1px solid #334155;background:#1e293b;color:#64748b;cursor:pointer;font-size:12px;">TP 20 kW</button>
+        <button id="pkg_p_tp25" style="padding:5px 12px;border-radius:6px;border:1px solid #334155;background:#1e293b;color:#64748b;cursor:pointer;font-size:12px;">TP 25 kW</button>
+        <button id="pkg_p_tp30" style="padding:5px 12px;border-radius:6px;border:1px solid #334155;background:#1e293b;color:#64748b;cursor:pointer;font-size:12px;">TP 30 kW</button>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:10px;color:#475569;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;">Target &#9733;</div>
+      <div style="display:flex;align-items:center;gap:4px;">
+        <button id="pkg_target_dn" style="width:24px;height:26px;background:#334155;color:#e2e8f0;border:none;border-radius:5px;font-size:12px;cursor:pointer;font-weight:700;line-height:1;">&#9660;</button>
+        <input id="pkg_target" type="number" value="4.3" step="0.1" min="0" max="20"
+          style="width:54px;text-align:center;background:#1e293b;color:#fbbf24;border:1.5px solid #fbbf24;border-radius:6px;padding:3px 4px;font-size:13px;font-weight:900;outline:none;">
+        <button id="pkg_target_up" style="width:24px;height:26px;background:#334155;color:#e2e8f0;border:none;border-radius:5px;font-size:12px;cursor:pointer;font-weight:700;line-height:1;">&#9650;</button>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:10px;color:#475569;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;">Round to</div>
+      <div style="display:flex;gap:6px;" id="pkg_roundRow">
+        <button id="pkg_r_100" style="padding:5px 12px;border-radius:6px;border:1px solid #334155;background:#1e293b;color:#64748b;cursor:pointer;font-size:12px;">$100</button>
+        <button id="pkg_r_250" style="padding:5px 12px;border-radius:6px;border:1px solid #334155;background:#1e293b;color:#64748b;cursor:pointer;font-size:12px;">$250</button>
+        <button id="pkg_r_500" style="padding:5px 12px;border-radius:6px;border:2px solid #64748b;background:#1e293b;color:#e2e8f0;cursor:pointer;font-size:12px;font-weight:600;">$500</button>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:10px;color:#475569;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;">Even steps</div>
+      <div style="display:flex;gap:6px;align-items:center;">
+        <button id="pkg_evenstep_btn" style="padding:5px 12px;border-radius:6px;border:2px solid #6366f1;background:#1e1b4b;color:#6366f1;cursor:pointer;font-size:12px;font-weight:600;">ON</button>
+        <div style="display:flex;flex-direction:column;align-items:center;">
+          <div style="font-size:9px;color:#475569;letter-spacing:.04em;">Boundary kWh</div>
+          <input id="pkg_step_boundary" type="number" value="32" step="1" min="0"
+            style="width:54px;text-align:center;background:#1e293b;color:#6366f1;border:1px solid #334155;border-radius:5px;padding:3px 4px;font-size:12px;font-weight:700;outline:none;">
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;">
+          <div style="font-size:9px;color:#475569;letter-spacing:.04em;" id="pkg_step_low_lbl">&le;24 kWh +$</div>
+          <input id="pkg_step_low" type="number" value="1500" step="250" min="0"
+            style="width:64px;text-align:center;background:#1e293b;color:#6366f1;border:1px solid #334155;border-radius:5px;padding:3px 4px;font-size:12px;font-weight:700;outline:none;">
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;">
+          <div style="font-size:9px;color:#475569;letter-spacing:.04em;" id="pkg_step_high_lbl">&gt;24 kWh +$</div>
+          <input id="pkg_step_high" type="number" value="2500" step="250" min="0"
+            style="width:64px;text-align:center;background:#1e293b;color:#6366f1;border:1px solid #334155;border-radius:5px;padding:3px 4px;font-size:12px;font-weight:700;outline:none;">
+        </div>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:10px;color:#475569;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;">Early Bird deal</div>
+      <div style="display:flex;gap:6px;align-items:center;">
+        <div style="display:flex;flex-direction:column;align-items:center;">
+          <button id="pkg_special_stay_btn" style="padding:5px 10px;border-radius:6px;border:2px solid #4ade80;background:#1a3a2a;color:#4ade80;cursor:pointer;font-size:11px;font-weight:600;">Stay ON</button>
+          <input id="pkg_special_stay" type="number" value="500" step="50" min="0"
+            style="width:62px;text-align:center;background:#1e293b;color:#4ade80;border:1px solid #334155;border-radius:5px;padding:3px 4px;font-size:11px;font-weight:700;outline:none;margin-top:3px;">
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;">
+          <button id="pkg_special_up_btn" style="padding:5px 10px;border-radius:6px;border:1px solid #334155;background:#1e293b;color:#64748b;cursor:pointer;font-size:11px;font-weight:600;">Upgrade OFF</button>
+          <input id="pkg_special_up" type="number" value="500" step="50" min="0"
+            style="width:62px;text-align:center;background:#1e293b;color:#4ade80;border:1px solid #334155;border-radius:5px;padding:3px 4px;font-size:11px;font-weight:700;outline:none;margin-top:3px;">
+        </div>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:10px;color:#475569;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;">3-mo Lock-in</div>
+      <div style="display:flex;gap:6px;align-items:center;">
+        <button id="pkg_lockin_btn" style="padding:5px 10px;border-radius:6px;border:2px solid #b46dfa;background:#2e1065;color:#b46dfa;cursor:pointer;font-size:11px;font-weight:600;">Show ON</button>
+        <div style="display:flex;flex-direction:column;align-items:center;">
+          <div style="font-size:9px;color:#475569;letter-spacing:.04em;">Target \u2605</div>
+          <input id="pkg_lockin_target" type="number" value="6.2" step="0.1" min="0"
+            style="width:54px;text-align:center;background:#1e293b;color:#b46dfa;border:1px solid #334155;border-radius:5px;padding:3px 4px;font-size:11px;font-weight:700;outline:none;">
+        </div>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:10px;color:#475569;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;">Client view</div>
+      <div style="display:flex;gap:6px;align-items:center;">
+        <button id="pkg_client_btn" style="padding:5px 10px;border-radius:6px;border:1px solid #334155;background:#1e293b;color:#64748b;cursor:pointer;font-size:11px;font-weight:600;" title="Hide ratings/hours/PPH for clean client screenshots">Show All</button>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:10px;color:#475569;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;">Solar/Add hrs floor</div>
+      <div style="display:flex;gap:6px;align-items:center;">
+        <div style="display:flex;flex-direction:column;align-items:center;">
+          <div style="font-size:9px;color:#475569;letter-spacing:.04em;">Std hrs</div>
+          <input id="pkg_floor_std" type="number" value="7.6" step="0.1" min="0"
+            style="width:54px;text-align:center;background:#1e293b;color:#fb923c;border:1px solid #334155;border-radius:5px;padding:3px 4px;font-size:11px;font-weight:700;outline:none;">
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;">
+          <div style="font-size:9px;color:#475569;letter-spacing:.04em;">Special hrs</div>
+          <input id="pkg_floor_spc" type="number" value="1.0" step="0.1" min="0"
+            style="width:54px;text-align:center;background:#1e293b;color:#fb923c;border:1px solid #334155;border-radius:5px;padding:3px 4px;font-size:11px;font-weight:700;outline:none;">
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;">
+          <div style="font-size:9px;color:#475569;letter-spacing:.04em;">Spc \u2605</div>
+          <input id="pkg_target_spc" type="number" value="0.5" step="0.1" min="0"
+            style="width:54px;text-align:center;background:#1e293b;color:#fb923c;border:1px solid #334155;border-radius:5px;padding:3px 4px;font-size:11px;font-weight:700;outline:none;">
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="border-top:1px solid #1e293b;margin:10px 0;"></div>
+  <div id="pkg_gridLbl" style="font-size:10px;color:#475569;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">Battery capacity &mdash; target &#9733;4.5</div>
+  <div id="pkg_grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;"></div>
+</div>
+
 <!-- P&L CALCULATOR -->
-<div class="card" style="border:2px solid #334155;background:#0f172a;color:#e2e8f0;">
+<div class="card" id="pnlSection" style="border:2px solid #334155;background:#0f172a;color:#e2e8f0;">
   <h2 style="color:#e2e8f0;">📊 P&L Calculator <span style="font-size:0.5em;color:#475569;margin-left:8px;">2026 Post May 1st — Internal Tool</span></h2>
 
   <!-- Top config row -->
@@ -125,10 +274,10 @@ h1{font-size:1.3em;font-weight:800;color:#e2e8f0;margin-bottom:6px;}
         <!-- BATTERY -->
         <tr style="border-bottom:1px solid #1e293b;">
           <td style="padding:6px 10px;color:#94a3b8;font-size:0.88em;">Select Battery Type</td>
-          <td style="padding:4px 6px;"><select data-slot="battery" onchange="plcSel('battery',this)" style="width:100%;background:#1e293b;color:#a78bfa;border:1px solid #334155;border-radius:5px;padding:4px 6px;font-size:0.88em;font-weight:600;">
+          <td style="padding:4px 6px;"><select data-slot="battery" onchange="plcSel('battery',this)" style="width:100%;background:#1e293b;color:#6366f1;border:1px solid #334155;border-radius:5px;padding:4px 6px;font-size:0.88em;font-weight:600;">
             <option value="">— None —</option>
           </select></td>
-          <td style="padding:4px 6px;text-align:center;"><input id="plc_batt_qty" type="number" value="0" min="0" onchange="plcQty('battery',this)" style="width:62px;text-align:center;background:#1e293b;color:#a78bfa;border:1.5px solid #a78bfa33;border-radius:5px;padding:4px;font-size:0.9em;font-weight:700;"></td>
+          <td style="padding:4px 6px;text-align:center;"><input id="plc_batt_qty" type="number" value="0" min="0" onchange="plcQty('battery',this)" style="width:62px;text-align:center;background:#1e293b;color:#6366f1;border:1.5px solid #6366f133;border-radius:5px;padding:4px;font-size:0.9em;font-weight:700;"></td>
           <td style="padding:4px 6px;text-align:right;"><input id="plc_batt_price" type="number" value="2484" onchange="plcPrice('battery',this)" style="width:80px;text-align:right;background:#1e293b;color:#e2e8f0;border:1px solid #334155;border-radius:5px;padding:3px 5px;font-size:0.85em;"></td>
           <td style="padding:6px 8px;text-align:right;font-weight:700;" id="plc_batt_tot">$0</td>
           <td style="padding:6px 8px;text-align:right;color:#64748b;font-size:0.82em;" id="plc_battKwh">0 kWh</td>
@@ -211,24 +360,24 @@ h1{font-size:1.3em;font-weight:800;color:#e2e8f0;margin-bottom:6px;}
         </tr>
         <!-- Cabling -->
         <tr style="background:#0f172a;">
-          <td colspan="6" style="padding:5px 10px;font-size:0.72em;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#7c3aed;">⚡ Cabling (per metre)</td>
+          <td colspan="6" style="padding:5px 10px;font-size:0.72em;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#6366f1;">⚡ Cabling (per metre)</td>
         </tr>
         <tr style="border-bottom:1px solid #1e293b;">
           <td style="padding:6px 10px;color:#94a3b8;font-size:0.88em;">DC Cable</td>
-          <td style="padding:4px 6px;"><select data-slot="dcCable" onchange="plcSel('dcCable',this)" style="width:100%;background:#1e293b;color:#c4b5fd;border:1px solid #334155;border-radius:5px;padding:4px 6px;font-size:0.88em;font-weight:600;">
+          <td style="padding:4px 6px;"><select data-slot="dcCable" onchange="plcSel('dcCable',this)" style="width:100%;background:#1e293b;color:#6366f1;border:1px solid #334155;border-radius:5px;padding:4px 6px;font-size:0.88em;font-weight:600;">
             <option value="cb1" selected>DC Cable — $20/m</option>
           </select></td>
-          <td style="padding:4px 6px;text-align:center;"><input id="plc_dccable_qty" type="number" value="0" min="0" step="1" onchange="plcQty('dcCable',this)" style="width:62px;text-align:center;background:#1e293b;color:#c4b5fd;border:1.5px solid #c4b5fd33;border-radius:5px;padding:4px;font-size:0.9em;font-weight:700;" placeholder="m"></td>
+          <td style="padding:4px 6px;text-align:center;"><input id="plc_dccable_qty" type="number" value="0" min="0" step="1" onchange="plcQty('dcCable',this)" style="width:62px;text-align:center;background:#1e293b;color:#6366f1;border:1.5px solid #6366f133;border-radius:5px;padding:4px;font-size:0.9em;font-weight:700;" placeholder="m"></td>
           <td style="padding:4px 6px;text-align:right;"><input id="plc_dccable_price" type="number" value="20" onchange="plcPrice('dcCable',this)" style="width:80px;text-align:right;background:#1e293b;color:#e2e8f0;border:1px solid #334155;border-radius:5px;padding:3px 5px;font-size:0.85em;"></td>
           <td style="padding:6px 8px;text-align:right;font-weight:700;" id="plc_dccable_tot">$0</td>
           <td style="padding:6px 8px;text-align:right;color:#64748b;font-size:0.82em;">$50/m sell</td>
         </tr>
         <tr style="border-bottom:1px solid #1e293b;">
           <td style="padding:6px 10px;color:#94a3b8;font-size:0.88em;">AC Cable</td>
-          <td style="padding:4px 6px;"><select data-slot="acCable" onchange="plcSel('acCable',this)" style="width:100%;background:#1e293b;color:#a5b4fc;border:1px solid #334155;border-radius:5px;padding:4px 6px;font-size:0.88em;font-weight:600;">
+          <td style="padding:4px 6px;"><select data-slot="acCable" onchange="plcSel('acCable',this)" style="width:100%;background:#1e293b;color:#6366f1;border:1px solid #334155;border-radius:5px;padding:4px 6px;font-size:0.88em;font-weight:600;">
             <option value="cb2" selected>AC Cable — $20/m</option>
           </select></td>
-          <td style="padding:4px 6px;text-align:center;"><input id="plc_accable_qty" type="number" value="0" min="0" step="1" onchange="plcQty('acCable',this)" style="width:62px;text-align:center;background:#1e293b;color:#a5b4fc;border:1.5px solid #a5b4fc33;border-radius:5px;padding:4px;font-size:0.9em;font-weight:700;" placeholder="m"></td>
+          <td style="padding:4px 6px;text-align:center;"><input id="plc_accable_qty" type="number" value="0" min="0" step="1" onchange="plcQty('acCable',this)" style="width:62px;text-align:center;background:#1e293b;color:#6366f1;border:1.5px solid #6366f133;border-radius:5px;padding:4px;font-size:0.9em;font-weight:700;" placeholder="m"></td>
           <td style="padding:4px 6px;text-align:right;"><input id="plc_accable_price" type="number" value="20" onchange="plcPrice('acCable',this)" style="width:80px;text-align:right;background:#1e293b;color:#e2e8f0;border:1px solid #334155;border-radius:5px;padding:3px 5px;font-size:0.85em;"></td>
           <td style="padding:6px 8px;text-align:right;font-weight:700;" id="plc_accable_tot">$0</td>
           <td style="padding:6px 8px;text-align:right;color:#64748b;font-size:0.82em;">$50/m sell</td>
@@ -283,7 +432,7 @@ h1{font-size:1.3em;font-weight:800;color:#e2e8f0;margin-bottom:6px;}
               <div style="background:#1e293b;border-radius:8px;padding:8px 12px;display:flex;align-items:center;gap:8px;font-size:0.78em;color:#94a3b8;">
                 <span>Battery materials</span>
                 <span style="color:#64748b;">flat</span>
-                <input type="number" value="500" id="plc_battMatRate" onchange="PLC_BATT_MAT=parseFloat(this.value)||500;plcUpdate();" style="width:65px;text-align:right;background:#0f172a;color:#a78bfa;border:1px solid #334155;border-radius:4px;padding:2px 5px;font-weight:700;">
+                <input type="number" value="500" id="plc_battMatRate" onchange="PLC_BATT_MAT=parseFloat(this.value)||500;plcUpdate();" style="width:65px;text-align:right;background:#0f172a;color:#6366f1;border:1px solid #334155;border-radius:4px;padding:2px 5px;font-weight:700;">
               </div>
               <div style="background:#1e293b;border-radius:8px;padding:8px 12px;display:flex;align-items:center;gap:8px;font-size:0.78em;color:#94a3b8;">
                 <span style="color:#64748b;font-weight:700;">Fixed cost anchor</span>
@@ -310,15 +459,42 @@ h1{font-size:1.3em;font-weight:800;color:#e2e8f0;margin-bottom:6px;}
             </div>
             <div style="display:flex;justify-content:space-between;align-items:center;">
               <span>Trade Assistant</span>
-              <input type="number" value="25" id="plc_ta" onchange="PLC_TA=parseFloat(this.value)||25;plcUpdate();" style="width:65px;text-align:right;background:#0f172a;color:#fbbf24;border:1px solid #334155;border-radius:4px;padding:2px 5px;font-weight:700;">
+              <input type="number" value="30" id="plc_ta" onchange="PLC_TA=parseFloat(this.value)||30;plcUpdate();" style="width:65px;text-align:right;background:#0f172a;color:#fbbf24;border:1px solid #334155;border-radius:4px;padding:2px 5px;font-weight:700;">
             </div>
             <div style="display:flex;justify-content:space-between;align-items:center;">
               <span>Apprentice</span>
-              <input type="number" value="30" id="plc_apprentice" onchange="PLC_APPRENTICE=parseFloat(this.value)||30;plcUpdate();" style="width:65px;text-align:right;background:#0f172a;color:#fbbf24;border:1px solid #334155;border-radius:4px;padding:2px 5px;font-weight:700;">
+              <input type="number" value="25" id="plc_apprentice" onchange="PLC_APPRENTICE=parseFloat(this.value)||25;plcUpdate();" style="width:65px;text-align:right;background:#0f172a;color:#fbbf24;border:1px solid #334155;border-radius:4px;padding:2px 5px;font-weight:700;">
             </div>
-            <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid #334155;padding-top:3px;margin-top:1px;">
-              <span style="color:#a5b4fc;">On-cost Multiplier</span>
-              <input type="number" value="1.3" step="0.05" id="plc_mult" onchange="PLC_MULTIPLIER=parseFloat(this.value)||1.3;plcUpdate();" style="width:65px;text-align:right;background:#0f172a;color:#a5b4fc;border:1px solid #334155;border-radius:4px;padding:2px 5px;font-weight:700;">
+            <div style="border-top:1px solid #334155;margin-top:3px;padding-top:6px;">
+              <div style="font-size:0.73em;color:#6366f1;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;">On-cost build-up</div>
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <span>Super %</span>
+                <input type="number" value="12" step="0.5" id="plc_oc_super" onchange="plcRecalcMult();" style="width:65px;text-align:right;background:#0f172a;color:#6366f1;border:1px solid #334155;border-radius:4px;padding:2px 5px;font-weight:700;">
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <span>WorkCover %</span>
+                <input type="number" value="3" step="0.25" id="plc_oc_wc" onchange="plcRecalcMult();" style="width:65px;text-align:right;background:#0f172a;color:#6366f1;border:1px solid #334155;border-radius:4px;padding:2px 5px;font-weight:700;">
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <span>Annual leave (wks)</span>
+                <input type="number" value="4" step="0.5" id="plc_oc_al" onchange="plcRecalcMult();" style="width:65px;text-align:right;background:#0f172a;color:#6366f1;border:1px solid #334155;border-radius:4px;padding:2px 5px;font-weight:700;">
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <span>Sick leave (days)</span>
+                <input type="number" value="10" step="1" id="plc_oc_sick" onchange="plcRecalcMult();" style="width:65px;text-align:right;background:#0f172a;color:#6366f1;border:1px solid #334155;border-radius:4px;padding:2px 5px;font-weight:700;">
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;color:#64748b;font-size:0.92em;padding-top:2px;">
+                <span>Productive hrs/yr</span>
+                <span id="plc_oc_prodHrs" style="color:#94a3b8;font-weight:600;">1,748</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;color:#64748b;font-size:0.92em;">
+                <span>Leave uplift</span>
+                <span id="plc_oc_leaveUp" style="color:#94a3b8;font-weight:600;">+13.0%</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid #334155;padding-top:3px;margin-top:3px;">
+                <span style="color:#6366f1;">Multiplier</span>
+                <span id="plc_mult_disp" style="color:#6366f1;font-weight:800;font-size:1.05em;">1.300</span>
+              </div>
             </div>
             <div style="display:flex;justify-content:space-between;align-items:center;color:#64748b;font-size:0.9em;">
               <span>Effective ord. rate</span>
@@ -338,78 +514,15 @@ h1{font-size:1.3em;font-weight:800;color:#e2e8f0;margin-bottom:6px;}
               <input type="number" value="7" step="0.5" onchange="plcCfg('commissionPct',this)" style="width:65px;text-align:right;background:#0f172a;color:#e2e8f0;border:1px solid #334155;border-radius:4px;padding:2px 5px;">
             </div>
             <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid #334155;padding-top:6px;margin-top:4px;">
-              <span style="color:#a5b4fc;font-weight:700;">Crews Running Today</span>
+              <span style="color:#6366f1;font-weight:700;">Crews Running Today</span>
               <div style="display:flex;align-items:center;gap:4px;">
                 <button onclick="PLC_CREWS=Math.max(1,PLC_CREWS-1);document.getElementById('plcCrewsDisp').textContent=PLC_CREWS;plcUpdate();updateCrewLabel();" style="width:22px;height:22px;background:#334155;color:white;border:none;border-radius:4px;cursor:pointer;font-weight:700;font-size:1em;line-height:1;">−</button>
-                <span id="plcCrewsDisp" style="color:#a5b4fc;font-weight:800;min-width:18px;text-align:center;font-size:1.1em;">2</span>
+                <span id="plcCrewsDisp" style="color:#6366f1;font-weight:800;min-width:18px;text-align:center;font-size:1.1em;">2</span>
                 <button onclick="PLC_CREWS=Math.min(6,PLC_CREWS+1);document.getElementById('plcCrewsDisp').textContent=PLC_CREWS;plcUpdate();updateCrewLabel();" style="width:22px;height:22px;background:#334155;color:white;border:none;border-radius:4px;cursor:pointer;font-weight:700;font-size:1em;line-height:1;">+</button>
               </div>
             </div>
             <div id="plcCrewLabel" style="font-size:0.75em;color:#64748b;text-align:right;margin-top:-4px;"></div>
-            <div style="font-size:0.76em;color:#6366f1;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;margin-top:6px;margin-bottom:4px;">Job Options</div>
-            <div style="display:flex;justify-content:space-between;align-items:center;font-size:0.82em;color:#6366f1;padding:2px 0;">
-              <span>Min 7.6 hr floor</span>
-              <label style="display:flex;align-items:center;gap:5px;cursor:pointer;">
-                <input type="checkbox" id="plc_minHrs" checked onchange="plcUpdate();" style="accent-color:#6366f1;width:14px;height:14px;">
-                <span id="plc_minHrsLbl" style="font-size:0.85em;color:#6366f1;">ON</span>
-              </label>
-            </div>
-            <div style="display:flex;justify-content:space-between;align-items:center;font-size:0.82em;color:#4ade80;padding:2px 0;">
-              <span>Solar STC rebate</span>
-              <label style="display:flex;align-items:center;gap:5px;cursor:pointer;">
-                <input type="checkbox" id="plc_stcOn" checked onchange="plcUpdate();" style="accent-color:#4ade80;width:14px;height:14px;">
-                <span id="plc_stcOnLbl" style="font-size:0.85em;color:#4ade80;">ON</span>
-              </label>
-            </div>
-            <div style="display:flex;justify-content:space-between;align-items:center;font-size:0.82em;color:#4ade80;padding:2px 0;">
-              <span>Battery rebate</span>
-              <label style="display:flex;align-items:center;gap:5px;cursor:pointer;">
-                <input type="checkbox" id="plc_battRebOn" checked onchange="plcUpdate();" style="accent-color:#4ade80;width:14px;height:14px;">
-                <span id="plc_battRebOnLbl" style="font-size:0.85em;color:#4ade80;">ON</span>
-              </label>
-            </div>
-            <div style="display:flex;justify-content:space-between;align-items:center;font-size:0.82em;color:#f472b6;padding:2px 0;">
-              <span>Fixed costs</span>
-              <label style="display:flex;align-items:center;gap:5px;cursor:pointer;">
-                <input type="checkbox" id="plc_fixedOn" checked onchange="plcUpdate();" style="accent-color:#f472b6;width:14px;height:14px;">
-                <span id="plc_fixedOnLbl" style="font-size:0.85em;color:#f472b6;">ON</span>
-              </label>
-            </div>
-            <div style="display:flex;justify-content:space-between;align-items:center;font-size:0.82em;color:#fbbf24;padding:2px 0;">
-              <span>Labour</span>
-              <label style="display:flex;align-items:center;gap:5px;cursor:pointer;">
-                <input type="checkbox" id="plc_labourOn" checked onchange="plcUpdate();" style="accent-color:#fbbf24;width:14px;height:14px;">
-                <span id="plc_labourOnLbl" style="font-size:0.85em;color:#fbbf24;">ON</span>
-              </label>
-            </div>
-            <div style="display:flex;justify-content:space-between;align-items:center;font-size:0.82em;color:#fb923c;padding:2px 0;">
-              <span>Sale coms</span>
-              <label style="display:flex;align-items:center;gap:5px;cursor:pointer;">
-                <input type="checkbox" id="plc_comsOn" checked onchange="plcUpdate();" style="accent-color:#fb923c;width:14px;height:14px;">
-                <span id="plc_comsOnLbl" style="font-size:0.85em;color:#fb923c;">ON</span>
-              </label>
-            </div>
-            <div style="display:flex;justify-content:space-between;align-items:center;font-size:0.82em;color:#fbbf24;padding:2px 0;">
-              <span>Solar materials</span>
-              <label style="display:flex;align-items:center;gap:5px;cursor:pointer;">
-                <input type="checkbox" id="plc_solMatOn" checked onchange="plcUpdate();" style="accent-color:#fbbf24;width:14px;height:14px;">
-                <span id="plc_solMatOnLbl" style="font-size:0.85em;color:#fbbf24;">ON</span>
-              </label>
-            </div>
-            <div style="display:flex;justify-content:space-between;align-items:center;font-size:0.82em;color:#94a3b8;padding:2px 0;">
-              <span>Racking</span>
-              <label style="display:flex;align-items:center;gap:5px;cursor:pointer;">
-                <input type="checkbox" id="plc_rackOn" checked onchange="plcUpdate();" style="accent-color:#94a3b8;width:14px;height:14px;">
-                <span id="plc_rackOnLbl" style="font-size:0.85em;color:#94a3b8;">ON</span>
-              </label>
-            </div>
-            <div style="display:flex;justify-content:space-between;align-items:center;font-size:0.82em;color:#a78bfa;padding:2px 0;">
-              <span>Battery materials</span>
-              <label style="display:flex;align-items:center;gap:5px;cursor:pointer;">
-                <input type="checkbox" id="plc_battMatOn" checked onchange="plcUpdate();" style="accent-color:#a78bfa;width:14px;height:14px;">
-                <span id="plc_battMatOnLbl" style="font-size:0.85em;color:#a78bfa;">ON</span>
-              </label>
-            </div>
+            <div style="font-size:0.76em;color:#6366f1;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;margin-top:6px;margin-bottom:4px;display:none;">Job Options</div>
           </div>
         </div>
         <div style="background:#1e293b;border-radius:8px;padding:12px;">
@@ -434,7 +547,7 @@ h1{font-size:1.3em;font-weight:800;color:#e2e8f0;margin-bottom:6px;}
               <span>hrs per module</span>
               <input type="number" value="0.5" step="0.1" min="0.1" id="plc_hrsBatt"
                 onchange="PLC_HRS_BATT=parseFloat(this.value)||0.5;plcUpdate();"
-                style="width:52px;text-align:right;background:#0f172a;color:#a78bfa;border:1px solid #334155;border-radius:4px;padding:1px 4px;font-size:0.95em;">
+                style="width:52px;text-align:right;background:#0f172a;color:#6366f1;border:1px solid #334155;border-radius:4px;padding:1px 4px;font-size:0.95em;">
             </div>
             <div style="display:flex;justify-content:space-between;"><span>Travel</span><span id="plc_travelHrs" style="color:#fbbf24;font-weight:700;">1</span></div>
             <div style="display:flex;justify-content:space-between;border-top:1px solid #334155;padding-top:4px;font-weight:700;color:#e2e8f0;"><span>Total (min 7.6)</span><span id="plc_totalHrs" style="color:#4ade80;font-size:1.1em;">7.6</span></div>
@@ -479,6 +592,7 @@ h1{font-size:1.3em;font-weight:800;color:#e2e8f0;margin-bottom:6px;}
         </div>
         <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:2px solid #475569;">
           <span id="plc_margin" style="font-weight:700;color:#4ade80;">Margin 0%</span>
+          <span id="plc_pph" style="font-weight:600;color:#64748b;font-size:0.92em;" title="Profit per hour">$0</span>
           <div style="display:flex;align-items:center;gap:6px;">
             <span style="font-size:0.78em;color:#475569;">Rating:</span>
             <button onclick="plcNudgeRating(-1)" style="width:24px;height:24px;background:#334155;color:#e2e8f0;border:none;border-radius:5px;font-size:1em;cursor:pointer;font-weight:700;line-height:1;">▼</button>
@@ -530,113 +644,81 @@ h1{font-size:1.3em;font-weight:800;color:#e2e8f0;margin-bottom:6px;}
           Tapering ON: 0-14kWh 100% · 15-28kWh 60% · 29-50kWh 15%
         </div>
         <div style="color:#334155;font-size:0.78em;margin-top:6px;">Zone 3 (SEQ) 1.382 · <input id="plc_stcZone" type="number" value="1.382" step="0.001" onchange="PLC_STATE.stcZone=parseFloat(this.value)||1.382;plcUpdate();" style="width:60px;background:#1e293b;color:#64748b;border:1px solid #334155;border-radius:4px;padding:2px 4px;font-size:0.95em;"></div>
+        <!-- Job Options toggles -->
+        <div style="margin-top:14px;padding-top:10px;border-top:1px solid #1e293b;">
+          <div style="font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:#94a3b8;margin-bottom:6px;">Job Options</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:0.92em;color:#6366f1;padding:2px 0;">
+            <span>Min 7.6 hr floor</span>
+            <label style="display:flex;align-items:center;gap:5px;cursor:pointer;">
+              <input type="checkbox" id="plc_minHrs" checked onchange="plcUpdate();" style="accent-color:#6366f1;width:14px;height:14px;">
+              <span id="plc_minHrsLbl" style="font-size:0.92em;color:#6366f1;">ON</span>
+            </label>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:0.92em;color:#4ade80;padding:2px 0;">
+            <span>Solar STC rebate</span>
+            <label style="display:flex;align-items:center;gap:5px;cursor:pointer;">
+              <input type="checkbox" id="plc_stcOn" checked onchange="plcUpdate();" style="accent-color:#4ade80;width:14px;height:14px;">
+              <span id="plc_stcOnLbl" style="font-size:0.92em;color:#4ade80;">ON</span>
+            </label>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:0.92em;color:#4ade80;padding:2px 0;">
+            <span>Battery rebate</span>
+            <label style="display:flex;align-items:center;gap:5px;cursor:pointer;">
+              <input type="checkbox" id="plc_battRebOn" checked onchange="plcUpdate();" style="accent-color:#4ade80;width:14px;height:14px;">
+              <span id="plc_battRebOnLbl" style="font-size:0.92em;color:#4ade80;">ON</span>
+            </label>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:0.92em;color:#f472b6;padding:2px 0;">
+            <span>Fixed costs</span>
+            <label style="display:flex;align-items:center;gap:5px;cursor:pointer;">
+              <input type="checkbox" id="plc_fixedOn" checked onchange="plcUpdate();" style="accent-color:#f472b6;width:14px;height:14px;">
+              <span id="plc_fixedOnLbl" style="font-size:0.92em;color:#f472b6;">ON</span>
+            </label>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:0.92em;color:#fbbf24;padding:2px 0;">
+            <span>Labour</span>
+            <label style="display:flex;align-items:center;gap:5px;cursor:pointer;">
+              <input type="checkbox" id="plc_labourOn" checked onchange="plcUpdate();" style="accent-color:#fbbf24;width:14px;height:14px;">
+              <span id="plc_labourOnLbl" style="font-size:0.92em;color:#fbbf24;">ON</span>
+            </label>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:0.92em;color:#fb923c;padding:2px 0;">
+            <span>Sale coms</span>
+            <label style="display:flex;align-items:center;gap:5px;cursor:pointer;">
+              <input type="checkbox" id="plc_comsOn" checked onchange="plcUpdate();" style="accent-color:#fb923c;width:14px;height:14px;">
+              <span id="plc_comsOnLbl" style="font-size:0.92em;color:#fb923c;">ON</span>
+            </label>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:0.92em;color:#fbbf24;padding:2px 0;">
+            <span>Solar materials</span>
+            <label style="display:flex;align-items:center;gap:5px;cursor:pointer;">
+              <input type="checkbox" id="plc_solMatOn" checked onchange="plcUpdate();" style="accent-color:#fbbf24;width:14px;height:14px;">
+              <span id="plc_solMatOnLbl" style="font-size:0.92em;color:#fbbf24;">ON</span>
+            </label>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:0.92em;color:#94a3b8;padding:2px 0;">
+            <span>Racking</span>
+            <label style="display:flex;align-items:center;gap:5px;cursor:pointer;">
+              <input type="checkbox" id="plc_rackOn" checked onchange="plcUpdate();" style="accent-color:#94a3b8;width:14px;height:14px;">
+              <span id="plc_rackOnLbl" style="font-size:0.92em;color:#94a3b8;">ON</span>
+            </label>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:0.92em;color:#6366f1;padding:2px 0;">
+            <span>Battery materials</span>
+            <label style="display:flex;align-items:center;gap:5px;cursor:pointer;">
+              <input type="checkbox" id="plc_battMatOn" checked onchange="plcUpdate();" style="accent-color:#6366f1;width:14px;height:14px;">
+              <span id="plc_battMatOnLbl" style="font-size:0.92em;color:#6366f1;">ON</span>
+            </label>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- PACKAGES MIND MAP -->
-<div class="card" id="pkgSection" style="border:2px solid #334155;background:#0f172a;margin-top:16px;">
-  <h2 style="color:#e2e8f0;">&#128230; Package Price Map <span style="font-size:0.5em;color:#475569;margin-left:8px;">GoodWe &amp; Sigenergy &middot; crew labour model &middot; 2026</span></h2>
-  <div style="display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 6px;">
-    <div>
-      <div style="font-size:10px;color:#475569;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;">Brand</div>
-      <div style="display:flex;gap:6px;" id="pkg_brandRow">
-        <button id="pkg_b_gw" style="padding:5px 12px;border-radius:6px;border:2px solid #378ADD;background:#1e3a5f;color:#93c5fd;cursor:pointer;font-size:12px;font-weight:600;">GoodWe</button>
-        <button id="pkg_b_sg" style="padding:5px 12px;border-radius:6px;border:1px solid #334155;background:#1e293b;color:#64748b;cursor:pointer;font-size:12px;">Sigenergy</button>
-        <button id="pkg_b_su" style="padding:5px 12px;border-radius:6px;border:1px solid #334155;background:#1e293b;color:#64748b;cursor:pointer;font-size:12px;">Sungrow</button>
-        <button id="pkg_b_all" style="padding:5px 12px;border-radius:6px;border:1px solid #334155;background:#1e293b;color:#64748b;cursor:pointer;font-size:12px;">All &middot; Compare</button>
-      </div>
-    </div>
-    <div>
-      <div style="font-size:10px;color:#475569;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;">Job type</div>
-      <div style="display:flex;gap:6px;flex-wrap:wrap;" id="pkg_jobRow">
-        <button id="pkg_j_batt" style="padding:5px 12px;border-radius:6px;border:2px solid #64748b;background:#1e293b;color:#e2e8f0;cursor:pointer;font-size:12px;font-weight:600;">Battery only</button>
-        <button id="pkg_j_combo" style="padding:5px 12px;border-radius:6px;border:1px solid #334155;background:#1e293b;color:#64748b;cursor:pointer;font-size:12px;">Solar + battery</button>
-        <button id="pkg_j_solar" style="padding:5px 12px;border-radius:6px;border:1px solid #334155;background:#1e293b;color:#64748b;cursor:pointer;font-size:12px;">Solar only</button>
-        <button id="pkg_j_addsolar" style="padding:5px 12px;border-radius:6px;border:1px solid #334155;background:#1e293b;color:#64748b;cursor:pointer;font-size:12px;">Add panels</button>
-      </div>
-    </div>
-    <div id="pkg_solWrap" style="display:none;">
-      <div style="font-size:10px;color:#475569;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;">Solar size</div>
-      <div style="display:flex;gap:6px;" id="pkg_solRow">
-        <button id="pkg_s_66" style="padding:5px 12px;border-radius:6px;border:2px solid #64748b;background:#1e293b;color:#e2e8f0;cursor:pointer;font-size:12px;font-weight:600;">6.6 kW</button>
-        <button id="pkg_s_133" style="padding:5px 12px;border-radius:6px;border:1px solid #334155;background:#1e293b;color:#64748b;cursor:pointer;font-size:12px;">13.3 kW</button>
-        <button id="pkg_s_198" style="padding:5px 12px;border-radius:6px;border:1px solid #334155;background:#1e293b;color:#64748b;cursor:pointer;font-size:12px;">19.8 kW</button>
-      </div>
-    </div>
-    <div>
-      <div style="font-size:10px;color:#475569;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;">Inverter</div>
-      <div style="display:flex;gap:6px;flex-wrap:wrap;" id="pkg_phRow">
-        <button id="pkg_p_sp" style="padding:5px 12px;border-radius:6px;border:2px solid #64748b;background:#1e293b;color:#e2e8f0;cursor:pointer;font-size:12px;font-weight:600;">SP 9.9 kW</button>
-        <button id="pkg_p_tp15" style="padding:5px 12px;border-radius:6px;border:1px solid #334155;background:#1e293b;color:#64748b;cursor:pointer;font-size:12px;">TP 15 kW</button>
-        <button id="pkg_p_tp20" style="padding:5px 12px;border-radius:6px;border:1px solid #334155;background:#1e293b;color:#64748b;cursor:pointer;font-size:12px;">TP 20 kW</button>
-        <button id="pkg_p_tp25" style="padding:5px 12px;border-radius:6px;border:1px solid #334155;background:#1e293b;color:#64748b;cursor:pointer;font-size:12px;">TP 25 kW</button>
-        <button id="pkg_p_tp30" style="padding:5px 12px;border-radius:6px;border:1px solid #334155;background:#1e293b;color:#64748b;cursor:pointer;font-size:12px;">TP 30 kW</button>
-      </div>
-    </div>
-    <div>
-      <div style="font-size:10px;color:#475569;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;">Target &#9733;</div>
-      <div style="display:flex;align-items:center;gap:4px;">
-        <button id="pkg_target_dn" style="width:24px;height:26px;background:#334155;color:#e2e8f0;border:none;border-radius:5px;font-size:12px;cursor:pointer;font-weight:700;line-height:1;">&#9660;</button>
-        <input id="pkg_target" type="number" value="4.1" step="0.1" min="0" max="20"
-          style="width:54px;text-align:center;background:#1e293b;color:#fbbf24;border:1.5px solid #fbbf24;border-radius:6px;padding:3px 4px;font-size:13px;font-weight:900;outline:none;">
-        <button id="pkg_target_up" style="width:24px;height:26px;background:#334155;color:#e2e8f0;border:none;border-radius:5px;font-size:12px;cursor:pointer;font-weight:700;line-height:1;">&#9650;</button>
-      </div>
-    </div>
-    <div>
-      <div style="font-size:10px;color:#475569;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;">Round to</div>
-      <div style="display:flex;gap:6px;" id="pkg_roundRow">
-        <button id="pkg_r_250" style="padding:5px 12px;border-radius:6px;border:1px solid #334155;background:#1e293b;color:#64748b;cursor:pointer;font-size:12px;">$250</button>
-        <button id="pkg_r_500" style="padding:5px 12px;border-radius:6px;border:2px solid #64748b;background:#1e293b;color:#e2e8f0;cursor:pointer;font-size:12px;font-weight:600;">$500</button>
-      </div>
-    </div>
-    <div>
-      <div style="font-size:10px;color:#475569;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;">Even steps</div>
-      <div style="display:flex;gap:6px;align-items:center;">
-        <button id="pkg_evenstep_btn" style="padding:5px 12px;border-radius:6px;border:2px solid #a78bfa;background:#1e1b4b;color:#a78bfa;cursor:pointer;font-size:12px;font-weight:600;">ON</button>
-        <div style="display:flex;flex-direction:column;align-items:center;">
-          <div style="font-size:9px;color:#475569;letter-spacing:.04em;">Boundary kWh</div>
-          <input id="pkg_step_boundary" type="number" value="24" step="1" min="0"
-            style="width:54px;text-align:center;background:#1e293b;color:#a78bfa;border:1px solid #334155;border-radius:5px;padding:3px 4px;font-size:12px;font-weight:700;outline:none;">
-        </div>
-        <div style="display:flex;flex-direction:column;align-items:center;">
-          <div style="font-size:9px;color:#475569;letter-spacing:.04em;" id="pkg_step_low_lbl">&le;24 kWh +$</div>
-          <input id="pkg_step_low" type="number" value="1500" step="250" min="0"
-            style="width:64px;text-align:center;background:#1e293b;color:#a78bfa;border:1px solid #334155;border-radius:5px;padding:3px 4px;font-size:12px;font-weight:700;outline:none;">
-        </div>
-        <div style="display:flex;flex-direction:column;align-items:center;">
-          <div style="font-size:9px;color:#475569;letter-spacing:.04em;" id="pkg_step_high_lbl">&gt;24 kWh +$</div>
-          <input id="pkg_step_high" type="number" value="2500" step="250" min="0"
-            style="width:64px;text-align:center;background:#1e293b;color:#a78bfa;border:1px solid #334155;border-radius:5px;padding:3px 4px;font-size:12px;font-weight:700;outline:none;">
-        </div>
-      </div>
-    </div>
-    <div>
-      <div style="font-size:10px;color:#475569;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;">Sign-today deal</div>
-      <div style="display:flex;gap:6px;align-items:center;">
-        <button id="pkg_special_btn" style="padding:5px 12px;border-radius:6px;border:2px solid #4ade80;background:#1a3a2a;color:#4ade80;cursor:pointer;font-size:12px;font-weight:600;">ON</button>
-        <div style="display:flex;flex-direction:column;align-items:center;">
-          <div style="font-size:9px;color:#475569;letter-spacing:.04em;">Stay &minus;$</div>
-          <input id="pkg_special_stay" type="number" value="700" step="50" min="0"
-            style="width:64px;text-align:center;background:#1e293b;color:#4ade80;border:1px solid #334155;border-radius:5px;padding:3px 4px;font-size:12px;font-weight:700;outline:none;">
-        </div>
-        <div style="display:flex;flex-direction:column;align-items:center;">
-          <div style="font-size:9px;color:#475569;letter-spacing:.04em;">Upgrade &minus;$</div>
-          <input id="pkg_special_up" type="number" value="700" step="50" min="0"
-            style="width:64px;text-align:center;background:#1e293b;color:#4ade80;border:1px solid #334155;border-radius:5px;padding:3px 4px;font-size:12px;font-weight:700;outline:none;">
-        </div>
-      </div>
-    </div>
-  </div>
-  <div style="border-top:1px solid #1e293b;margin:10px 0;"></div>
-  <div id="pkg_gridLbl" style="font-size:10px;color:#475569;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">Battery capacity &mdash; target &#9733;4.5</div>
-  <div id="pkg_grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;"></div>
-</div>
-
-<!-- LOOKUP TABLE -->
-<div class="card" style="border:2px solid #334155;background:#0f172a;margin-top:16px;">
-  <h2 style="color:#e2e8f0;">🔍 Price Lookup Table <span style="font-size:0.55em;color:#475569;font-weight:500;margin-left:8px;">Edit prices — changes update P&L Calculator live</span></h2>
+<!-- PRICE TABLE -->
+<div class="card" id="lookupSection" style="border:2px solid #334155;background:#0f172a;margin-top:16px;display:none;">
+  <h2 style="color:#e2e8f0;">💲 Product Price Table <span style="font-size:0.55em;color:#475569;font-weight:500;margin-left:8px;">Edit prices — changes update P&L Calculator live</span></h2>
   <div style="overflow-x:auto;">
     <table style="width:100%;border-collapse:collapse;font-size:0.86em;">
       <thead>
@@ -652,8 +734,8 @@ h1{font-size:1.3em;font-weight:800;color:#e2e8f0;margin-bottom:6px;}
     </table>
   </div>
   <div style="margin-top:14px;padding:10px 14px;background:#1e293b;border-radius:8px;font-size:0.78em;color:#64748b;line-height:1.8;">
-    <strong style="color:#94a3b8;">How prices flow:</strong> Cost Price = what we pay (from LOOKUP tab) → used in P&L Calculator for profit calculations.
-    Sell Price = RRP or customer quote basis (from LOOKUP sell column). Changes here update live in the P&L Calculator.
+    <strong style="color:#94a3b8;">How prices flow:</strong> Cost Price = what we pay → used in P&L Calculator for profit calculations.
+    Sell Price = RRP or customer quote basis. Changes here update live in the P&L Calculator.
   </div>
 </div>
 
@@ -662,39 +744,130 @@ h1{font-size:1.3em;font-weight:800;color:#e2e8f0;margin-bottom:6px;}
 <script>
 function g(id){return document.getElementById(id);}
 var PKG_DATA={"batt":{"gw":{"sp":[{"k":8,"p":12500,"r":4.4},{"k":16,"p":13000,"r":4.4},{"k":24,"p":14000,"r":4.5},{"k":32,"p":16000,"r":4.6},{"k":40,"p":18500,"r":4.6},{"k":48,"p":21000,"r":4.6}],"tp15":[{"k":8,"p":13000,"r":4.4},{"k":16,"p":13500,"r":4.4},{"k":24,"p":14500,"r":4.5},{"k":32,"p":16000,"r":4.4},{"k":40,"p":19000,"r":4.6},{"k":48,"p":21500,"r":4.6}],"tp20":[{"k":8,"p":13000,"r":4.4},{"k":16,"p":13500,"r":4.4},{"k":24,"p":14500,"r":4.5},{"k":32,"p":16500,"r":4.6},{"k":40,"p":19000,"r":4.6},{"k":48,"p":21500,"r":4.5}],"tp25":[{"k":8,"p":13500,"r":4.6},{"k":16,"p":14000,"r":4.6},{"k":24,"p":14500,"r":4.4},{"k":32,"p":16500,"r":4.6},{"k":40,"p":19000,"r":4.5},{"k":48,"p":21500,"r":4.5}],"tp30":[{"k":8,"p":13500,"r":4.6},{"k":16,"p":14000,"r":4.6},{"k":24,"p":15000,"r":4.6},{"k":32,"p":16500,"r":4.5},{"k":40,"p":19000,"r":4.4},{"k":48,"p":21500,"r":4.4}]},"sg":{"sp":[{"k":8,"p":15000,"r":4.5},{"k":16,"p":16500,"r":4.6},{"k":24,"p":18000,"r":4.5},{"k":32,"p":20500,"r":4.5},{"k":40,"p":24000,"r":4.5},{"k":48,"p":27500,"r":4.6}],"tp15":[{"k":8,"p":16000,"r":4.4},{"k":16,"p":17500,"r":4.5},{"k":24,"p":19000,"r":4.4},{"k":32,"p":21500,"r":4.4},{"k":40,"p":25000,"r":4.4},{"k":48,"p":28500,"r":4.5}],"tp20":[{"k":8,"p":16500,"r":4.4},{"k":16,"p":18000,"r":4.5},{"k":24,"p":19500,"r":4.4},{"k":32,"p":22500,"r":4.7},{"k":40,"p":25500,"r":4.4},{"k":48,"p":29000,"r":4.5}],"tp25":[{"k":8,"p":17500,"r":4.6},{"k":16,"p":18500,"r":4.4},{"k":24,"p":20500,"r":4.6},{"k":32,"p":23000,"r":4.5},{"k":40,"p":26500,"r":4.6},{"k":48,"p":29500,"r":4.4}],"tp30":[{"k":8,"p":18000,"r":4.6},{"k":16,"p":19000,"r":4.4},{"k":24,"p":21000,"r":4.6},{"k":32,"p":23500,"r":4.5},{"k":40,"p":27000,"r":4.6},{"k":48,"p":30000,"r":4.3}]},"su":{"sp":[{"k":10,"p":14000,"r":4.4},{"k":15,"p":15500,"r":4.5},{"k":20,"p":17500,"r":4.5},{"k":25,"p":20000,"r":4.6},{"k":30,"p":23000,"r":4.6}],"tp15":[{"k":10,"p":15000,"r":4.4},{"k":15,"p":16500,"r":4.5},{"k":20,"p":18500,"r":4.5},{"k":25,"p":21000,"r":4.5},{"k":30,"p":24000,"r":4.6}],"tp20":[{"k":10,"p":15500,"r":4.4},{"k":15,"p":17000,"r":4.5},{"k":20,"p":19000,"r":4.5},{"k":25,"p":21500,"r":4.5},{"k":30,"p":24500,"r":4.5}],"tp25":[{"k":10,"p":16000,"r":4.6},{"k":15,"p":17500,"r":4.6},{"k":20,"p":19500,"r":4.5},{"k":25,"p":22000,"r":4.5},{"k":30,"p":25000,"r":4.5}],"tp30":[{"k":10,"p":16500,"r":4.6},{"k":15,"p":18000,"r":4.6},{"k":20,"p":20000,"r":4.5},{"k":25,"p":22500,"r":4.5},{"k":30,"p":25500,"r":4.4}]}},"combo":{"gw":{"6.6":{"sp":[{"k":8,"p":14000,"r":4.9},{"k":16,"p":14500,"r":4.9},{"k":24,"p":15500,"r":5.0},{"k":32,"p":17500,"r":5.1},{"k":40,"p":20000,"r":4.9},{"k":48,"p":23000,"r":5.1}],"tp15":[{"k":8,"p":14500,"r":4.9},{"k":16,"p":15000,"r":4.9},{"k":24,"p":16000,"r":5.0},{"k":32,"p":18000,"r":5.1},{"k":40,"p":20500,"r":5.0},{"k":48,"p":23500,"r":5.1}],"tp20":[{"k":8,"p":14500,"r":4.9},{"k":16,"p":15000,"r":4.9},{"k":24,"p":16000,"r":5.0},{"k":32,"p":18000,"r":5.0},{"k":40,"p":20500,"r":4.9},{"k":48,"p":23500,"r":5.1}],"tp25":[{"k":8,"p":15000,"r":5.1},{"k":16,"p":15500,"r":5.1},{"k":24,"p":16000,"r":4.9},{"k":32,"p":18000,"r":5.0},{"k":40,"p":20500,"r":4.9},{"k":48,"p":23500,"r":5.0}],"tp30":[{"k":8,"p":15000,"r":5.1},{"k":16,"p":15500,"r":5.1},{"k":24,"p":16500,"r":5.1},{"k":32,"p":18000,"r":4.9},{"k":40,"p":21000,"r":5.1},{"k":48,"p":23500,"r":5.0}]},"13.3":{"sp":[{"k":8,"p":15500,"r":5.1},{"k":16,"p":16000,"r":5.0},{"k":24,"p":17000,"r":5.0},{"k":32,"p":19000,"r":5.0},{"k":40,"p":21500,"r":4.9},{"k":48,"p":24500,"r":5.0}],"tp15":[{"k":8,"p":15500,"r":4.8},{"k":16,"p":16500,"r":5.1},{"k":24,"p":17500,"r":5.0},{"k":32,"p":19500,"r":5.1},{"k":40,"p":22000,"r":4.9},{"k":48,"p":25000,"r":5.1}],"tp20":[{"k":8,"p":16000,"r":5.1},{"k":16,"p":16500,"r":5.0},{"k":24,"p":17500,"r":4.9},{"k":32,"p":19500,"r":5.0},{"k":40,"p":22000,"r":4.8},{"k":48,"p":25000,"r":5.0}],"tp25":[{"k":8,"p":16000,"r":5.0},{"k":16,"p":16500,"r":4.9},{"k":24,"p":17500,"r":4.9},{"k":32,"p":19500,"r":4.9},{"k":40,"p":22500,"r":5.1},{"k":48,"p":25000,"r":4.9}],"tp30":[{"k":8,"p":16000,"r":5.0},{"k":16,"p":16500,"r":4.9},{"k":24,"p":18000,"r":5.1},{"k":32,"p":19500,"r":4.9},{"k":40,"p":22500,"r":5.0},{"k":48,"p":25000,"r":4.9}]},"19.8":{"sp":[{"k":8,"p":17000,"r":5.0},{"k":16,"p":17500,"r":5.0},{"k":24,"p":18500,"r":4.9},{"k":32,"p":20500,"r":5.0},{"k":40,"p":23000,"r":4.9},{"k":48,"p":26000,"r":5.1}],"tp15":[{"k":8,"p":17500,"r":5.1},{"k":16,"p":18000,"r":5.0},{"k":24,"p":19000,"r":5.0},{"k":32,"p":21000,"r":5.1},{"k":40,"p":23500,"r":4.9},{"k":48,"p":26500,"r":5.1}],"tp20":[{"k":8,"p":17500,"r":5.0},{"k":16,"p":18000,"r":4.9},{"k":24,"p":19000,"r":4.9},{"k":32,"p":21000,"r":5.0},{"k":40,"p":23500,"r":4.9},{"k":48,"p":26500,"r":5.1}],"tp25":[{"k":8,"p":17500,"r":5.0},{"k":16,"p":18000,"r":4.9},{"k":24,"p":19000,"r":4.9},{"k":32,"p":21000,"r":5.0},{"k":40,"p":24000,"r":5.1},{"k":48,"p":26500,"r":5.0}],"tp30":[{"k":8,"p":17500,"r":4.9},{"k":16,"p":18500,"r":5.1},{"k":24,"p":19500,"r":5.1},{"k":32,"p":21000,"r":4.9},{"k":40,"p":24000,"r":5.1},{"k":48,"p":26500,"r":4.9}]}},"sg":{"6.6":{"sp":[{"k":8,"p":16500,"r":5.0},{"k":16,"p":18000,"r":5.1},{"k":24,"p":19500,"r":5.0},{"k":32,"p":22000,"r":4.9},{"k":40,"p":25500,"r":4.9},{"k":48,"p":29500,"r":5.2}],"tp15":[{"k":8,"p":17500,"r":4.9},{"k":16,"p":19000,"r":5.0},{"k":24,"p":20500,"r":4.9},{"k":32,"p":23500,"r":5.1},{"k":40,"p":27000,"r":5.1},{"k":48,"p":30500,"r":5.1}],"tp20":[{"k":8,"p":18000,"r":4.9},{"k":16,"p":19500,"r":5.0},{"k":24,"p":21000,"r":4.9},{"k":32,"p":24000,"r":5.1},{"k":40,"p":27500,"r":5.1},{"k":48,"p":31000,"r":5.0}],"tp25":[{"k":8,"p":19000,"r":5.1},{"k":16,"p":20000,"r":4.9},{"k":24,"p":22000,"r":5.1},{"k":32,"p":24500,"r":5.0},{"k":40,"p":28000,"r":4.9},{"k":48,"p":31500,"r":4.9}],"tp30":[{"k":8,"p":19500,"r":5.1},{"k":16,"p":20500,"r":4.9},{"k":24,"p":22500,"r":5.1},{"k":32,"p":25000,"r":5.0},{"k":40,"p":28500,"r":4.9},{"k":48,"p":32000,"r":4.9}]},"13.3":{"sp":[{"k":8,"p":17500,"r":4.9},{"k":16,"p":19000,"r":4.9},{"k":24,"p":21000,"r":5.0},{"k":32,"p":23500,"r":4.8},{"k":40,"p":27500,"r":5.1},{"k":48,"p":31000,"r":5.1}],"tp15":[{"k":8,"p":19000,"r":5.1},{"k":16,"p":20500,"r":5.2},{"k":24,"p":22000,"r":4.9},{"k":32,"p":25000,"r":5.1},{"k":40,"p":28500,"r":5.0},{"k":48,"p":32000,"r":5.0}],"tp20":[{"k":8,"p":19500,"r":5.1},{"k":16,"p":21000,"r":5.1},{"k":24,"p":22500,"r":4.9},{"k":32,"p":25500,"r":5.0},{"k":40,"p":29000,"r":5.0},{"k":48,"p":32500,"r":4.9}],"tp25":[{"k":8,"p":20000,"r":5.0},{"k":16,"p":21500,"r":5.0},{"k":24,"p":23500,"r":5.1},{"k":32,"p":26000,"r":4.9},{"k":40,"p":29500,"r":4.9},{"k":48,"p":33500,"r":5.1}],"tp30":[{"k":8,"p":20500,"r":5.0},{"k":16,"p":22000,"r":5.0},{"k":24,"p":24000,"r":5.1},{"k":32,"p":26500,"r":4.9},{"k":40,"p":30000,"r":4.9},{"k":48,"p":34000,"r":5.1}]},"19.8":{"sp":[{"k":8,"p":19500,"r":5.2},{"k":16,"p":20500,"r":4.9},{"k":24,"p":22500,"r":5.0},{"k":32,"p":25000,"r":4.9},{"k":40,"p":29000,"r":5.2},{"k":48,"p":32500,"r":5.1}],"tp15":[{"k":8,"p":20500,"r":5.1},{"k":16,"p":22000,"r":5.1},{"k":24,"p":23500,"r":4.9},{"k":32,"p":26500,"r":5.1},{"k":40,"p":30000,"r":5.1},{"k":48,"p":33500,"r":5.1}],"tp20":[{"k":8,"p":21000,"r":5.0},{"k":16,"p":22500,"r":5.1},{"k":24,"p":24000,"r":4.8},{"k":32,"p":27000,"r":5.0},{"k":40,"p":30500,"r":5.0},{"k":48,"p":34000,"r":5.0}],"tp25":[{"k":8,"p":21500,"r":4.9},{"k":16,"p":23000,"r":4.9},{"k":24,"p":25000,"r":5.0},{"k":32,"p":27500,"r":4.9},{"k":40,"p":31000,"r":4.9},{"k":48,"p":34500,"r":4.9}],"tp30":[{"k":8,"p":22000,"r":4.9},{"k":16,"p":23500,"r":4.9},{"k":24,"p":25500,"r":5.0},{"k":32,"p":28000,"r":4.9},{"k":40,"p":31500,"r":4.9},{"k":48,"p":35000,"r":4.9}]}},"su":{"6.6":{"sp":[{"k":10,"p":16000,"r":4.9},{"k":15,"p":17500,"r":4.9},{"k":20,"p":19500,"r":5.0},{"k":25,"p":22000,"r":5.1},{"k":30,"p":25500,"r":5.1}],"tp15":[{"k":10,"p":17000,"r":4.9},{"k":15,"p":18500,"r":4.9},{"k":20,"p":20500,"r":5.0},{"k":25,"p":23000,"r":5.1},{"k":30,"p":26500,"r":5.1}],"tp20":[{"k":10,"p":17500,"r":4.8},{"k":15,"p":19000,"r":5.0},{"k":20,"p":21000,"r":5.0},{"k":25,"p":23500,"r":5.0},{"k":30,"p":27000,"r":5.0}],"tp25":[{"k":10,"p":18000,"r":5.1},{"k":15,"p":19500,"r":5.1},{"k":20,"p":22000,"r":5.0},{"k":25,"p":25000,"r":5.0},{"k":30,"p":28000,"r":5.0}],"tp30":[{"k":10,"p":18500,"r":5.1},{"k":15,"p":20000,"r":5.1},{"k":20,"p":22500,"r":5.1},{"k":25,"p":25500,"r":4.9},{"k":30,"p":28500,"r":4.9}]},"13.3":{"sp":[{"k":10,"p":17500,"r":4.9},{"k":15,"p":19000,"r":4.9},{"k":20,"p":21000,"r":5.0},{"k":25,"p":23500,"r":5.1},{"k":30,"p":27000,"r":5.1}],"tp15":[{"k":10,"p":18500,"r":4.9},{"k":15,"p":20000,"r":4.9},{"k":20,"p":22000,"r":5.0},{"k":25,"p":24500,"r":5.1},{"k":30,"p":28000,"r":5.1}],"tp20":[{"k":10,"p":19000,"r":4.8},{"k":15,"p":20500,"r":5.0},{"k":20,"p":22500,"r":5.0},{"k":25,"p":25000,"r":5.0},{"k":30,"p":28500,"r":5.0}],"tp25":[{"k":10,"p":19500,"r":5.1},{"k":15,"p":21000,"r":5.1},{"k":20,"p":23500,"r":5.0},{"k":25,"p":26500,"r":5.0},{"k":30,"p":29500,"r":5.0}],"tp30":[{"k":10,"p":20000,"r":5.1},{"k":15,"p":21500,"r":5.1},{"k":20,"p":24000,"r":5.1},{"k":25,"p":27000,"r":4.9},{"k":30,"p":30000,"r":4.9}]},"19.8":{"sp":[{"k":10,"p":19000,"r":4.9},{"k":15,"p":20500,"r":4.9},{"k":20,"p":22500,"r":5.0},{"k":25,"p":25000,"r":5.1},{"k":30,"p":28500,"r":5.1}],"tp15":[{"k":10,"p":20000,"r":4.9},{"k":15,"p":21500,"r":4.9},{"k":20,"p":23500,"r":5.0},{"k":25,"p":26000,"r":5.1},{"k":30,"p":29500,"r":5.1}],"tp20":[{"k":10,"p":20500,"r":4.8},{"k":15,"p":22000,"r":5.0},{"k":20,"p":24000,"r":5.0},{"k":25,"p":26500,"r":5.0},{"k":30,"p":30000,"r":5.0}],"tp25":[{"k":10,"p":21000,"r":5.1},{"k":15,"p":22500,"r":5.1},{"k":20,"p":25000,"r":5.0},{"k":25,"p":28000,"r":5.0},{"k":30,"p":31000,"r":5.0}],"tp30":[{"k":10,"p":21500,"r":5.1},{"k":15,"p":23000,"r":5.1},{"k":20,"p":25500,"r":5.1},{"k":25,"p":28500,"r":4.9},{"k":30,"p":31500,"r":4.9}]}}},"solar":{"gw":{"sp":[{"k":6.6,"p":3500,"r":4.5},{"k":13.3,"p":5500,"r":4.8},{"k":19.8,"p":7500,"r":4.9}],"tp15":[{"k":6.6,"p":4000,"r":4.5},{"k":13.3,"p":6000,"r":4.8},{"k":19.8,"p":8000,"r":4.9}],"tp20":[{"k":6.6,"p":4000,"r":4.5},{"k":13.3,"p":6000,"r":4.8},{"k":19.8,"p":8000,"r":4.9}],"tp25":[{"k":6.6,"p":4500,"r":4.6},{"k":13.3,"p":6500,"r":4.8},{"k":19.8,"p":8500,"r":4.9}],"tp30":[{"k":6.6,"p":4500,"r":4.6},{"k":13.3,"p":6500,"r":4.8},{"k":19.8,"p":8500,"r":4.9}]},"sg":{"sp":[{"k":6.6,"p":4000,"r":4.5},{"k":13.3,"p":6500,"r":4.8},{"k":19.8,"p":9000,"r":4.9}],"tp15":[{"k":6.6,"p":4500,"r":4.5},{"k":13.3,"p":7000,"r":4.8},{"k":19.8,"p":9500,"r":4.9}],"tp20":[{"k":6.6,"p":4500,"r":4.5},{"k":13.3,"p":7000,"r":4.8},{"k":19.8,"p":9500,"r":4.9}],"tp25":[{"k":6.6,"p":5000,"r":4.6},{"k":13.3,"p":7500,"r":4.8},{"k":19.8,"p":10000,"r":4.9}],"tp30":[{"k":6.6,"p":5000,"r":4.6},{"k":13.3,"p":7500,"r":4.8},{"k":19.8,"p":10000,"r":4.9}]},"su":{"sp":[{"k":6.6,"p":3500,"r":4.5},{"k":13.3,"p":5500,"r":4.8},{"k":19.8,"p":7500,"r":4.9}],"tp15":[{"k":6.6,"p":4000,"r":4.5},{"k":13.3,"p":6000,"r":4.8},{"k":19.8,"p":8000,"r":4.9}],"tp20":[{"k":6.6,"p":4000,"r":4.5},{"k":13.3,"p":6000,"r":4.8},{"k":19.8,"p":8000,"r":4.9}],"tp25":[{"k":6.6,"p":4500,"r":4.6},{"k":13.3,"p":6500,"r":4.8},{"k":19.8,"p":8500,"r":4.9}],"tp30":[{"k":6.6,"p":4500,"r":4.6},{"k":13.3,"p":6500,"r":4.8},{"k":19.8,"p":8500,"r":4.9}]}}};
-var PKG_ST={brand:'gw',job:'batt',sol:'6.6',phase:'sp'};
-var PKG_TARGETS={batt:4.1, combo:6.2, solar:2.5, addsolar:1.5};
-var PKG_SPECIAL=true;
-var PKG_SPECIAL_STAY=700;
-var PKG_SPECIAL_UP=700;
-var PKG_ROUND=500;
+var PKG_ST={brand:'all',job:'batt',sol:'13.3',phase:'sp'};
+/* Augment PKG_DATA with extended solar sizes — prices/ratings get recomputed live anyway */
+(function augmentPkgData(){
+  var SOLAR_SIZES=[3.3,6.6,9.9,13.3,16.5,19.8,23.1,26.4];
+  var COMBO_SOLARS=['3.3','6.6','9.9','13.3','16.5','19.8','23.1','26.4'];
+  var PHASES=['sp','tp15','tp20','tp25','tp30'];
+  var BRANDS=['gw','sg','su'];
+  /* Solar-only: rebuild list with all sizes */
+  for(var bi=0;bi<BRANDS.length;bi++){
+    var b=BRANDS[bi];
+    if(!PKG_DATA.solar[b])continue;
+    for(var pi=0;pi<PHASES.length;pi++){
+      var ph=PHASES[pi];
+      PKG_DATA.solar[b][ph]=SOLAR_SIZES.map(function(k){return{k:k,p:0,r:0};});
+    }
+  }
+  /* Sungrow battery limits (SBH 5kWh modules):
+     SH-RS (SP):     6 modules max → 30 kWh
+     SH-T  (TP):     8 modules max → 40 kWh
+     No SH30T inverter exists — TP30 not valid for Sungrow */
+  var sungrowSizesByPhase={
+    sp:  [10,15,20,25,30],
+    tp15:[10,15,20,25,30,35,40],
+    tp20:[10,15,20,25,30,35,40],
+    tp25:[10,15,20,25,30,35,40],
+    tp30:[]  /* invalid for Sungrow */
+  };
+  /* Battery-only: rebuild Sungrow lists per phase */
+  if(PKG_DATA.batt.su){
+    for(var pi3=0;pi3<PHASES.length;pi3++){
+      var ph3=PHASES[pi3];
+      PKG_DATA.batt.su[ph3]=sungrowSizesByPhase[ph3].map(function(k){return{k:k,p:0,r:0};});
+    }
+  }
+  /* Combo: ensure each solar-size key exists, with brand+phase-specific battery sizes */
+  for(var bi2=0;bi2<BRANDS.length;bi2++){
+    var b2=BRANDS[bi2];
+    if(!PKG_DATA.combo[b2])continue;
+    for(var ci=0;ci<COMBO_SOLARS.length;ci++){
+      var ck=COMBO_SOLARS[ci];
+      if(!PKG_DATA.combo[b2][ck])PKG_DATA.combo[b2][ck]={};
+      for(var pi2=0;pi2<PHASES.length;pi2++){
+        var ph2=PHASES[pi2];
+        var battSizes;
+        if(b2==='su')battSizes=sungrowSizesByPhase[ph2];
+        else battSizes=[8,16,24,32,40,48];
+        PKG_DATA.combo[b2][ck][ph2]=battSizes.map(function(k){return{k:k,p:0,r:0};});
+      }
+    }
+  }
+})();
+var PKG_TARGETS={batt:4.3, combo:6.0, solar:2.5, addsolar:1.5};
+var PKG_SPECIAL_STAY_ON=true;
+var PKG_SPECIAL_UP_ON=false;
+var PKG_SPECIAL_STAY=500;
+var PKG_SPECIAL_UP=500;
+var PKG_LOCKIN_ON=true;  /* Show 3-mo solar lock-in differential on battery-only cards */
+var PKG_LOCKIN_TARGET=6.2;  /* Lock-in combo target (slightly above combo ★6.0 to cover return trip) */
+var PKG_FLOOR_STD=7.6;   /* Min labour hours floor for solar-only and addsolar standard */
+var PKG_FLOOR_SPC=1.0;   /* Min labour hours floor for addsolar special (bundled jobs) */
+var PKG_TARGET_SPC=0.5;  /* Target rating for addsolar special (low — bundled with another job) */
+var PKG_CLIENT_MODE=false;  /* Hide all ratings/stars/hours/PPH on cards for clean client screenshots */
+var PKG_ROUND_BY_JOB={batt:500, combo:500, solar:100, addsolar:100};
+function pkgRound(jobType){return PKG_ROUND_BY_JOB[jobType]||500;}
 var PKG_EVENSTEP=true;
-var PKG_STEPS={gw:{low:1000,high:2000},sg:{low:2000,high:3000},su:{low:2000,high:3000}};
-var PKG_STEP_BOUNDARY=24;
+var PKG_STEPS={gw:{low:2000,high:2000},sg:{low:3000,high:3000},su:{low:2000,high:3000}};
+/* Multi-section comparison view state */
+var CMP_SECTIONS={batt:true, combo:true, solar:false, addsolar:false};
+/* Sizes visible per type: arrays of kWh/kW values (matched against {k:...} in PKG_DATA) */
+var CMP_SIZES={
+  batt:    [16,24,32,40,48],
+  combo:   [16,24,32,40,48],
+  solar:   [3.3,6.6,9.9,13.3,16.5,19.8,23.1,26.4],
+  addsolar:[0.5,1.0,1.5,2.0,2.5,3.3,6.6,9.9,13.3,16.5,19.8,23.1,26.4]
+};
+/* Combo solar size for comparison view */
+var CMP_COMBO_SOL='13.3';
+var PKG_STEP_BOUNDARY=32;
 var PKG_STEP_ANCHOR_KWH=32;
-PKG_DATA.addsolar=[{k:1.6},{k:3.3},{k:5.0},{k:6.6},{k:9.9},{k:13.3}];
+PKG_DATA.addsolar=[{k:0.5},{k:1.0},{k:1.5},{k:2.0},{k:2.5},{k:3.3},{k:6.6},{k:9.9},{k:13.3},{k:16.5},{k:19.8},{k:23.1},{k:26.4}];
 /* Build a one-line spec summary for a card: panels · inverter · battery modules */
+function buildSystemHeadline(jobType, batKwh, solKw){
+/* Returns plain-text headline describing the system at a glance.
+   Examples:
+     batt-only : "16 kWh battery"
+     combo     : "13.3 kW solar + 16 kWh battery"
+     solar     : "13.3 kW solar"
+     addsolar  : "1.5 kW solar (3 panels)" */
+if(jobType==='addsolar'&&solKw>0){
+  var p=Math.round(solKw*1000/475);
+  return solKw+' kW solar ('+p+' panel'+(p===1?'':'s')+')';
+}
+if(jobType==='combo'&&solKw>0&&batKwh>0)return solKw+' kW solar + '+batKwh+' kWh battery';
+if(jobType==='solar'&&solKw>0)return solKw+' kW solar';
+if(jobType==='batt'&&batKwh>0)return batKwh+' kWh battery';
+if(batKwh>0)return batKwh+' kWh battery';
+if(solKw>0)return solKw+' kW solar';
+return '';
+}
 function buildSpecLine(brand, jobType, phase, batKwh, solKw){
-var parts=[];
+/* Component breakdown — uses the brand's lighter tint colour to match the price.
+   Brand identity sits in the headline at top of card; this is just the parts list. */
+var lines=[];
+var lineCol={gw:'#93c5fd', sg:'#feec79', su:'#fcd34d'}[brand]||'#94a3b8';
 if(solKw>0){
-var panels=Math.round(solKw*1000/475);
-parts.push(panels+'p');
+  var panels=Math.round(solKw*1000/475);
+  lines.push(panels+'\u00d7 475W panels');
 }
 if(jobType!=='addsolar'){
-var invLabels={
-gw:{sp:'9.9kW SP',tp15:'15kW TP',tp20:'20kW TP',tp25:'25kW TP',tp30:'30kW TP'},
-sg:{sp:'10kW SP', tp15:'15kW TP',tp20:'20kW TP',tp25:'25kW TP',tp30:'30kW TP'},
-su:{sp:'10kW SP', tp15:'15kW TP',tp20:'20kW TP',tp25:'25kW TP',tp30:'25kW TP'}
-};
-var lbl=invLabels[brand]&&invLabels[brand][phase];
-if(lbl)parts.push(lbl);
+  /* inverter — generic kW + phase, regardless of brand */
+  var kwByPhase={sp:'10kW',tp15:'15kW',tp20:'20kW',tp25:'25kW',tp30:'30kW'};
+  var phaseShort=phase==='sp'?'SP':'TP';
+  var invKw=kwByPhase[phase]||'';
+  if(invKw)lines.push(invKw+' '+phaseShort+' inverter');
 }
 if(batKwh>0){
-var battKwhPerMod=brand==='su'?5:8;
-var battQty=Math.round(batKwh/battKwhPerMod);
-parts.push(battQty+'\u00d7 '+battKwhPerMod+'kWh');
+  /* battery — generic count of {kWh}kWh modules, no brand */
+  var battKwhPerMod=brand==='su'?5:8;
+  var battQty=Math.round(batKwh/battKwhPerMod);
+  lines.push(battQty+'\u00d7 '+battKwhPerMod+'kWh battery modules');
 }
-return parts.join(' \u00b7 ');
+if(!lines.length)return '';
+var rows=lines.map(function(L){return '<div style="font-size:10px;color:'+lineCol+';line-height:1.4;font-weight:600;">\u00b7 '+L+'</div>';}).join('');
+return '<div style="margin-top:6px;border-top:1px dashed #1e293b;padding-top:5px;">'+rows+'</div>';
 }
 function syncStepInputs(){
 var brand=PKG_ST.brand==='all'?'gw':PKG_ST.brand;
@@ -711,18 +884,18 @@ var highLbl=document.getElementById('pkg_step_high_lbl');
 if(lowLbl)lowLbl.innerHTML='\u2264'+PKG_STEP_BOUNDARY+' kWh +$';
 if(highLbl)highLbl.innerHTML='&gt;'+PKG_STEP_BOUNDARY+' kWh +$';
 /* Tint border to brand colour as a hint about which brand is being edited */
-var brandCol=brand==='gw'?'#378ADD':brand==='sg'?'#7F77DD':'#fbbf24';
+var brandCol=brand==='gw'?'#2563eb':brand==='sg'?'#eab308':'#fbbf24';
 if(lowEl)lowEl.style.borderColor=brandCol;
 if(highEl)highEl.style.borderColor=brandCol;
 }
 /* Even-step pricing — only applies to batt/combo. Anchors at the size closest to
    PKG_STEP_ANCHOR_KWH (32 kWh) at current target, then walks outward. Uses per-brand step values. */
-function evenStepPrice(brand, jobType, phase, items, idx, target){
+function evenStepPrice(brand, jobType, phase, items, idx, target, solKwOverride){
 if(!PKG_EVENSTEP)return null;
 if(jobType!=='batt'&&jobType!=='combo')return null;
 if(!items||!items.length)return null;
-var solKw=jobType==='combo'?parseFloat(PKG_ST.sol):0;
-var rnd=PKG_ROUND||250;
+var solKw=(typeof solKwOverride==='number')?solKwOverride:(jobType==='combo'?parseFloat(PKG_ST.sol):0);
+var rnd=pkgRound(jobType);
 var steps=PKG_STEPS[brand]||PKG_STEPS.gw;
 var stepLow=steps.low||0;
 var stepHigh=steps.high||0;
@@ -749,39 +922,99 @@ price-=stB;
 return Math.max(0,Math.round(price/rnd)*rnd);
 }
 /* Build "Sign Today" deal block for a card. Eligible: GW/Sigen + batt/combo only. */
-function buildDealBlock(brand, jobType, phase, items, idx, target){
-if(!PKG_SPECIAL)return '';
+function buildHrsPphLine(calc){
+/* Hide entirely in client-mode (clean screenshots for customers). */
+if(PKG_CLIENT_MODE)return '';
+/* Returns small inline string. Format:
+   - under 7.6h: "5.2h \u00b7 \u26051.5"  (shorter than a normal day)
+   - >= 7.6h  : "1d \u00b7 10.5h \u00b7 \u26051.6"  (day count via anchor, plus total hrs)
+   Day count uses PLC_ANCHOR (default 12h) — same anchor that drives the labour OT split,
+   so a job tipping over 12h becomes a 2nd day. */
+if(!calc||!calc.totalHrs||calc.totalHrs<=0)return '';
+var h=calc.totalHrs;
+var anchor=PLC_ANCHOR||12;
+var hStr;
+if(h<7.6){
+  hStr=h.toFixed(1)+'h';
+} else {
+  var days=Math.max(1,Math.ceil(h/anchor));
+  hStr=days+'d \u00b7 '+h.toFixed(1)+'h';
+}
+var pph=h>0?(calc.np/h):0;
+var pphRating=pph/100;
+var pphCol=pphRating>=2?'#4ade80':pphRating>=1?'#fbbf24':pphRating>=0.5?'#94a3b8':'#64748b';
+return '<div style="font-size:9px;color:#475569;margin-top:2px;">'
++'<span>'+hStr+'</span> '
++'<span style="color:'+pphCol+';font-weight:600;">\u00b7 \u2605'+pphRating.toFixed(1)+'</span>'
++'</div>';
+}
+function buildLockInLine(brand, phase, batKwh, target, solSizeStr){
+/* 3-month solar lock-in price = (combo at lock-in target) - (battery at battery target).
+   The lock-in target is a separately-tuneable rating that lets you bump up the price
+   above the standard combo to cover the cost of a separate return trip later. */
+if(!PKG_LOCKIN_ON)return '';
+if(brand!=='gw'&&brand!=='sg')return '';
+if(!solSizeStr)solSizeStr=PKG_ST.sol||'13.3';
+var solKw=parseFloat(solSizeStr);
+if(!solKw||solKw<=0)return '';
+var lockTarget=PKG_LOCKIN_TARGET||PKG_TARGETS.combo||6.0;
+var battOnly=computePackagePrice(brand,'batt',phase,batKwh,0,target);
+var combo=computePackagePrice(brand,'combo',phase,batKwh,solKw,lockTarget);
+/* Apply even-step adjustment so battery price matches the displayed card */
+var evenBatt=evenStepPrice(brand,'batt',phase,[{k:batKwh}],0,target,0);
+if(evenBatt!==null)battOnly=computePackagePrice(brand,'batt',phase,batKwh,0,target,false,evenBatt);
+var diff=combo.price-battOnly.price;
+if(diff<=0)return '';
+var totalPrice=battOnly.price+diff;
+/* Stars for lock-in target */
+var st='',sn=Math.floor(lockTarget);
+for(var jj=0;jj<sn;jj++)st+='\u2605';
+if(lockTarget-sn>=0.3)st+='\u2606';
+var ratingCol=lockTarget>=PKG_TARGETS.combo?'#4ade80':lockTarget>=PKG_TARGETS.combo-0.5?'#fbbf24':'#f87171';
+return '<div style="border-top:1px dashed #1e293b;margin-top:6px;padding-top:5px;">'
++'<div style="font-size:9px;font-weight:700;color:#b46dfa;text-transform:uppercase;letter-spacing:.05em;">\ud83d\udd12 3-mo lock-in</div>'
++'<div style="font-size:10px;color:#475569;">+$'+diff.toLocaleString()+' for '+solSizeStr+' kW solar</div>'
++'<div style="font-size:11px;font-weight:700;color:#b46dfa;margin-top:2px;">$'+totalPrice.toLocaleString()+' total'+(PKG_CLIENT_MODE?'':' <span style="font-size:10px;color:'+ratingCol+';font-weight:600;">'+st+' '+lockTarget.toFixed(1)+'</span>')+'</div>'
++'</div>';
+}
+function buildDealBlock(brand, jobType, phase, items, idx, target, solKwOverride){
+if(!PKG_SPECIAL_STAY_ON&&!PKG_SPECIAL_UP_ON)return '';
 if(brand!=='gw'&&brand!=='sg')return '';
 if(jobType!=='batt'&&jobType!=='combo')return '';
 var d=items[idx];
-var solKw=jobType==='combo'?parseFloat(PKG_ST.sol):0;
+var solKw=(typeof solKwOverride==='number')?solKwOverride:(jobType==='combo'?parseFloat(PKG_ST.sol):0);
 var batKwh=d.k;
 /* Use even-step price as regular if even-step mode is active, else target-derived */
-var evenP=evenStepPrice(brand,jobType,phase,items,idx,target);
+var evenP=evenStepPrice(brand,jobType,phase,items,idx,target,solKw);
 var regularPrice=(evenP!==null)?evenP:computePackagePrice(brand,jobType,phase,batKwh,solKw,target).price;
 var stayDisc=PKG_SPECIAL_STAY||0;
 var upDisc=PKG_SPECIAL_UP||0;
 function fmtK(v){return v>=1000?('$'+(v/1000).toFixed(v%1000===0?0:1)+'k'):('$'+v);}
 /* Same-size deal */
+var stayHtml='';
+if(PKG_SPECIAL_STAY_ON){
 var stayPrice=Math.max(0,regularPrice-stayDisc);
 var stayCalc=computePackagePrice(brand,jobType,phase,batKwh,solKw,target,false,stayPrice);
+var stayRatingCol=stayCalc.rating>=target?'#4ade80':stayCalc.rating>=target-0.5?'#fbbf24':'#f87171';
+stayHtml='<div style="font-size:10px;color:#475569;">Same size <span style="color:#4ade80;">(\u2212'+fmtK(stayDisc)+')</span></div>'
++'<div style="font-size:13px;font-weight:700;color:#4ade80;">$'+stayCalc.price.toLocaleString()+(PKG_CLIENT_MODE?'':' <span style="font-size:10px;color:'+stayRatingCol+';">\u2605'+stayCalc.rating.toFixed(1)+'</span>')+'</div>';
+}
 /* Upgrade deal: next size up */
 var nextItem=items[idx+1];
 var upHtml='';
-if(nextItem){
-var nextEvenP=evenStepPrice(brand,jobType,phase,items,idx+1,target);
+if(PKG_SPECIAL_UP_ON&&nextItem){
+var nextEvenP=evenStepPrice(brand,jobType,phase,items,idx+1,target,solKw);
 var nextRegularPrice=(nextEvenP!==null)?nextEvenP:computePackagePrice(brand,jobType,phase,nextItem.k,solKw,target).price;
 var upPrice=Math.max(0,nextRegularPrice-upDisc);
 var upCalc=computePackagePrice(brand,jobType,phase,nextItem.k,solKw,target,false,upPrice);
 var upRatingCol=upCalc.rating>=target?'#4ade80':upCalc.rating>=target-0.5?'#fbbf24':'#f87171';
-upHtml='<div style="font-size:10px;color:#475569;margin-top:4px;">Upgrade to '+nextItem.k+' kWh <span style="color:#4ade80;">(\u2212'+fmtK(upDisc)+')</span></div>'
-+'<div style="font-size:13px;font-weight:700;color:#4ade80;">$'+upCalc.price.toLocaleString()+' <span style="font-size:10px;color:'+upRatingCol+';">\u2605'+upCalc.rating.toFixed(1)+'</span></div>';
+upHtml='<div style="font-size:10px;color:#475569;'+(PKG_SPECIAL_STAY_ON?'margin-top:4px;':'')+'">Upgrade to '+nextItem.k+' kWh <span style="color:#4ade80;">(\u2212'+fmtK(upDisc)+')</span></div>'
++'<div style="font-size:13px;font-weight:700;color:#4ade80;">$'+upCalc.price.toLocaleString()+(PKG_CLIENT_MODE?'':' <span style="font-size:10px;color:'+upRatingCol+';">\u2605'+upCalc.rating.toFixed(1)+'</span>')+'</div>';
 }
-var stayRatingCol=stayCalc.rating>=target?'#4ade80':stayCalc.rating>=target-0.5?'#fbbf24':'#f87171';
+if(!stayHtml&&!upHtml)return '';
 return '<div style="border-top:1px dashed #334155;margin-top:8px;padding-top:6px;">'
-+'<div style="font-size:9px;font-weight:700;color:#4ade80;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px;">\u26A1 Sign Today</div>'
-+'<div style="font-size:10px;color:#475569;">Same size <span style="color:#4ade80;">(\u2212'+fmtK(stayDisc)+')</span></div>'
-+'<div style="font-size:13px;font-weight:700;color:#4ade80;">$'+stayCalc.price.toLocaleString()+' <span style="font-size:10px;color:'+stayRatingCol+';">\u2605'+stayCalc.rating.toFixed(1)+'</span></div>'
++'<div style="font-size:9px;font-weight:700;color:#4ade80;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px;">\u26A1 Early Bird</div>'
++stayHtml
 +upHtml
 +'</div>';
 }
@@ -820,10 +1053,10 @@ else{battLid='b6';battKwhPerMod=8;}
 var battLu=lookupById(battLid)||{cost:0};
 var battCost=battLu.cost;
 var battQty=(!isAdd&&batKwh>0)?Math.round(batKwh/battKwhPerMod):0;
-/* Mount */
+/* Mount — addsolar uses existing rails so no new mount kit needed */
 var mountLu=lookupById('m1')||{cost:252};
 var mountCost=mountLu.cost;
-var mountQty=solKw>0?1:0;
+var mountQty=(!isAdd&&solKw>0)?1:0;
 /* Gateway: Sigen needs gateway (SP/TP), Sungrow needs accessory kit, GoodWe none */
 var gatewayCost=0;
 if(battQty>0){
@@ -842,14 +1075,25 @@ var solMat=Math.round(solKw*PLC_SOL_MAT);
 var racking=Math.round(solKw*PLC_RACK);
 var battMat=battQty>0?PLC_BATT_MAT:0;
 /* Labour — addsolar has no inverter setup hour and no min-7.6 floor.
-   Travel scales with day count (1 hr per day). Special mode: drop travel entirely. */
-var solarHrs=panelQty>0?Math.ceil(panelQty/7)*PLC_HRS_STRING:0;
+   Travel scales with day count (1 hr per day). Special mode: drop travel entirely.
+   Solar labour now scales linearly per panel (panelQty * hrs_per_panel) — for multiples
+   of 7 this gives the same result as the old per-string calc, but small jobs scale down. */
+var solarHrs=panelQty>0?panelQty*(PLC_HRS_STRING/7):0;
 var battHrs=battQty>0?1+battQty*PLC_HRS_BATT:0;
 var invHrs=(invCost>0)?1:0;
 var workHrs=solarHrs+battHrs+invHrs;
 var travelHrs=isSpc?0:calcTravelHrs(workHrs);
 var rawHrs=workHrs+travelHrs;
-var totalHrs=isAdd?Math.max(rawHrs,isSpc?1.0:7.6):Math.max(rawHrs,7.6);
+/* Per-job-type configurable hour floor:
+   - addsolar+special : PKG_FLOOR_SPC (default 1.0, bundled with another job)
+   - addsolar+std OR solar-only : PKG_FLOOR_STD (default 7.6, configurable for short jobs)
+   - batt/combo : fixed 7.6h floor */
+var floor;
+if(isAdd&&isSpc) floor=PKG_FLOOR_SPC||1.0;
+else if(isAdd) floor=PKG_FLOOR_STD||7.6;
+else if(jobType==='solar') floor=PKG_FLOOR_STD||7.6;
+else floor=7.6;
+var totalHrs=Math.max(rawHrs,floor);
 var labour=calcCrewLabour(totalHrs);
 /* Fixed costs (overheads + other wages). Special mode: zero (covered by parent job). */
 var fc=calcFixedCosts(solKw,battQty,totalHrs);
@@ -871,7 +1115,7 @@ var gpTarget=targetNet/0.75;
 var commDeduct=(s.commissionPct/100)*1.1;
 var saleExNeeded=(gpTarget-stcTotal+fixedCosts)/(1-commDeduct);
 var saleInc=saleExNeeded*1.1;
-var rnd=PKG_ROUND||250;
+var rnd=pkgRound(jobType);
 price=Math.max(0,Math.ceil(saleInc/rnd)*rnd);
 }
 /* Recompute actual rating at chosen price */
@@ -880,7 +1124,7 @@ var commActual=price*(s.commissionPct/100);
 var gpActual=saleExActual+stcTotal-fixedCosts-commActual;
 var netActual=gpActual*0.75;
 var ratingActual=Math.round(netActual/100)/10;
-return{price:price,rating:ratingActual};
+return{price:price, rating:ratingActual, totalHrs:totalHrs, np:netActual};
 }
 function renderPackages(){
 var grid=document.getElementById('pkg_grid');
@@ -907,57 +1151,211 @@ if(solWrap)solWrap.style.display='none';
 if(phWrap)phWrap.style.display='none';
 }else{
 if(phWrap)phWrap.style.display='';
-if(solWrap)solWrap.style.display=(PKG_ST.job==='combo')?'block':'none';
+/* Single-brand solar size selector visibility:
+   - Compare mode (brand=all): hidden — compare has its own combo solar pill
+   - Combo job: always visible
+   - Battery job + lock-in on: visible (controls lock-in solar size)
+   - Otherwise: hidden */
+if(solWrap){
+  if(PKG_ST.brand==='all'){
+    solWrap.style.display='none';
+  } else if(PKG_ST.job==='combo'){
+    solWrap.style.display='block';
+  } else if(PKG_ST.job==='batt'&&PKG_LOCKIN_ON){
+    solWrap.style.display='block';
+  } else {
+    solWrap.style.display='none';
+  }
 }
-/* ── COMPARISON MODE: 3 brands side-by-side ── */
-if(PKG_ST.brand==='all'&&PKG_ST.job!=='addsolar'){
+}
+/* Sungrow has no SH30T inverter — hide TP30 button when Sungrow active, fall back to TP25 */
+var tp30Btn=document.getElementById('pkg_p_tp30');
+if(tp30Btn){
+if(PKG_ST.brand==='su'){
+tp30Btn.style.display='none';
+if(PKG_ST.phase==='tp30')PKG_ST.phase='tp25';
+}else{
+tp30Btn.style.display='';
+}
+}
+/* ── COMPARISON MODE: multi-section, GoodWe + Sigen side-by-side ── */
+if(PKG_ST.brand==='all'){
 var BRANDS=[
-{id:'gw',name:'GoodWe', acc:'#378ADD',txt:'#93c5fd'},
-{id:'sg',name:'Sigen',  acc:'#7F77DD',txt:'#c4b5fd'}
+{id:'gw',name:'GoodWe',    acc:'#2563eb',txt:'#93c5fd'},
+{id:'sg',name:'Sigenergy', acc:'#eab308',txt:'#feec79'}
 ];
-var html='<div style="display:flex;flex-direction:column;gap:14px;">';
-for(var bi=0;bi<BRANDS.length;bi++){
-var B=BRANDS[bi];
-var items;
-if(PKG_ST.job==='batt')items=PKG_DATA.batt[B.id][PKG_ST.phase];
-else if(PKG_ST.job==='combo')items=PKG_DATA.combo[B.id][PKG_ST.sol][PKG_ST.phase];
-else items=PKG_DATA.solar[B.id][PKG_ST.phase];
-html+='<div>';
-html+='<div style="font-size:13px;font-weight:700;color:'+B.txt+';margin-bottom:8px;border-bottom:2px solid '+B.acc+';padding-bottom:5px;text-transform:uppercase;letter-spacing:.05em;">'+B.name+'</div>';
-html+='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;">';
-for(var i=0;i<items.length;i++){
-var d=items[i];
-var batKwh,solKw;
-if(PKG_ST.job==='batt'){batKwh=d.k;solKw=0;}
-else if(PKG_ST.job==='combo'){batKwh=d.k;solKw=parseFloat(PKG_ST.sol);}
-else{batKwh=0;solKw=d.k;}
-var calc=computePackagePrice(B.id,PKG_ST.job,PKG_ST.phase,batKwh,solKw,target);
-var evenPc=evenStepPrice(B.id,PKG_ST.job,PKG_ST.phase,items,i,target);
-if(evenPc!==null)calc=computePackagePrice(B.id,PKG_ST.job,PKG_ST.phase,batKwh,solKw,target,false,evenPc);
-var unit=PKG_ST.job==='solar'?'kW':'kWh';
+/* All possible sizes per type — used for pill toggles */
+var ALL_SIZES_GW={batt:[8,16,24,32,40,48], combo:[8,16,24,32,40,48], solar:[3.3,6.6,9.9,13.3,16.5,19.8,23.1,26.4], addsolar:[0.5,1.0,1.5,2.0,2.5,3.3,6.6,9.9,13.3,16.5,19.8,23.1,26.4]};
+var ALL_SIZES_SG={batt:[8,16,24,32,40,48], combo:[8,16,24,32,40,48], solar:[3.3,6.6,9.9,13.3,16.5,19.8,23.1,26.4]};
+var SECT_LABELS={batt:'Battery only', combo:'Solar + battery', solar:'Solar only', addsolar:'Add panels'};
+var SECT_ORDER=['batt','combo','solar','addsolar'];
+var SOLAR_OPTS=['3.3','6.6','9.9','13.3','16.5','19.8','23.1','26.4'];
+var html='';
+/* ── Top control bar: section toggles + size pills ── */
+html+='<div style="background:#0f172a;border:1px solid #1e293b;border-radius:8px;padding:10px 12px;margin-bottom:14px;">';
+html+='<div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:8px;">';
+html+='<span style="font-size:10px;color:#475569;text-transform:uppercase;letter-spacing:.06em;margin-right:6px;">Sections</span>';
+for(var si=0;si<SECT_ORDER.length;si++){
+var sk=SECT_ORDER[si];
+var on=CMP_SECTIONS[sk];
+var bg=on?'#1e3a5f':'#1e293b';
+var bd=on?'2px solid #94a3b8':'1px solid #334155';
+var fc=on?'#e2e8f0':'#64748b';
+var fw=on?'font-weight:600;':'';
+html+='<button data-cmp-sect="'+sk+'" style="padding:4px 10px;border-radius:6px;border:'+bd+';background:'+bg+';color:'+fc+';cursor:pointer;font-size:11px;'+fw+'">'+SECT_LABELS[sk]+'</button>';
+}
+html+='</div>';
+/* Combo solar size pill row (only shown if combo section is on) */
+if(CMP_SECTIONS.combo){
+html+='<div style="display:flex;flex-wrap:wrap;gap:5px;align-items:center;margin-top:6px;">';
+html+='<span style="font-size:10px;color:#475569;text-transform:uppercase;letter-spacing:.06em;margin-right:4px;">Combo solar:</span>';
+for(var soi=0;soi<SOLAR_OPTS.length;soi++){
+var so=SOLAR_OPTS[soi];
+var sOn=CMP_COMBO_SOL===so;
+var sbg=sOn?'#1e3a5f':'#1e293b';
+var sbd=sOn?'2px solid #94a3b8':'1px solid #334155';
+var sfc=sOn?'#e2e8f0':'#64748b';
+html+='<button data-cmp-cs="'+so+'" style="padding:3px 8px;border-radius:5px;border:'+sbd+';background:'+sbg+';color:'+sfc+';cursor:pointer;font-size:11px;'+(sOn?'font-weight:600;':'')+'">'+so+' kW</button>';
+}
+html+='</div>';
+}
+/* Size pill rows per active section */
+for(var pri=0;pri<SECT_ORDER.length;pri++){
+var psk=SECT_ORDER[pri];
+if(!CMP_SECTIONS[psk])continue;
+var poolGW=ALL_SIZES_GW[psk]||[];
+var poolSG=ALL_SIZES_SG[psk]||poolGW;
+/* Union of GW + SG pools */
+var pool=poolGW.slice();
+for(var pkj=0;pkj<poolSG.length;pkj++){if(pool.indexOf(poolSG[pkj])<0)pool.push(poolSG[pkj]);}
+pool.sort(function(a,b){return a-b;});
+var unitP=psk==='batt'||psk==='combo'?'kWh':'kW';
+html+='<div style="display:flex;flex-wrap:wrap;gap:5px;align-items:center;margin-top:6px;">';
+html+='<span style="font-size:10px;color:#475569;text-transform:uppercase;letter-spacing:.06em;margin-right:4px;min-width:70px;">'+SECT_LABELS[psk]+':</span>';
+for(var pi=0;pi<pool.length;pi++){
+var pv=pool[pi];
+var inSet=CMP_SIZES[psk].indexOf(pv)>=0;
+var pbg=inSet?'#1e3a5f':'#1e293b';
+var pbd=inSet?'2px solid #94a3b8':'1px solid #334155';
+var pfc=inSet?'#e2e8f0':'#64748b';
+html+='<button data-cmp-sz="'+psk+':'+pv+'" style="padding:3px 8px;border-radius:5px;border:'+pbd+';background:'+pbg+';color:'+pfc+';cursor:pointer;font-size:11px;'+(inSet?'font-weight:600;':'')+'">'+pv+'</button>';
+}
+html+='</div>';
+}
+html+='</div>';
+/* ── Render each enabled section as its own block with brand columns ── */
+function buildCard(B,jobType,phase,batKwh,solKw,sizeList,idxInList,unit,labelK){
+var calc=computePackagePrice(B.id,jobType,phase,batKwh,solKw,target);
+var itemsForStep=sizeList.map(function(k){return{k:k};});
+var evenPc=evenStepPrice(B.id,jobType,phase,itemsForStep,idxInList,target,solKw);
+if(evenPc!==null)calc=computePackagePrice(B.id,jobType,phase,batKwh,solKw,target,false,evenPc);
 var s='',n=Math.floor(calc.rating);
 for(var j=0;j<n;j++)s+='\u2605';
 if(calc.rating-n>=0.3)s+='\u2606';
 var rCol=calc.rating>=target?'#4ade80':calc.rating>=target-0.5?'#fbbf24':'#f87171';
-var dealHtml=buildDealBlock(B.id,PKG_ST.job,PKG_ST.phase,items,i,target);
-var specStr=buildSpecLine(B.id,PKG_ST.job,PKG_ST.phase,batKwh,solKw);
-html+='<div style="background:#0f172a;border:1px solid #1e293b;border-left:3px solid '+B.acc+';border-radius:8px;padding:10px 12px;">'
-+'<div style="font-size:11px;color:#475569;margin-bottom:3px;">'+d.k+' '+unit+'</div>'
-+'<div style="font-size:17px;font-weight:700;color:'+B.txt+';">$'+calc.price.toLocaleString()+'</div>'
-+'<div style="font-size:11px;color:'+rCol+';margin-top:3px;">'+s+' <span style="color:#475569;">'+calc.rating.toFixed(1)+'</span></div>'
-+(specStr?'<div style="font-size:10px;color:#64748b;margin-top:4px;">'+specStr+'</div>':'')
+var dealHtml=buildDealBlock(B.id,jobType,phase,itemsForStep,idxInList,target,solKw);
+var specStr=buildSpecLine(B.id,jobType,phase,batKwh,solKw);
+var hrsHtml=buildHrsPphLine(calc);
+var lockInHtml=(jobType==='batt')?buildLockInLine(B.id,phase,batKwh,target,CMP_COMBO_SOL):'';
+return '<div style="background:#0f172a;border:1px solid #1e293b;border-left:3px solid '+B.acc+';border-radius:8px;padding:10px 12px;">'
++'<div style="font-size:11px;color:'+B.acc+';text-transform:uppercase;letter-spacing:0.1em;font-weight:800;margin-bottom:3px;">'+B.name+'</div>'
++'<div style="font-size:12px;font-weight:700;color:'+B.txt+';margin-bottom:4px;line-height:1.3;">'+buildSystemHeadline(jobType,batKwh,solKw)+'</div>'
++'<div style="font-size:17px;font-weight:800;color:'+B.acc+';">$'+calc.price.toLocaleString()+'</div>'
++(PKG_CLIENT_MODE?'':'<div style="font-size:11px;color:'+rCol+';margin-top:3px;">'+s+' <span style="color:#475569;">'+calc.rating.toFixed(1)+'</span></div>')
++hrsHtml
++specStr
 +dealHtml
++lockInHtml
++'</div>';
+}
+for(var sg=0;sg<SECT_ORDER.length;sg++){
+var sj=SECT_ORDER[sg];
+if(!CMP_SECTIONS[sj])continue;
+var sizes=CMP_SIZES[sj].slice().sort(function(a,b){return a-b;});
+if(!sizes.length)continue;
+html+='<div style="margin-bottom:18px;">';
+html+='<div style="font-size:13px;font-weight:700;color:#818cf8;margin-bottom:10px;border-bottom:2px solid #6366f1;padding-bottom:5px;text-transform:uppercase;letter-spacing:.05em;">'+SECT_LABELS[sj]+(sj==='combo'?(' \u00b7 '+CMP_COMBO_SOL+' kW solar'):'')+'</div>';
+if(sj==='addsolar'){
+/* Add panels: brand-agnostic, paired Standard|Special, no brand columns */
+html+='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;">';
+for(var ai=0;ai<sizes.length;ai++){
+var ak=sizes[ai];
+var stdC=computePackagePrice('gw','addsolar',null,0,ak,PKG_TARGETS.addsolar||1.5,false);
+var spcC=computePackagePrice('gw','addsolar',null,0,ak,PKG_TARGET_SPC||0.5,true);
+var save=stdC.price-spcC.price;
+var panels=Math.round(ak*1000/475);
+function bs(r){var x='',n=Math.floor(r);for(var i=0;i<n;i++)x+='\u2605';if(r-n>=0.3)x+='\u2606';return x;}
+html+='<div style="background:#0f172a;border:1px solid #1e293b;border-left:3px solid #0d9488;border-radius:8px;padding:10px 12px;">'
++'<div style="font-size:12px;font-weight:700;color:#0d9488;margin-bottom:6px;line-height:1.3;">'+ak+' kW solar ('+panels+' panel'+(panels===1?'':'s')+')</div>'
++'<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">'
++'<div style="border-right:1px solid #1e293b;padding-right:8px;">'
++'<div style="font-size:9px;font-weight:700;color:#64748b;text-transform:uppercase;margin-bottom:2px;">Std</div>'
++'<div style="font-size:15px;font-weight:700;color:#5eead4;">$'+stdC.price.toLocaleString()+'</div>'
++buildHrsPphLine(stdC)
++'</div>'
++'<div>'
++'<div style="font-size:9px;font-weight:700;color:#b46dfa;text-transform:uppercase;margin-bottom:2px;">Special</div>'
++'<div style="font-size:15px;font-weight:700;color:#b46dfa;">$'+spcC.price.toLocaleString()+'</div>'
++buildHrsPphLine(spcC)
++'</div>'
++'</div>'
++'<div style="font-size:10px;color:#94a3b8;margin-top:6px;text-align:right;">Save <strong style="color:#b46dfa;">$'+save.toLocaleString()+'</strong></div>'
 +'</div>';
 }
 html+='</div></div>';
+continue;
 }
-html+='</div>';
+/* Two-brand columns for batt/combo/solar */
+html+='<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:14px;">';
+for(var bi3=0;bi3<BRANDS.length;bi3++){
+var B3=BRANDS[bi3];
+html+='<div>';
+html+='<div style="font-size:12px;font-weight:600;color:'+B3.txt+';margin-bottom:6px;">'+B3.name+'</div>';
+html+='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;">';
+for(var szi=0;szi<sizes.length;szi++){
+var skv=sizes[szi];
+var batKwh,solKw,unit,labelK;
+if(sj==='batt'){batKwh=skv;solKw=0;unit='kWh';labelK=skv;}
+else if(sj==='combo'){batKwh=skv;solKw=parseFloat(CMP_COMBO_SOL);unit='kWh';labelK=skv;}
+else{batKwh=0;solKw=skv;unit='kW';labelK=skv;}
+/* Use job-type's specific target rating */
+var oldT=target;
+target=PKG_TARGETS[sj]||target;
+html+=buildCard(B3,sj,PKG_ST.phase,batKwh,solKw,sizes,szi,unit,labelK);
+target=oldT;
+}
+html+='</div></div>';
+}
+html+='</div></div>';
+}
 grid.innerHTML=html;
 var lblA=document.getElementById('pkg_gridLbl');
-if(lblA){
-var jl=PKG_ST.job==='batt'?'Battery only':PKG_ST.job==='combo'?('Combo @ '+PKG_ST.sol+' kW solar'):'Solar only';
-lblA.textContent='Brand comparison \u2014 '+jl+' \u00b7 target \u2605'+target.toFixed(1);
-}
+if(lblA)lblA.textContent='All-brand comparison \u2014 click section/size pills to filter';
+/* Wire control-bar interactions */
+grid.querySelectorAll('[data-cmp-sect]').forEach(function(el){
+  el.addEventListener('click',function(){
+    var k=el.getAttribute('data-cmp-sect');
+    CMP_SECTIONS[k]=!CMP_SECTIONS[k];
+    renderPackages();
+  });
+});
+grid.querySelectorAll('[data-cmp-sz]').forEach(function(el){
+  el.addEventListener('click',function(){
+    var parts=el.getAttribute('data-cmp-sz').split(':');
+    var sk=parts[0]; var sv=parseFloat(parts[1]);
+    var arr=CMP_SIZES[sk];
+    var idx=arr.indexOf(sv);
+    if(idx>=0)arr.splice(idx,1);
+    else{arr.push(sv);arr.sort(function(a,b){return a-b;});}
+    renderPackages();
+  });
+});
+grid.querySelectorAll('[data-cmp-cs]').forEach(function(el){
+  el.addEventListener('click',function(){
+    CMP_COMBO_SOL=el.getAttribute('data-cmp-cs');
+    renderPackages();
+  });
+});
 return;
 }
 /* ── ADD PANELS — paired Standard / Special cards ── */
@@ -967,7 +1365,7 @@ var html='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax
 for(var i=0;i<addItems.length;i++){
 var d=addItems[i];
 var stdCalc=computePackagePrice('gw','addsolar',null,0,d.k,target,false);
-var spcCalc=computePackagePrice('gw','addsolar',null,0,d.k,target,true);
+var spcCalc=computePackagePrice('gw','addsolar',null,0,d.k,PKG_TARGET_SPC||0.5,true);
 var save=stdCalc.price-spcCalc.price;
 var panels=Math.round(d.k*1000/475);
 function buildStars(r){var s='',n=Math.floor(r);for(var k=0;k<n;k++)s+='\u2605';if(r-n>=0.3)s+='\u2606';return s;}
@@ -975,21 +1373,23 @@ var stdStars=buildStars(stdCalc.rating);
 var spcStars=buildStars(spcCalc.rating);
 var stdCol=stdCalc.rating>=target?'#4ade80':stdCalc.rating>=target-0.5?'#fbbf24':'#f87171';
 var spcCol=spcCalc.rating>=target?'#4ade80':spcCalc.rating>=target-0.5?'#fbbf24':'#f87171';
-html+='<div style="background:#0f172a;border:1px solid #1e293b;border-left:3px solid #fbbf24;border-radius:8px;padding:10px 12px;">'
-+'<div style="font-size:11px;color:#475569;margin-bottom:6px;">'+d.k+' kW \u00b7 '+panels+' panels</div>'
+html+='<div style="background:#0f172a;border:1px solid #1e293b;border-left:3px solid #0d9488;border-radius:8px;padding:10px 12px;">'
++'<div style="font-size:13px;font-weight:700;color:#0d9488;margin-bottom:6px;line-height:1.3;">'+d.k+' kW solar ('+panels+' panel'+(panels===1?'':'s')+')</div>'
 +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">'
 +'<div style="border-right:1px solid #1e293b;padding-right:8px;">'
 +'<div style="font-size:9px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px;">Standard</div>'
-+'<div style="font-size:16px;font-weight:700;color:#fcd34d;">$'+stdCalc.price.toLocaleString()+'</div>'
-+'<div style="font-size:11px;color:'+stdCol+';">'+stdStars+' <span style="color:#475569;">'+stdCalc.rating.toFixed(1)+'</span></div>'
++'<div style="font-size:16px;font-weight:700;color:#5eead4;">$'+stdCalc.price.toLocaleString()+'</div>'
++(PKG_CLIENT_MODE?'':'<div style="font-size:11px;color:'+stdCol+';">'+stdStars+' <span style="color:#475569;">'+stdCalc.rating.toFixed(1)+'</span></div>')
++buildHrsPphLine(stdCalc)
 +'</div>'
 +'<div>'
-+'<div style="font-size:9px;font-weight:700;color:#4ade80;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px;">Special \u00b7 same day</div>'
-+'<div style="font-size:16px;font-weight:700;color:#4ade80;">$'+spcCalc.price.toLocaleString()+'</div>'
-+'<div style="font-size:11px;color:'+spcCol+';">'+spcStars+' <span style="color:#475569;">'+spcCalc.rating.toFixed(1)+'</span></div>'
++'<div style="font-size:9px;font-weight:700;color:#b46dfa;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px;">Special \u00b7 same day</div>'
++'<div style="font-size:16px;font-weight:700;color:#b46dfa;">$'+spcCalc.price.toLocaleString()+'</div>'
++(PKG_CLIENT_MODE?'':'<div style="font-size:11px;color:'+spcCol+';">'+spcStars+' <span style="color:#475569;">'+spcCalc.rating.toFixed(1)+'</span></div>')
++buildHrsPphLine(spcCalc)
 +'</div>'
 +'</div>'
-+'<div style="font-size:10px;color:#94a3b8;margin-top:6px;text-align:right;">Customer saves <strong style="color:#4ade80;">$'+save.toLocaleString()+'</strong></div>'
++'<div style="font-size:10px;color:#94a3b8;margin-top:6px;text-align:right;">Customer saves <strong style="color:#b46dfa;">$'+save.toLocaleString()+'</strong></div>'
 +'</div>';
 }
 html+='</div>';
@@ -1000,8 +1400,8 @@ return;
 }
 /* ── SINGLE BRAND ── */
 var b=PKG_ST.brand==='all'?'gw':PKG_ST.brand;
-var acc=b==='gw'?'#378ADD':b==='sg'?'#7F77DD':'#fbbf24';
-var txt=b==='gw'?'#93c5fd':b==='sg'?'#c4b5fd':'#fcd34d';
+var acc=b==='gw'?'#2563eb':b==='sg'?'#eab308':'#fbbf24';
+var txt=b==='gw'?'#93c5fd':b==='sg'?'#feec79':'#fcd34d';
 var items,unit,lbl_txt;
 if(PKG_ST.job==='batt'){
 items=PKG_DATA.batt[b][PKG_ST.phase];unit='kWh';lbl_txt='Battery capacity \u2014 target \u2605'+target.toFixed(1);
@@ -1018,7 +1418,7 @@ if(PKG_ST.job==='batt'){batKwh=d.k;solKw=0;}
 else if(PKG_ST.job==='combo'){batKwh=d.k;solKw=parseFloat(PKG_ST.sol);}
 else{batKwh=0;solKw=d.k;}
 var calc=computePackagePrice(b,PKG_ST.job,PKG_ST.phase,batKwh,solKw,target);
-var evenP=evenStepPrice(b,PKG_ST.job,PKG_ST.phase,items,i,target);
+var evenP=evenStepPrice(b,PKG_ST.job,PKG_ST.phase,items,i,target,solKw);
 if(evenP!==null)calc=computePackagePrice(b,PKG_ST.job,PKG_ST.phase,batKwh,solKw,target,false,evenP);
 var price=calc.price;
 var rating=calc.rating;
@@ -1026,14 +1426,19 @@ var s='',n=Math.floor(rating);
 for(var j=0;j<n;j++)s+='\u2605';
 if(rating-n>=0.3)s+='\u2606';
 var rCol=rating>=target?'#4ade80':rating>=target-0.5?'#fbbf24':'#f87171';
-var dealHtml=buildDealBlock(b,PKG_ST.job,PKG_ST.phase,items,i,target);
+var dealHtml=buildDealBlock(b,PKG_ST.job,PKG_ST.phase,items,i,target,solKw);
 var specStr=buildSpecLine(b,PKG_ST.job,PKG_ST.phase,batKwh,solKw);
+var hrsHtml=buildHrsPphLine(calc);
+var lockInHtml=(PKG_ST.job==='batt')?buildLockInLine(b,PKG_ST.phase,batKwh,target,PKG_ST.sol):'';
 html+='<div style="background:#0f172a;border:1px solid #1e293b;border-left:3px solid '+acc+';border-radius:8px;padding:10px 12px;">'
-+'<div style="font-size:11px;color:#475569;margin-bottom:3px;">'+d.k+' '+unit+'</div>'
-+'<div style="font-size:18px;font-weight:700;color:'+txt+';">$'+price.toLocaleString()+'</div>'
-+'<div style="font-size:12px;color:'+rCol+';margin-top:4px;">'+s+' <span style="font-size:11px;color:#475569;">'+rating.toFixed(1)+'</span></div>'
-+(specStr?'<div style="font-size:10px;color:#64748b;margin-top:4px;">'+specStr+'</div>':'')
++'<div style="font-size:12px;color:'+acc+';text-transform:uppercase;letter-spacing:0.1em;font-weight:800;margin-bottom:3px;">'+({gw:'GoodWe',sg:'Sigenergy',su:'Sungrow'}[b]||'')+'</div>'
++'<div style="font-size:13px;font-weight:700;color:'+txt+';margin-bottom:4px;line-height:1.3;">'+buildSystemHeadline(PKG_ST.job,batKwh,solKw)+'</div>'
++'<div style="font-size:18px;font-weight:800;color:'+acc+';">$'+price.toLocaleString()+'</div>'
++(PKG_CLIENT_MODE?'':'<div style="font-size:12px;color:'+rCol+';margin-top:4px;">'+s+' <span style="font-size:11px;color:#475569;">'+rating.toFixed(1)+'</span></div>')
++hrsHtml
++specStr
 +dealHtml
++lockInHtml
 +'</div>';
 }
 grid.innerHTML=html;
@@ -1044,7 +1449,29 @@ function wirePackageInputs(){}
 
 /* ── Crew count & rates ── */
 var PLC_CREWS=2;
-var PLC_TRADIE=65, PLC_TA=25, PLC_APPRENTICE=30, PLC_MULTIPLIER=1.3;
+var PLC_TRADIE=65, PLC_TA=30, PLC_APPRENTICE=25, PLC_MULTIPLIER=1.3;
+
+/* Recompute on-cost multiplier from breakdown inputs.
+   Multiplier = (Paid hrs / Productive hrs) × (1 + super% + workcover%)
+   Paid hrs = 38 hrs/wk × 52 wks = 1,976
+   Non-productive = AL_weeks × 38 + sick_days × 7.6 */
+function plcRecalcMult(){
+  var g=function(id){return document.getElementById(id);};
+  var sup=parseFloat((g('plc_oc_super')||{}).value)||0;
+  var wc =parseFloat((g('plc_oc_wc')   ||{}).value)||0;
+  var al =parseFloat((g('plc_oc_al')   ||{}).value)||0;
+  var sk =parseFloat((g('plc_oc_sick') ||{}).value)||0;
+  var paid=38*52;
+  var nonProd=al*38 + sk*7.6;
+  var prod=Math.max(1,paid-nonProd);
+  var leaveFactor=paid/prod;
+  var mult=leaveFactor*(1 + sup/100 + wc/100);
+  PLC_MULTIPLIER=mult;
+  var ph=g('plc_oc_prodHrs');   if(ph)ph.textContent=Math.round(prod).toLocaleString();
+  var lu=g('plc_oc_leaveUp');   if(lu)lu.textContent='+'+((leaveFactor-1)*100).toFixed(1)+'%';
+  var md=g('plc_mult_disp');    if(md)md.textContent=mult.toFixed(3);
+  if(typeof plcUpdate==='function')plcUpdate();
+}
 var PLC_HRS_STRING=1.5;  /* hrs per 3.3kW half-string */
 var PLC_HRS_BATT=0.5;    /* hrs per battery module (plus 1hr base) */
 var PLC_SOL_MAT=80;      /* $/kW solar materials */
@@ -1165,6 +1592,18 @@ for(var _i=0;_i<LOOKUP_DATA.length;_i++){if(LOOKUP_DATA[_i].id===lid)return LOOK
 return null;
 }
 function plcLookup(lid){return lookupById(lid)||{cost:0,notes:'',unit:'',watts:475};}
+/* ── Section visibility toggle ── */
+function toggleSection(key){
+var ids={pnl:'pnlSection',pkg:'pkgSection',lookup:'lookupSection'};
+var btnIds={pnl:'tg_pnl',pkg:'tg_pkg',lookup:'tg_lookup'};
+var sec=document.getElementById(ids[key]);
+var btn=document.getElementById(btnIds[key]);
+if(!sec||!btn)return;
+var nowHidden=sec.style.display==='none';
+sec.style.display=nowHidden?'':'none';
+btn.style.opacity=nowHidden?'1':'0.45';
+btn.style.textDecoration=nowHidden?'none':'line-through';
+}
 function plcSetRating(targetRating){
 /* Reverse-calculate sale price from target rating (net profit in $k) */
 var targetNet=targetRating*1000;
@@ -1203,7 +1642,7 @@ var _battMatOn=g('plc_battMatOn')?g('plc_battMatOn').checked :true;
 var solMat=_solMatOn?Math.round(solKw*PLC_SOL_MAT):0;
 var racking=_rackOn?Math.round(solKw*PLC_RACK):0;
 var battMat=_battMatOn?(s.battery.qty>0?PLC_BATT_MAT:0):0;
-var solarAuto=solKw>0?Math.ceil(Math.round(solKw*1000/475)/7)*PLC_HRS_STRING:0;
+var solarAuto=solKw>0?Math.round(solKw*1000/475)*(PLC_HRS_STRING/7):0;
 var battAuto =s.battery.qty>0?1+s.battery.qty*PLC_HRS_BATT:0;
 var invHrs   =s.inverter.qty>0?1:0;
 var _workHrs =solarAuto+battAuto+invHrs+s.balance.hrs;
@@ -1273,7 +1712,7 @@ var _lbLbl=g('plc_labourOnLbl');if(_lbLbl){_lbLbl.textContent=_labourOn?'ON':'OF
 var _cmLbl=g('plc_comsOnLbl');  if(_cmLbl){_cmLbl.textContent=_comsOn?'ON':'OFF';_cmLbl.style.color=_comsOn?'#fb923c':'#475569';}
 var _smLbl=g('plc_solMatOnLbl');if(_smLbl){_smLbl.textContent=_solMatOn?'ON':'OFF';_smLbl.style.color=_solMatOn?'#fbbf24':'#475569';}
 var _rkLbl=g('plc_rackOnLbl');  if(_rkLbl){_rkLbl.textContent=_rackOn?'ON':'OFF';_rkLbl.style.color=_rackOn?'#94a3b8':'#475569';}
-var _bmLbl=g('plc_battMatOnLbl');if(_bmLbl){_bmLbl.textContent=_battMatOn?'ON':'OFF';_bmLbl.style.color=_battMatOn?'#a78bfa':'#475569';}
+var _bmLbl=g('plc_battMatOnLbl');if(_bmLbl){_bmLbl.textContent=_battMatOn?'ON':'OFF';_bmLbl.style.color=_battMatOn?'#6366f1':'#475569';}
 /* Update min hrs label */
 var _thRow=document.querySelector('[id="plc_totalHrs"]')&&document.querySelector('[id="plc_totalHrs"]').closest('div');
 if(_thRow){var _span=_thRow.querySelector('span:first-child');if(_span)_span.textContent=_minHrsOn?'Total (min 7.6)':'Total hours';}
@@ -1379,6 +1818,14 @@ var gpEl=g('plc_gp'),npEl=g('plc_np'),mEl=g('plc_margin'),rEl=g('plc_rating'),sp
 if(gpEl){gpEl.textContent='$'+fc(gp);gpEl.style.color=gp>=4000?'#4ade80':gp>=1500?'#fbbf24':'#f87171';}
 if(npEl){npEl.textContent='$'+fc(np);npEl.style.color=np>=3000?'#4ade80':np>=1000?'#fbbf24':'#f87171';}
 if(mEl){mEl.textContent='Margin '+(margin*100).toFixed(0)+'%';mEl.style.color=margin>=0.35?'#4ade80':margin>=0.20?'#fbbf24':'#f87171';}
+var pphEl=g('plc_pph');
+if(pphEl){
+  var pph=totalHrs>0?np/totalHrs:0;
+  /* PPH as rating: $/hr divided by 100. So $156/hr = ★1.56, $200/hr = ★2.0 */
+  var pphRating=pph/100;
+  pphEl.textContent='\u2605'+pphRating.toFixed(1);
+  pphEl.style.color=pphRating>=2?'#4ade80':pphRating>=1?'#fbbf24':pphRating>=0.5?'#94a3b8':'#64748b';
+}
 var rat=Math.round(np/100)/10;
 if(rEl){rEl.textContent=rat.toFixed(1);rEl.style.color=rat>=4.5?'#4ade80':rat>=2.5?'#fbbf24':'#f87171';}
 /* Sync rating input to actual rating (when sale price is changed manually) */
@@ -1403,16 +1850,16 @@ if(_sd){
   if(s.inverter.qty>0)  _sdRows.push(['Inverter',(_ilu2&&_ilu2.name||'—'),'#93c5fd']);
   if(s.panel.qty>0)     _sdRows.push(['Solar',s.panel.qty+' panels · '+_solKw2.toFixed(1)+'kW','#fbbf24']);
   if(s.panel.qty>0&&_plu2) _sdRows.push(['Panel',_plu2.name,'#fbbf24']);
-  if(s.battery.qty>0)   _sdRows.push(['Battery',s.battery.qty+' × '+(_blu2&&_blu2.name||'—'),'#a78bfa']);
-  if(s.battery.qty>0)   _sdRows.push(['Battery total',_battKwh2.toFixed(1)+' kWh','#a78bfa']);
+  if(s.battery.qty>0)   _sdRows.push(['Battery',s.battery.qty+' × '+(_blu2&&_blu2.name||'—'),'#6366f1']);
+  if(s.battery.qty>0)   _sdRows.push(['Battery total',_battKwh2.toFixed(1)+' kWh','#6366f1']);
   if(s.gateway.qty>0&&s.gateway.lid!=='g0') _sdRows.push(['Gateway/Kit',(_glu2&&_glu2.name||'—'),'#34d399']);
   if(s.mount.qty>0)     _sdRows.push(['Mount kit',s.mount.qty+' × '+(_mlu2&&_mlu2.name||'—'),'#94a3b8']);
   if(s.ev.qty>0)        _sdRows.push(['EV charger',s.ev.qty+' unit(s)','#86efac']);
   if(s.switchboard.qty>0) _sdRows.push(['SB upgrade','Yes','#fde68a']);
   if(s.rcboSP.qty>0)    _sdRows.push(['RCBOs SP',s.rcboSP.qty,'#fb923c']);
   if(s.rcboTP.qty>0)    _sdRows.push(['RCBOs TP',s.rcboTP.qty,'#fb923c']);
-  if((s.dcCable&&s.dcCable.qty>0)) _sdRows.push(['DC cable',s.dcCable.qty+'m','#c4b5fd']);
-  if((s.acCable&&s.acCable.qty>0)) _sdRows.push(['AC cable',s.acCable.qty+'m','#a5b4fc']);
+  if((s.dcCable&&s.dcCable.qty>0)) _sdRows.push(['DC cable',s.dcCable.qty+'m','#6366f1']);
+  if((s.acCable&&s.acCable.qty>0)) _sdRows.push(['AC cable',s.acCable.qty+'m','#6366f1']);
   if((s.trench&&s.trench.qty>0))   _sdRows.push(['Trenching',s.trench.qty+'m','#6ee7b7']);
   if(s.inverter.qty>0)  _sdRows.push(['Phase',_isTP?'Three phase (TP)':_isSP?'Single phase (SP)':'Unknown','#64748b']);
   _sdRows.push(['Job type',_jType,'#64748b']);
@@ -1461,10 +1908,102 @@ if(_flg){
   if(_isTP&&s.gateway.qty>0&&s.gateway.lid==='g1') _flags.push(['⚠ TP inverter but SP gateway selected','#fbbf24']);
   /* SP inverter, TP gateway */
   if(_isSP&&s.gateway.qty>0&&s.gateway.lid==='g2') _flags.push(['⚠ SP inverter but TP gateway selected','#fbbf24']);
+  /* Battery-count vs inverter-capacity limits per stack */
+  if(s.battery.qty>0&&s.inverter.qty>0){
+    var _bq=s.battery.qty;
+    var _maxStack=null;
+    var _modName='';
+    if(_batIsSung){
+      var _isSBH=_batN.indexOf('SBH')>=0||_batN.indexOf('5kWh')>=0;
+      var _isSBR=_batN.indexOf('SBR')>=0||_batN.indexOf('3.2')>=0;
+      _modName=_isSBH?'SBH':(_isSBR?'SBR':'Sungrow');
+      if(_invN.indexOf('SH5.0RS')>=0||_invN.indexOf('SH6.0RS')>=0||_invN.indexOf('SH8.0RS')>=0||_invN.indexOf('SH10RS')>=0){
+        _maxStack=_isSBH?6:7;  /* SP hybrid */
+      } else if(_invN.indexOf('SH5.0RT')>=0||_invN.indexOf('SH10RT')>=0){
+        _maxStack=_isSBH?7:8;  /* small 3-phase RT */
+      } else if(_invN.indexOf('SH15T')>=0||_invN.indexOf('SH20T')>=0||_invN.indexOf('SH25T')>=0){
+        _maxStack=8;  /* large 3-phase T */
+      }
+    } else if(_batIsLynx){
+      _modName='Lynx';
+      _maxStack=6;  /* GoodWe Lynx D max 6 modules per stack */
+    } else if(_batIsSigen){
+      _modName='Sigen BAT';
+      _maxStack=8;  /* SigenStor max 8 modules per stack */
+    }
+    if(_maxStack&&_bq>_maxStack){
+      _flags.push(['⚠ '+_bq+' '+_modName+' modules exceeds inverter stack limit ('+_maxStack+' max) — needs parallel stacks','#f87171']);
+    }
+  }
+  /* Solar kW vs inverter max PV input limit */
+  if(s.panel.qty>0&&s.inverter.qty>0&&solKw>0){
+    var _maxPv=0, _invLabel='';
+    /* Sigenergy SP */
+    if(_invN.indexOf('3.0 SP')>=0){_maxPv=6;_invLabel='Sigen 3.0 SP';}
+    else if(_invN.indexOf('5.0 SP')>=0){_maxPv=10;_invLabel='Sigen 5.0 SP';}
+    else if(_invN.indexOf('6.0 SP')>=0){_maxPv=12;_invLabel='Sigen 6.0 SP';}
+    else if(_invN.indexOf('8.0 SP')>=0){_maxPv=16;_invLabel='Sigen 8.0 SP';}
+    else if(_invN.indexOf('10.0 SP')>=0){_maxPv=20;_invLabel='Sigen 10.0 SP';}
+    else if(_invN.indexOf('12.0 SP')>=0){_maxPv=24;_invLabel='Sigen 12.0 SP';}
+    /* Sigenergy TP */
+    else if(_invN.indexOf('5.0 TP')>=0){_maxPv=8;_invLabel='Sigen 5.0 TP';}
+    else if(_invN.indexOf('10.0 TP')>=0){_maxPv=16;_invLabel='Sigen 10.0 TP';}
+    else if(_invN.indexOf('15.0 TP')>=0){_maxPv=24;_invLabel='Sigen 15.0 TP';}
+    else if(_invN.indexOf('20.0 TP')>=0){_maxPv=32;_invLabel='Sigen 20.0 TP';}
+    else if(_invN.indexOf('25.0 TP')>=0){_maxPv=40;_invLabel='Sigen 25.0 TP';}
+    else if(_invN.indexOf('30.0 TP')>=0){_maxPv=48;_invLabel='Sigen 30.0 TP';}
+    /* GoodWe ETA — 2:1 DC oversize */
+    else if(_invN.indexOf('10.0-ETA')>=0){_maxPv=20;_invLabel='GW10-ETA';}
+    else if(_invN.indexOf('15.0-ETA')>=0){_maxPv=30;_invLabel='GW15-ETA';}
+    else if(_invN.indexOf('20.0-ETA')>=0){_maxPv=40;_invLabel='GW20-ETA';}
+    else if(_invN.indexOf('25.0-ETA')>=0){_maxPv=50;_invLabel='GW25-ETA';}
+    else if(_invN.indexOf('30.0-ETA')>=0){_maxPv=60;_invLabel='GW30-ETA';}
+    else if(_invN.indexOf('9.9kW')>=0){_maxPv=20;_invLabel='GW 9.9kW SP';}
+    /* Sungrow SH-RS */
+    else if(_invN.indexOf('SH5.0RS')>=0){_maxPv=10;_invLabel='SH5.0RS';}
+    else if(_invN.indexOf('SH6.0RS')>=0){_maxPv=10.7;_invLabel='SH6.0RS';}
+    else if(_invN.indexOf('SH8.0RS')>=0){_maxPv=12;_invLabel='SH8.0RS';}
+    else if(_invN.indexOf('SH10RS')>=0){_maxPv=13;_invLabel='SH10RS';}
+    /* Sungrow SH-RT */
+    else if(_invN.indexOf('SH5.0RT')>=0){_maxPv=12.5;_invLabel='SH5.0RT';}
+    else if(_invN.indexOf('SH10RT')>=0){_maxPv=20.6;_invLabel='SH10RT';}
+    /* Sungrow SH15-25T */
+    else if(_invN.indexOf('SH15T')>=0){_maxPv=30;_invLabel='SH15T';}
+    else if(_invN.indexOf('SH20T')>=0){_maxPv=40;_invLabel='SH20T';}
+    else if(_invN.indexOf('SH25T')>=0){_maxPv=50;_invLabel='SH25T';}
+    if(_maxPv>0&&solKw>_maxPv){
+      _flags.push(['⚠ '+solKw.toFixed(2)+' kW solar exceeds '+_invLabel+' max PV input ('+_maxPv+' kW) — oversize risk','#f87171']);
+    } else if(_maxPv>0&&solKw>_maxPv*0.95){
+      _flags.push(['ⓘ '+solKw.toFixed(2)+' kW solar near '+_invLabel+' max PV input ('+_maxPv+' kW)','#fbbf24']);
+    }
+  }
+  /* EV charger brand & phase compatibility */
+  if(s.ev.qty>0&&s.ev.lid!=='ev0'){
+    var _evlu=plcLookup(s.ev.lid);
+    var _evN=(_evlu&&_evlu.name)||'';
+    var _evIsAccess=(_evN.indexOf('Cable')>=0||_evN.indexOf('RFID')>=0);
+    if(!_evIsAccess){
+      var _evIsGoodwe=_evN.indexOf('GoodWe')>=0;
+      var _evIsSigen =(_evN.indexOf('Sigen')>=0||_evN.indexOf('EVDC')>=0||_evN.indexOf('EVAC')>=0);
+      var _evIsDC    =(_evN.indexOf('EVDC')>=0);
+      var _evIsSP    =(_evN.indexOf('EVAC 7')>=0||_evN.indexOf('7kW SP')>=0);
+      var _evIsTP    =(_evN.indexOf('EVAC 11')>=0||_evN.indexOf('EVAC 22')>=0||_evN.indexOf('22kW TP')>=0);
+      /* Brand mismatch with inverter */
+      if(s.inverter.qty>0){
+        if(_evIsGoodwe&&!_invIsGoodwe) _flags.push(['⚠ GoodWe EV charger needs GoodWe inverter — smart features will not work','#f87171']);
+        if(_evIsSigen&&!_invIsSigen)   _flags.push(['⚠ Sigenergy EV charger needs Sigenergy inverter — smart features will not work','#f87171']);
+      }
+      /* Phase mismatch (AC chargers only; DC chargers are bus-coupled) */
+      if(s.inverter.qty>0&&!_evIsDC){
+        if(_evIsSP&&_isTP) _flags.push(['⚠ '+_evN+' is single phase but inverter is three phase','#f87171']);
+        if(_evIsTP&&_isSP) _flags.push(['⚠ '+_evN+' is three phase but inverter is single phase','#f87171']);
+      }
+    }
+  }
   /* Multi-day job flag */
   if(totalHrs>PLC_ANCHOR){
     var _days=Math.ceil(totalHrs/PLC_ANCHOR);
-    _flags.push([_days===2?'📅 2-day job — overheads, labour & wages already adjusted':'📅 Multi-day job ('+_days+' days) — overheads, labour & wages already adjusted','#a5b4fc']);
+    _flags.push([_days===2?'📅 2-day job — overheads, labour & wages already adjusted':'📅 Multi-day job ('+_days+' days) — overheads, labour & wages already adjusted','#6366f1']);
   }
   if(_flags.length===0){
     _flg.innerHTML='<div style="color:#4ade80;">✓ No issues</div>';
@@ -1502,7 +2041,7 @@ var el=g('lookupBody');if(!el)return;
 var cats=[
 ['Solar Panels',     'panel',       '#fbbf24'],
 ['Inverters',        'inverter',    '#93c5fd'],
-['Battery Modules',  'battery',     '#a78bfa'],
+['Battery Modules',  'battery',     '#6366f1'],
 ['Gateway',          'gateway',     '#34d399'],
 ['Add Labour Hours', 'labour_add',  '#fb923c'],
 ['Switchboard',      'switchboard', '#f472b6'],
@@ -1652,13 +2191,14 @@ window.addEventListener('DOMContentLoaded', function(){
   plcInitDropdowns();
   plcAnchorBtns();
   renderLookup();
+  plcRecalcMult();
   plcUpdate();
 });
 </script>
 <script>
 (function(){
-var ON_GW={border:'2px solid #378ADD',background:'#1e3a5f',color:'#93c5fd',fontWeight:'600'};
-var ON_SG={border:'2px solid #7F77DD',background:'#1e1b4b',color:'#c4b5fd',fontWeight:'600'};
+var ON_GW={border:'2px solid #2563eb',background:'#1e3a5f',color:'#93c5fd',fontWeight:'600'};
+var ON_SG={border:'2px solid #6366f1',background:'#1e1b4b',color:'#6366f1',fontWeight:'600'};
 var ON_N={border:'2px solid #64748b',background:'#1e293b',color:'#e2e8f0',fontWeight:'600'};
 var OFF={border:'1px solid #334155',background:'#1e293b',color:'#64748b',fontWeight:'400'};
 function applyStyle(btn,sty){
@@ -1707,6 +2247,7 @@ wire('pkg_j_batt',function(){
   clearJobBtns();
   applyStyle(document.getElementById('pkg_j_batt'),ON_N);
   document.getElementById('pkg_solWrap').style.display='none';
+  if(typeof _refreshRoundBtns==='function')_refreshRoundBtns();
   renderPackages();
 });
 wire('pkg_j_combo',function(){
@@ -1714,6 +2255,7 @@ wire('pkg_j_combo',function(){
   clearJobBtns();
   applyStyle(document.getElementById('pkg_j_combo'),ON_N);
   document.getElementById('pkg_solWrap').style.display='block';
+  if(typeof _refreshRoundBtns==='function')_refreshRoundBtns();
   renderPackages();
 });
 wire('pkg_j_solar',function(){
@@ -1721,15 +2263,17 @@ wire('pkg_j_solar',function(){
   clearJobBtns();
   applyStyle(document.getElementById('pkg_j_solar'),ON_N);
   document.getElementById('pkg_solWrap').style.display='none';
+  if(typeof _refreshRoundBtns==='function')_refreshRoundBtns();
   renderPackages();
 });
 wire('pkg_j_addsolar',function(){
   PKG_ST.job='addsolar';
   clearJobBtns();
   applyStyle(document.getElementById('pkg_j_addsolar'),ON_N);
+  if(typeof _refreshRoundBtns==='function')_refreshRoundBtns();
   renderPackages();
 });
-var solMap={'pkg_s_66':'6.6','pkg_s_133':'13.3','pkg_s_198':'19.8'};
+var solMap={'pkg_s_33':'3.3','pkg_s_66':'6.6','pkg_s_99':'9.9','pkg_s_133':'13.3','pkg_s_165':'16.5','pkg_s_198':'19.8','pkg_s_231':'23.1','pkg_s_264':'26.4'};
 Object.keys(solMap).forEach(function(id){
   wire(id,function(){
     PKG_ST.sol=solMap[id];
@@ -1774,9 +2318,9 @@ wire('pkg_evenstep_btn',function(){
   if(el){
     if(PKG_EVENSTEP){
       el.textContent='ON';
-      el.style.border='2px solid #a78bfa';
+      el.style.border='2px solid #6366f1';
       el.style.background='#1e1b4b';
-      el.style.color='#a78bfa';
+      el.style.color='#6366f1';
     }else{
       el.textContent='OFF';
       el.style.border='1px solid #334155';
@@ -1810,31 +2354,66 @@ if(bndStepEl){
     renderPackages();
   });
 }
-/* Round-to selector */
+/* Round-to selector — per-job-type (each job remembers its own round) */
+function _refreshRoundBtns(){
+  var current=PKG_ROUND_BY_JOB[PKG_ST.job]||500;
+  ['100','250','500'].forEach(function(v){
+    var el=document.getElementById('pkg_r_'+v);
+    if(!el)return;
+    applyStyle(el, parseInt(v,10)===current?ON_N:OFF);
+  });
+}
+wire('pkg_r_100',function(){
+  PKG_ROUND_BY_JOB[PKG_ST.job]=100;
+  _refreshRoundBtns();
+  renderPackages();
+});
 wire('pkg_r_250',function(){
-  PKG_ROUND=250;
-  applyStyle(document.getElementById('pkg_r_250'),ON_N);
-  applyStyle(document.getElementById('pkg_r_500'),OFF);
+  PKG_ROUND_BY_JOB[PKG_ST.job]=250;
+  _refreshRoundBtns();
   renderPackages();
 });
 wire('pkg_r_500',function(){
-  PKG_ROUND=500;
-  applyStyle(document.getElementById('pkg_r_500'),ON_N);
-  applyStyle(document.getElementById('pkg_r_250'),OFF);
+  PKG_ROUND_BY_JOB[PKG_ST.job]=500;
+  _refreshRoundBtns();
   renderPackages();
 });
-/* Sign-today special toggle */
-wire('pkg_special_btn',function(){
-  PKG_SPECIAL=!PKG_SPECIAL;
-  var el=document.getElementById('pkg_special_btn');
+/* Sign-today special toggles — Stay & Upgrade independent */
+function _setSpecialBtnStyle(btnId, on, label){
+  var el=document.getElementById(btnId);
+  if(!el)return;
+  el.textContent=label+(on?' ON':' OFF');
+  if(on){
+    el.style.border='2px solid #4ade80';
+    el.style.background='#1a3a2a';
+    el.style.color='#4ade80';
+  }else{
+    el.style.border='1px solid #334155';
+    el.style.background='#1e293b';
+    el.style.color='#64748b';
+  }
+}
+wire('pkg_special_stay_btn',function(){
+  PKG_SPECIAL_STAY_ON=!PKG_SPECIAL_STAY_ON;
+  _setSpecialBtnStyle('pkg_special_stay_btn',PKG_SPECIAL_STAY_ON,'Stay');
+  renderPackages();
+});
+wire('pkg_special_up_btn',function(){
+  PKG_SPECIAL_UP_ON=!PKG_SPECIAL_UP_ON;
+  _setSpecialBtnStyle('pkg_special_up_btn',PKG_SPECIAL_UP_ON,'Upgrade');
+  renderPackages();
+});
+wire('pkg_lockin_btn',function(){
+  PKG_LOCKIN_ON=!PKG_LOCKIN_ON;
+  var el=document.getElementById('pkg_lockin_btn');
   if(el){
-    if(PKG_SPECIAL){
-      el.textContent='ON';
-      el.style.border='2px solid #4ade80';
-      el.style.background='#1a3a2a';
-      el.style.color='#4ade80';
+    if(PKG_LOCKIN_ON){
+      el.textContent='Show ON';
+      el.style.border='2px solid #b46dfa';
+      el.style.background='#2e1065';
+      el.style.color='#b46dfa';
     }else{
-      el.textContent='OFF';
+      el.textContent='Show OFF';
       el.style.border='1px solid #334155';
       el.style.background='#1e293b';
       el.style.color='#64748b';
@@ -1842,6 +2421,52 @@ wire('pkg_special_btn',function(){
   }
   renderPackages();
 });
+var lockInTargetEl=document.getElementById('pkg_lockin_target');
+if(lockInTargetEl){
+  lockInTargetEl.addEventListener('input',function(){
+    PKG_LOCKIN_TARGET=Math.max(0,parseFloat(this.value)||6.0);
+    renderPackages();
+  });
+}
+var floorStdEl=document.getElementById('pkg_floor_std');
+if(floorStdEl){
+  floorStdEl.addEventListener('input',function(){
+    PKG_FLOOR_STD=Math.max(0,parseFloat(this.value)||7.6);
+    renderPackages();
+  });
+}
+var floorSpcEl=document.getElementById('pkg_floor_spc');
+if(floorSpcEl){
+  floorSpcEl.addEventListener('input',function(){
+    PKG_FLOOR_SPC=Math.max(0,parseFloat(this.value)||1.0);
+    renderPackages();
+  });
+}
+var targetSpcEl=document.getElementById('pkg_target_spc');
+if(targetSpcEl){
+  targetSpcEl.addEventListener('input',function(){
+    PKG_TARGET_SPC=Math.max(0,parseFloat(this.value)||0.5);
+    renderPackages();
+  });
+}
+var clientBtn=document.getElementById('pkg_client_btn');
+if(clientBtn){
+  clientBtn.addEventListener('click',function(){
+    PKG_CLIENT_MODE=!PKG_CLIENT_MODE;
+    if(PKG_CLIENT_MODE){
+      clientBtn.textContent='Client Mode ON';
+      clientBtn.style.border='2px solid #4ade80';
+      clientBtn.style.background='#1a3a2a';
+      clientBtn.style.color='#4ade80';
+    } else {
+      clientBtn.textContent='Show All';
+      clientBtn.style.border='1px solid #334155';
+      clientBtn.style.background='#1e293b';
+      clientBtn.style.color='#64748b';
+    }
+    renderPackages();
+  });
+}
 /* Sign-today discount inputs */
 var stayEl=document.getElementById('pkg_special_stay');
 if(stayEl){
