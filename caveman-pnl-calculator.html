@@ -3,6 +3,24 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<style>
+@media (max-width:700px){
+  /* Main calc grid: stack instead of 1fr 320px */
+  body > div[style*="grid-template-columns:1fr 320px"]{
+    grid-template-columns:1fr !important;
+  }
+  /* Tab buttons: 2 columns instead of 4 */
+  body > div[style*="grid-template-columns:repeat(4,1fr)"]{
+    grid-template-columns:repeat(2,1fr) !important;
+  }
+  /* Tighten table padding on narrow screens */
+  table th, table td { padding:5px 4px !important; font-size:0.78em !important; }
+  /* Reduce side padding on body */
+  body { padding:10px !important; }
+  /* Smaller heading on mobile */
+  h1 { font-size:1.4em !important; }
+}
+</style>
 <meta name="theme-color" content="#0a0f1e">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -578,12 +596,17 @@ h1{font-size:1.3em;font-weight:800;color:#e2e8f0;margin-bottom:6px;}
       <div style="display:flex;gap:6px;align-items:center;">
         <button id="pkg_evenstep_btn" style="padding:5px 12px;border-radius:6px;border:2px solid #a78bfa;background:#1e1b4b;color:#a78bfa;cursor:pointer;font-size:12px;font-weight:600;">ON</button>
         <div style="display:flex;flex-direction:column;align-items:center;">
-          <div style="font-size:9px;color:#475569;letter-spacing:.04em;">&le;24 kWh +$</div>
+          <div style="font-size:9px;color:#475569;letter-spacing:.04em;">Boundary kWh</div>
+          <input id="pkg_step_boundary" type="number" value="24" step="1" min="0"
+            style="width:54px;text-align:center;background:#1e293b;color:#a78bfa;border:1px solid #334155;border-radius:5px;padding:3px 4px;font-size:12px;font-weight:700;outline:none;">
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;">
+          <div style="font-size:9px;color:#475569;letter-spacing:.04em;" id="pkg_step_low_lbl">&le;24 kWh +$</div>
           <input id="pkg_step_low" type="number" value="1500" step="250" min="0"
             style="width:64px;text-align:center;background:#1e293b;color:#a78bfa;border:1px solid #334155;border-radius:5px;padding:3px 4px;font-size:12px;font-weight:700;outline:none;">
         </div>
         <div style="display:flex;flex-direction:column;align-items:center;">
-          <div style="font-size:9px;color:#475569;letter-spacing:.04em;">&gt;24 kWh +$</div>
+          <div style="font-size:9px;color:#475569;letter-spacing:.04em;" id="pkg_step_high_lbl">&gt;24 kWh +$</div>
           <input id="pkg_step_high" type="number" value="2500" step="250" min="0"
             style="width:64px;text-align:center;background:#1e293b;color:#a78bfa;border:1px solid #334155;border-radius:5px;padding:3px 4px;font-size:12px;font-weight:700;outline:none;">
         </div>
@@ -678,8 +701,15 @@ var brand=PKG_ST.brand==='all'?'gw':PKG_ST.brand;
 var steps=PKG_STEPS[brand]||PKG_STEPS.gw;
 var lowEl=document.getElementById('pkg_step_low');
 var highEl=document.getElementById('pkg_step_high');
+var bndEl=document.getElementById('pkg_step_boundary');
 if(lowEl&&lowEl!==document.activeElement)lowEl.value=steps.low;
 if(highEl&&highEl!==document.activeElement)highEl.value=steps.high;
+if(bndEl&&bndEl!==document.activeElement)bndEl.value=PKG_STEP_BOUNDARY;
+/* Update the ≤/> labels to reflect current boundary */
+var lowLbl=document.getElementById('pkg_step_low_lbl');
+var highLbl=document.getElementById('pkg_step_high_lbl');
+if(lowLbl)lowLbl.innerHTML='\u2264'+PKG_STEP_BOUNDARY+' kWh +$';
+if(highLbl)highLbl.innerHTML='&gt;'+PKG_STEP_BOUNDARY+' kWh +$';
 /* Tint border to brand colour as a hint about which brand is being edited */
 var brandCol=brand==='gw'?'#378ADD':brand==='sg'?'#7F77DD':'#fbbf24';
 if(lowEl)lowEl.style.borderColor=brandCol;
@@ -1769,6 +1799,14 @@ if(stepHighEl){
   stepHighEl.addEventListener('input',function(){
     var brand=PKG_ST.brand==='all'?'gw':PKG_ST.brand;
     PKG_STEPS[brand].high=Math.max(0,parseFloat(this.value)||0);
+    renderPackages();
+  });
+}
+var bndStepEl=document.getElementById('pkg_step_boundary');
+if(bndStepEl){
+  bndStepEl.addEventListener('input',function(){
+    var v=parseFloat(this.value);
+    if(!isNaN(v)&&v>=0)PKG_STEP_BOUNDARY=v;
     renderPackages();
   });
 }
