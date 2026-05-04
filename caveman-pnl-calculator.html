@@ -53,12 +53,16 @@ h1{font-size:1.3em;font-weight:800;color:#e2e8f0;margin-bottom:6px;}
   <button id="tg_pkg" onclick="toggleSection('pkg')" style="padding:6px 14px;border-radius:6px;border:2px solid #0d9488;background:#042f2e;color:#5eead4;cursor:pointer;font-size:0.82em;font-weight:700;">📦 Price Map</button>
   <button id="tg_pnl" onclick="toggleSection('pnl')" style="padding:6px 14px;border-radius:6px;border:2px solid #6366f1;background:#1e1b4b;color:#a5b4fc;cursor:pointer;font-size:0.82em;font-weight:700;">📊 P&amp;L Calc</button>
   <button id="tg_lookup" onclick="toggleSection('lookup')" style="padding:6px 14px;border-radius:6px;border:2px solid #f59e0b;background:#451a03;color:#fcd34d;cursor:pointer;font-size:0.82em;font-weight:700;opacity:0.45;text-decoration:line-through;">💲 Price Table</button>
+  <button id="tg_help" onclick="toggleSection('help')" style="padding:6px 14px;border-radius:6px;border:2px solid #ec4899;background:#500724;color:#f9a8d4;cursor:pointer;font-size:0.82em;font-weight:700;opacity:0.45;text-decoration:line-through;">❓ Quick Start</button>
 </div>
 
 <!-- PACKAGES MIND MAP -->
 <div class="card" id="pkgSection" style="border:2px solid #334155;background:#0f172a;margin-top:16px;">
   <h2 style="color:#e2e8f0;">&#128230; Package Price Map <span style="font-size:0.5em;color:#475569;margin-left:8px;">GoodWe &amp; Sigenergy &middot; crew labour model &middot; 2026</span></h2>
-  <div style="display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 6px;">
+  <button id="pkg_tools_toggle" onclick="togglePkgGroup('tools')" style="display:flex;align-items:center;gap:8px;width:100%;background:#1e293b;border:1px solid #334155;border-radius:8px;padding:8px 12px;cursor:pointer;color:#5eead4;font-weight:600;font-size:12px;margin:10px 0 6px;">
+    <span>&#9889;</span><span>Solar &amp; Battery Tools</span><span id="pkg_tools_chev" style="margin-left:auto;font-size:14px;color:#5eead4;">&#9650;</span>
+  </button>
+  <div id="pkg_toolsWrap" style="display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 6px;">
     <div>
       <div style="font-size:10px;color:#475569;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;">Brand</div>
       <div style="display:flex;gap:6px;" id="pkg_brandRow">
@@ -109,6 +113,11 @@ h1{font-size:1.3em;font-weight:800;color:#e2e8f0;margin-bottom:6px;}
         <button id="pkg_target_up" style="width:24px;height:26px;background:#334155;color:#e2e8f0;border:none;border-radius:5px;font-size:12px;cursor:pointer;font-weight:700;line-height:1;">&#9650;</button>
       </div>
     </div>
+  </div>
+  <button id="pkg_adv_toggle" onclick="togglePkgGroup('adv')" style="display:flex;align-items:center;gap:8px;width:100%;background:#1e293b;border:1px solid #334155;border-radius:8px;padding:8px 12px;cursor:pointer;color:#94a3b8;font-weight:600;font-size:12px;margin:6px 0;">
+    <span>&#9881;</span><span>Advanced Settings</span><span id="pkg_adv_chev" style="margin-left:auto;font-size:14px;color:#64748b;">&#9650;</span>
+  </button>
+  <div id="pkg_advWrap" style="display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 6px;">
     <div>
       <div style="font-size:10px;color:#475569;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;">Round to</div>
       <div style="display:flex;gap:6px;" id="pkg_roundRow">
@@ -740,6 +749,309 @@ h1{font-size:1.3em;font-weight:800;color:#e2e8f0;margin-bottom:6px;}
     <strong style="color:#94a3b8;">How prices flow:</strong> Cost Price = what we pay → used in P&L Calculator for profit calculations.
     Sell Price = RRP or customer quote basis. Changes here update live in the P&L Calculator.
   </div>
+</div>
+
+<!-- QUICK START HELP -->
+<div class="card" id="helpSection" style="border:2px solid #ec4899;background:#0f172a;margin-top:16px;display:none;color:#e2e8f0;">
+  <h2 style="color:#f9a8d4;">❓ Quick Start Guide <span style="font-size:0.5em;color:#475569;margin-left:8px;font-weight:500;">Caveman Energy · Sales Tool</span></h2>
+
+  <div style="background:#1e1b4b;border-left:4px solid #ec4899;border-radius:6px;padding:12px 14px;margin:10px 0 16px;font-size:0.86em;line-height:1.55;color:#cbd5e1;">
+    <strong style="color:#f9a8d4;">What this is:</strong> A self-contained sales tool that does three jobs — shows live package prices to discuss with customers, runs a P&amp;L calc to spot-check job profitability, and stores all the underlying material costs in one editable table. Pin to phone, tablet or desktop.
+  </div>
+
+  <h3 style="color:#5eead4;font-size:1.0em;margin:16px 0 8px;border-bottom:1px solid #334155;padding-bottom:6px;">1. Top Toggle Bar</h3>
+  <p style="font-size:0.85em;color:#94a3b8;margin:6px 0;line-height:1.5;">Four buttons at the top control which sections show:</p>
+  <ul style="font-size:0.85em;color:#cbd5e1;line-height:1.7;padding-left:20px;margin:6px 0;">
+    <li><strong style="color:#5eead4;">📦 Price Map</strong> — customer-facing package grid (default ON)</li>
+    <li><strong style="color:#a5b4fc;">📊 P&amp;L Calc</strong> — internal job profitability (default ON)</li>
+    <li><strong style="color:#fcd34d;">💲 Price Table</strong> — editable cost &amp; sell prices (default OFF)</li>
+    <li><strong style="color:#f9a8d4;">❓ Quick Start</strong> — this guide (default OFF)</li>
+  </ul>
+  <p style="font-size:0.82em;color:#64748b;margin:6px 0;line-height:1.5;font-style:italic;">A button greyed/struck-through means hidden. Click to bring back.</p>
+
+  <h3 style="color:#5eead4;font-size:1.0em;margin:16px 0 8px;border-bottom:1px solid #334155;padding-bottom:6px;">2. Package Price Map — Daily Driver</h3>
+  <p style="font-size:0.85em;color:#94a3b8;margin:6px 0;line-height:1.5;">Generates a grid of priced packages with crew labour, materials, STC rebate, and rounding baked in. Two control groups — tap to expand on mobile.</p>
+
+  <p style="font-size:0.85em;color:#cbd5e1;margin:10px 0 4px;"><strong style="color:#5eead4;">⚡ Solar &amp; Battery Tools</strong> (everyday — what you flip with customers):</p>
+  <table style="width:100%;border-collapse:collapse;font-size:0.8em;margin-bottom:10px;">
+    <tr style="background:#1e293b;color:#94a3b8;">
+      <th style="text-align:left;padding:5px 8px;">Control</th>
+      <th style="text-align:left;padding:5px 8px;">What it does</th>
+    </tr>
+    <tr style="border-top:1px solid #334155;"><td style="padding:5px 8px;color:#5eead4;font-weight:600;">Brand</td><td style="padding:5px 8px;color:#cbd5e1;">GoodWe / Sigenergy / Sungrow / All · Compare</td></tr>
+    <tr style="border-top:1px solid #334155;"><td style="padding:5px 8px;color:#5eead4;font-weight:600;">Job type</td><td style="padding:5px 8px;color:#cbd5e1;">Battery only / Solar+battery / Solar only / Add panels</td></tr>
+    <tr style="border-top:1px solid #334155;"><td style="padding:5px 8px;color:#5eead4;font-weight:600;">Solar size</td><td style="padding:5px 8px;color:#cbd5e1;">Only shows for solar/combo/addsolar. 8 standard sizes + small-job sizes</td></tr>
+    <tr style="border-top:1px solid #334155;"><td style="padding:5px 8px;color:#5eead4;font-weight:600;">Inverter</td><td style="padding:5px 8px;color:#cbd5e1;">SP 9.9 / TP 15 / 20 / 25 / 30 kW</td></tr>
+    <tr style="border-top:1px solid #334155;"><td style="padding:5px 8px;color:#5eead4;font-weight:600;">Target ★</td><td style="padding:5px 8px;color:#cbd5e1;">Profit rating each card aims for. ★4.5 = $450/hr per crew hour</td></tr>
+  </table>
+
+  <p style="font-size:0.85em;color:#cbd5e1;margin:10px 0 4px;"><strong style="color:#94a3b8;">⚙ Advanced Settings</strong> (set-once tuning):</p>
+  <table style="width:100%;border-collapse:collapse;font-size:0.8em;margin-bottom:10px;">
+    <tr style="background:#1e293b;color:#94a3b8;">
+      <th style="text-align:left;padding:5px 8px;">Control</th>
+      <th style="text-align:left;padding:5px 8px;">What it does</th>
+    </tr>
+    <tr style="border-top:1px solid #334155;"><td style="padding:5px 8px;color:#94a3b8;font-weight:600;">Round to</td><td style="padding:5px 8px;color:#cbd5e1;">$100 / $250 / $500 final card price granularity</td></tr>
+    <tr style="border-top:1px solid #334155;"><td style="padding:5px 8px;color:#94a3b8;font-weight:600;">Even steps</td><td style="padding:5px 8px;color:#cbd5e1;">Forces consistent +$1500/+$2500 step pricing past the boundary kWh</td></tr>
+    <tr style="border-top:1px solid #334155;"><td style="padding:5px 8px;color:#94a3b8;font-weight:600;">Early Bird</td><td style="padding:5px 8px;color:#cbd5e1;">Stay (lock today's price) + Upgrade (sign for upgrade) — $500 off each</td></tr>
+    <tr style="border-top:1px solid #334155;"><td style="padding:5px 8px;color:#94a3b8;font-weight:600;">3-mo Lock-in</td><td style="padding:5px 8px;color:#cbd5e1;">Lavender note on battery cards — solar top-up window. GW + Sigen only</td></tr>
+    <tr style="border-top:1px solid #334155;"><td style="padding:5px 8px;color:#94a3b8;font-weight:600;">Client view</td><td style="padding:5px 8px;color:#cbd5e1;">Hides ★, hours, PPH for clean customer screenshots</td></tr>
+    <tr style="border-top:1px solid #334155;"><td style="padding:5px 8px;color:#94a3b8;font-weight:600;">Hrs floor</td><td style="padding:5px 8px;color:#cbd5e1;">Min labour hours per job; stops tiny jobs being underpriced</td></tr>
+  </table>
+
+  <h3 style="color:#5eead4;font-size:1.0em;margin:16px 0 8px;border-bottom:1px solid #334155;padding-bottom:6px;">3. Reading a Card</h3>
+  <ul style="font-size:0.85em;color:#cbd5e1;line-height:1.7;padding-left:20px;margin:6px 0;">
+    <li><strong style="color:#2563eb;">Brand name</strong> (top, deep colour) — GoodWe blue, Sigen gold, Add Panels teal</li>
+    <li><strong>System headline</strong> — e.g. "13.3 kW solar + 16 kWh battery"</li>
+    <li><strong>Price</strong> — large bold, GST-inclusive customer price</li>
+    <li><strong>Spec line</strong> — after dashed sep: panels, inverter, battery modules</li>
+    <li><strong style="color:#4ade80;">⚡ EARLY BIRD</strong> — green block, $500 off Stay or Upgrade</li>
+    <li><strong style="color:#b46dfa;">🔒 3-MO LOCK-IN</strong> — lavender block, solar top-up window pricing</li>
+    <li><strong style="color:#0d9488;">Add Panels Special</strong> — teal card, 2-col std vs same-day special</li>
+  </ul>
+
+  <h3 style="color:#5eead4;font-size:1.0em;margin:16px 0 8px;border-bottom:1px solid #334155;padding-bottom:6px;">4. Validation Flags</h3>
+  <p style="font-size:0.85em;color:#94a3b8;margin:6px 0;line-height:1.5;">Auto-checks that fire above the line items:</p>
+  <p style="font-size:0.85em;color:#cbd5e1;margin:6px 0;"><strong style="color:#f87171;">⚠ Red</strong> — fix before quoting:</p>
+  <ul style="font-size:0.82em;color:#cbd5e1;line-height:1.6;padding-left:20px;margin:6px 0;">
+    <li>Battery stack exceeds inverter limit (too many modules)</li>
+    <li>Solar exceeds inverter max PV input (oversize/clipping risk)</li>
+    <li>EV charger brand mismatch (GoodWe needs GoodWe inverter for smart features)</li>
+    <li>EV charger phase mismatch (SP/TP wrong)</li>
+  </ul>
+  <p style="font-size:0.85em;color:#cbd5e1;margin:8px 0 4px;"><strong style="color:#fbbf24;">ⓘ Amber</strong> — informational:</p>
+  <ul style="font-size:0.82em;color:#cbd5e1;line-height:1.6;padding-left:20px;margin:6px 0;">
+    <li>Solar within 5% of max PV input — within spec but no headroom</li>
+  </ul>
+  <div style="background:#451a03;border-left:3px solid #f59e0b;border-radius:6px;padding:8px 12px;margin:8px 0;font-size:0.78em;color:#fcd34d;line-height:1.5;">
+    <strong>Stack limits:</strong> Sigen BAT 8.0 → 6 modules. GoodWe BAT 8.3 → 6. Sungrow SBH varies (4–6 by inverter). Max PV input ≈ 2:1 DC oversize.
+  </div>
+
+  <h3 style="color:#5eead4;font-size:1.0em;margin:16px 0 8px;border-bottom:1px solid #334155;padding-bottom:6px;">5. How the Numbers Work</h3>
+  <p style="font-size:0.85em;color:#94a3b8;margin:6px 0 10px;line-height:1.5;">The mechanics behind why prices land where they do. Useful when a customer asks "but why?" or when you need to defend a number.</p>
+
+  <p style="font-size:0.86em;color:#cbd5e1;margin:12px 0 4px;"><strong style="color:#5eead4;">⚙ Day anchor &amp; full-day rounding</strong></p>
+  <p style="font-size:0.82em;color:#94a3b8;line-height:1.6;margin:4px 0 8px;">A "day" = <strong style="color:#fcd34d;">PLC_ANCHOR (default 12 hrs)</strong>. Below 7.6 hrs = ordinary rate. 7.6–9.6 hrs = OT @ 1.5×. 9.6–12 hrs = OT @ 2.0×. Past 12 hrs the day resets and the next day starts at ordinary again. Travel adds <strong>1 hr per day</strong> on site (so a 2-day job adds 2 travel hrs). Day count for fixed costs: <code style="background:#1e293b;color:#5eead4;padding:1px 4px;border-radius:3px;">ceil(workHrs / 12)</code>. A 13-hr job = 2 days for travel + fixed cost purposes.</p>
+
+  <p style="font-size:0.86em;color:#cbd5e1;margin:12px 0 4px;"><strong style="color:#5eead4;">⚙ Hour floors (why tiny jobs aren't tiny prices)</strong></p>
+  <ul style="font-size:0.82em;color:#94a3b8;line-height:1.6;padding-left:20px;margin:4px 0 8px;">
+    <li><strong>Standard solar / addsolar</strong> floors at <strong style="color:#fcd34d;">PKG_FLOOR_STD = 7.6 hrs</strong> — a 3-panel job still books a half-day minimum.</li>
+    <li><strong>Special same-day addsolar</strong> floors at <strong style="color:#fcd34d;">PKG_FLOOR_SPC = 1.0 hr</strong> — bundled while we're already on site, no separate trip.</li>
+    <li><strong>Special target rating</strong> = <strong style="color:#fcd34d;">PKG_TARGET_SPC ★0.5</strong> instead of the standard ★. We accept thinner margins because we're already there.</li>
+  </ul>
+
+  <p style="font-size:0.86em;color:#cbd5e1;margin:12px 0 4px;"><strong style="color:#5eead4;">⚙ Per-panel labour scaling</strong></p>
+  <p style="font-size:0.82em;color:#94a3b8;line-height:1.6;margin:4px 0 8px;">Solar labour = <code style="background:#1e293b;color:#5eead4;padding:1px 4px;border-radius:3px;">panelQty × (PLC_HRS_STRING / 7)</code>. Default 1.5 hrs per 7-panel string = ~0.21 hrs/panel. So 3 panels = 0.65 hrs labour, 14 panels = 3.0 hrs, 28 panels = 6.0 hrs. Then the floor kicks in for small jobs.</p>
+
+  <p style="font-size:0.86em;color:#cbd5e1;margin:12px 0 4px;"><strong style="color:#5eead4;">⚙ Even-step pricing (battery boundary)</strong></p>
+  <p style="font-size:0.82em;color:#94a3b8;line-height:1.6;margin:4px 0 8px;">When ON, batteries step in even increments past pure cost-based pricing:</p>
+  <ul style="font-size:0.82em;color:#94a3b8;line-height:1.6;padding-left:20px;margin:4px 0 8px;">
+    <li>Boundary kWh = <strong style="color:#fcd34d;">32 kWh</strong> by default</li>
+    <li>Below boundary: <strong style="color:#fcd34d;">+$1,500 per +8 kWh module</strong></li>
+    <li>At/above boundary: <strong style="color:#fcd34d;">+$2,500 per +8 kWh module</strong></li>
+  </ul>
+  <p style="font-size:0.82em;color:#94a3b8;line-height:1.6;margin:4px 0 8px;">Why: past 32 kWh you're typically into a parallel stack or 2-day install; cabling/labour complexity steps. All three values are editable in Advanced.</p>
+
+  <p style="font-size:0.86em;color:#cbd5e1;margin:12px 0 4px;"><strong style="color:#5eead4;">⚙ STC solar rebate</strong></p>
+  <p style="font-size:0.82em;color:#94a3b8;line-height:1.6;margin:4px 0 8px;">Formula: <code style="background:#1e293b;color:#5eead4;padding:1px 4px;border-radius:3px;">solKw × zone × deemingYears × $/STC</code>. Defaults: Zone 3 (SEQ) = <strong style="color:#fcd34d;">1.382</strong>, deeming = <strong style="color:#fcd34d;">5 years (2026)</strong>, price = <strong style="color:#fcd34d;">$40/STC</strong>. Net effect: ~$276/kW solar rebate. Drops to 4 years from 2027 and so on. Editable per quote in the P&amp;L Calc.</p>
+
+  <p style="font-size:0.86em;color:#cbd5e1;margin:12px 0 4px;"><strong style="color:#5eead4;">⚙ Battery rebate (CER post-May 2026 tapering)</strong></p>
+  <ul style="font-size:0.82em;color:#94a3b8;line-height:1.6;padding-left:20px;margin:4px 0 8px;">
+    <li>First 14 kWh: full rate (<strong style="color:#fcd34d;">100%</strong>)</li>
+    <li>15–28 kWh: <strong style="color:#fcd34d;">60%</strong> of full rate</li>
+    <li>29–50 kWh: <strong style="color:#fcd34d;">15%</strong> of full rate</li>
+    <li>Above 50 kWh: no rebate</li>
+  </ul>
+  <p style="font-size:0.82em;color:#94a3b8;line-height:1.6;margin:4px 0 8px;">This is why the battery rebate per kWh shrinks as systems get bigger — it's tapered, not flat. Driven by the CER battery scheme rules.</p>
+
+  <p style="font-size:0.86em;color:#cbd5e1;margin:12px 0 4px;"><strong style="color:#5eead4;">⚙ Wage rates &amp; on-cost multiplier</strong></p>
+  <p style="font-size:0.82em;color:#94a3b8;line-height:1.6;margin:4px 0 8px;">Crew base hourly: <strong style="color:#fcd34d;">Tradie $65 + TA $30 + Apprentice $25 = $120/hr</strong> (productive hours, ordinary time). The base is multiplied by <strong style="color:#fcd34d;">PLC_MULTIPLIER</strong> for ordinary hours — covers leave, sick days, super, workcover.</p>
+  <p style="font-size:0.82em;color:#94a3b8;line-height:1.6;margin:4px 0 8px;">Multiplier formula:</p>
+  <ul style="font-size:0.82em;color:#94a3b8;line-height:1.6;padding-left:20px;margin:4px 0 8px;">
+    <li><strong>Paid hours/yr</strong> = 38 × 52 = <strong style="color:#fcd34d;">1,976</strong></li>
+    <li><strong>Non-productive</strong> = AL weeks × 38 + sick days × 7.6</li>
+    <li><strong>Productive</strong> = paid − non-productive</li>
+    <li><strong>Leave factor</strong> = paid ÷ productive (typically <strong style="color:#fcd34d;">~1.13</strong>, or +13%)</li>
+    <li><strong>Final multiplier</strong> = leave factor × (1 + super% + workcover%)</li>
+  </ul>
+  <p style="font-size:0.82em;color:#94a3b8;line-height:1.6;margin:4px 0 8px;">Defaults: 4 wks AL, 10 sick days, 12% super, 5% workcover → multiplier ≈ <strong style="color:#fcd34d;">1.32</strong>. So $120/hr base × 1.32 = <strong style="color:#fcd34d;">~$158/hr fully-loaded</strong> for ordinary hours. <strong>OT 1.5× and 2.0× are NOT multiplied</strong> — they're paid as straight loadings on the base $120, since super/leave shouldn't compound on premium rates. Editable per quote in the wage breakdown panel.</p>
+
+  <p style="font-size:0.86em;color:#cbd5e1;margin:12px 0 4px;"><strong style="color:#5eead4;">⚙ Fixed costs (overheads + other wages)</strong></p>
+  <p style="font-size:0.82em;color:#94a3b8;line-height:1.6;margin:4px 0 8px;">Two annualised buckets, both default <strong style="color:#fcd34d;">$800/day</strong>:</p>
+  <ul style="font-size:0.82em;color:#94a3b8;line-height:1.6;padding-left:20px;margin:4px 0 8px;">
+    <li><strong>Overheads</strong> — rent, vehicles, insurance, software, admin (annual ÷ working days)</li>
+    <li><strong>Other wages</strong> — owner/office staff salary (anyone not on the install crew)</li>
+  </ul>
+  <p style="font-size:0.82em;color:#94a3b8;line-height:1.6;margin:4px 0 8px;">These are <strong>allocated per job, not per labour hour</strong>. Allocation depends on job type:</p>
+  <ul style="font-size:0.82em;color:#94a3b8;line-height:1.6;padding-left:20px;margin:4px 0 8px;">
+    <li><strong>Battery-only</strong> = <strong style="color:#fcd34d;">0.5 days</strong> (half a day, regardless of stack size up to inverter limit)</li>
+    <li><strong>Solar-only</strong> = <strong style="color:#fcd34d;">0.5 days + 0.25 per extra string</strong> past the first. So 6.6kW = 0.5d, 13.3kW = 0.75d, 19.8kW = 1.0d</li>
+    <li><strong>Combo (solar + battery)</strong> = <strong style="color:#fcd34d;">totalHrs ÷ 12</strong> (proportional to actual day count)</li>
+    <li><strong>Add-panels (small-job)</strong> = scaled by hours/anchor — bigger small jobs absorb more overhead</li>
+    <li><strong>Add-panels (special, same-day)</strong> = <strong style="color:#fcd34d;">$0 fixed costs</strong> (covered by the parent job we're already there for)</li>
+  </ul>
+  <p style="font-size:0.82em;color:#94a3b8;line-height:1.6;margin:4px 0 8px;">Then divided by crew count — 2 crews halves the calendar-day allocation since both buckets spread over fewer days. So: a 6-hour battery install costs the same in fixed costs as a 4-hour battery install (both = 0.5 day allocation × $800 × 2 buckets = <strong style="color:#fcd34d;">~$800 fixed</strong>). It's job-type based, not hour-based.</p>
+
+  <p style="font-size:0.86em;color:#cbd5e1;margin:12px 0 4px;"><strong style="color:#5eead4;">⚙ Labour vs fixed costs — what scales with what</strong></p>
+  <ul style="font-size:0.82em;color:#94a3b8;line-height:1.6;padding-left:20px;margin:4px 0 8px;">
+    <li><strong>Labour</strong> scales with hours worked (and OT thresholds within each day)</li>
+    <li><strong>Fixed costs</strong> scale with day allocation (job-type rules above)</li>
+    <li><strong>Materials</strong> scale with system size ($/kW or per-module)</li>
+    <li><strong>Travel</strong> scales with day count (1 hr/day at full crew rate)</li>
+  </ul>
+  <p style="font-size:0.82em;color:#94a3b8;line-height:1.6;margin:4px 0 8px;">This is why a 2-day install isn't just "double the 1-day price" — labour doubles, travel doubles, fixed costs double, but materials don't. Adding a battery module costs the per-module material + the labour hours, but doesn't push fixed costs (until the day count rolls over).</p>
+
+  <p style="font-size:0.86em;color:#cbd5e1;margin:12px 0 4px;"><strong style="color:#5eead4;">⚙ Crew count multiplier</strong></p>
+  <p style="font-size:0.82em;color:#94a3b8;line-height:1.6;margin:4px 0 8px;">2 crews = same labour hours but elapsed days halve. Used for fixed-cost allocation (overheads, other wages spread over fewer calendar days), not for total hours billed. So a 14-hr job with 2 crews = 1 calendar day @ 14 effective person-hours, but fixed costs apportion as 1 day instead of 2.</p>
+
+  <p style="font-size:0.86em;color:#cbd5e1;margin:12px 0 4px;"><strong style="color:#5eead4;">⚙ Materials per kW / per job</strong></p>
+  <ul style="font-size:0.82em;color:#94a3b8;line-height:1.6;padding-left:20px;margin:4px 0 8px;">
+    <li>Solar materials: <strong style="color:#fcd34d;">$80/kW</strong> (cabling, isolators, conduit)</li>
+    <li>Racking: <strong style="color:#fcd34d;">$60/kW</strong></li>
+    <li>Battery materials: <strong style="color:#fcd34d;">$500 flat</strong> per job (regardless of stack size)</li>
+    <li>Mount kit: <strong style="color:#fcd34d;">$252</strong> for new installs only — skipped on addsolar (existing kit reused)</li>
+    <li>Panel labour: <strong style="color:#fcd34d;">1.5 hrs per 3.3 kW string</strong> (7 panels @ 475 W)</li>
+    <li>Battery labour: <strong style="color:#fcd34d;">1 hr base + 0.5 hr per module</strong></li>
+  </ul>
+
+  <p style="font-size:0.86em;color:#cbd5e1;margin:12px 0 4px;"><strong style="color:#5eead4;">⚙ Round-to per job type</strong></p>
+  <ul style="font-size:0.82em;color:#94a3b8;line-height:1.6;padding-left:20px;margin:4px 0 8px;">
+    <li>Combo / battery-only: <strong style="color:#fcd34d;">$500</strong> (clean customer-facing prices)</li>
+    <li>Solar-only / addsolar: <strong style="color:#fcd34d;">$100</strong> (small jobs would distort with $500 rounding)</li>
+  </ul>
+
+  <p style="font-size:0.86em;color:#cbd5e1;margin:12px 0 4px;"><strong style="color:#5eead4;">⚙ PPH / ★ rating</strong></p>
+  <p style="font-size:0.82em;color:#94a3b8;line-height:1.6;margin:4px 0 8px;">PPH = <code style="background:#1e293b;color:#5eead4;padding:1px 4px;border-radius:3px;">net profit ÷ total crew hours</code>. ★ rating = PPH ÷ 100. So ★4.5 = $450/hr profit per crew hour. Default targets: <strong style="color:#fcd34d;">battery ★4.3, combo ★6.0, solar-only ★2.5, addsolar ★1.5</strong>. Combo targets higher because the customer is buying both products and overheads spread further.</p>
+
+  <p style="font-size:0.86em;color:#cbd5e1;margin:12px 0 4px;"><strong style="color:#5eead4;">⚙ Lock-in maths (3-mo solar top-up)</strong></p>
+  <p style="font-size:0.82em;color:#94a3b8;line-height:1.6;margin:4px 0 8px;">Differential = <code style="background:#1e293b;color:#5eead4;padding:1px 4px;border-radius:3px;">combo @ ★6.2 − batt-only @ ★4.3</code>. Lock target ★6.2 is slightly above the standard combo ★6.0 to cover the return trip cost (we're sending a crew back later). Customer signs today for the battery, has 3 months to add solar at the locked-in differential. GW + Sigen only — Sungrow excluded.</p>
+
+  <p style="font-size:0.86em;color:#cbd5e1;margin:12px 0 4px;"><strong style="color:#5eead4;">⚙ Annualised energy &amp; payback</strong></p>
+  <p style="font-size:0.82em;color:#94a3b8;line-height:1.6;margin:4px 0 8px;">Solar annual = <code style="background:#1e293b;color:#5eead4;padding:1px 4px;border-radius:3px;">solKw × 1,460 kWh/kW/yr</code> (SEQ irradiance assumption). Battery annual cycles = <code style="background:#1e293b;color:#5eead4;padding:1px 4px;border-radius:3px;">battKwh × 365</code>. Bill-offset estimates use these to reverse-engineer "years to payback" displayed in the P&amp;L Calc summary. Adjust the kWh/kW/yr figure if quoting outside SEQ.</p>
+
+  <h3 style="color:#5eead4;font-size:1.0em;margin:16px 0 8px;border-bottom:1px solid #334155;padding-bottom:6px;">6. P&amp;L Calculator — Deep Dive</h3>
+  <p style="font-size:0.85em;color:#94a3b8;margin:6px 0 10px;line-height:1.5;">For oddball quotes that don't fit the package map, or to verify what's behind a Price Map number. Every cost line and rate is editable. Also lets you toggle whole cost categories on/off for what-if scenarios.</p>
+
+  <p style="font-size:0.86em;color:#cbd5e1;margin:12px 0 4px;"><strong style="color:#5eead4;">⚙ Top configuration row</strong></p>
+  <ul style="font-size:0.82em;color:#94a3b8;line-height:1.6;padding-left:20px;margin:4px 0 8px;">
+    <li><strong>Quoting</strong> — Combo / Battery / Solar / Add-panels. Drives floors and target ★.</li>
+    <li><strong>Crews</strong> — 1 or 2. Halves elapsed days and fixed-cost allocation when 2.</li>
+    <li><strong>STC Period</strong> — May–Dec '26, Jan–Apr '27, etc. Auto-sets deeming years on selection.</li>
+    <li><strong>Phase</strong> — SP / TP. Drives RCBO type and Sungrow filtering.</li>
+  </ul>
+
+  <p style="font-size:0.86em;color:#cbd5e1;margin:12px 0 4px;"><strong style="color:#5eead4;">⚙ System Design quick-build</strong></p>
+  <p style="font-size:0.82em;color:#94a3b8;line-height:1.6;margin:4px 0 8px;">Three dropdowns: Inverter, Battery, Gateway/Kit. Picking these auto-fills the line items below with correct quantities and prices. Faster than typing each line item manually.</p>
+
+  <p style="font-size:0.86em;color:#cbd5e1;margin:12px 0 4px;"><strong style="color:#5eead4;">⚙ Line items table</strong></p>
+  <p style="font-size:0.82em;color:#94a3b8;line-height:1.6;margin:4px 0 8px;">Each row: <strong>Qty</strong>, <strong>Cost Price</strong>, <strong>Total</strong>. Both Qty and Cost are editable per quote — useful for one-off pricing without changing the global Price Table. Lines covered: Panels, Inverter, Battery, Mount Kit, Gateway, RCBO SP, RCBO TP, EV, Sigen Parts, Switchboard upgrade, DC cable (m), AC cable (m), Trench (m).</p>
+  <p style="font-size:0.82em;color:#94a3b8;line-height:1.6;margin:4px 0 8px;"><strong>Balance hrs dropdown</strong> — extra labour hours for site-specific quirks (long cable runs, complex switchboard, second-storey, etc). Adds to total labour without changing materials.</p>
+
+  <p style="font-size:0.86em;color:#cbd5e1;margin:12px 0 4px;"><strong style="color:#5eead4;">⚙ Cost-line ON/OFF toggles (the powerful what-if switches)</strong></p>
+  <p style="font-size:0.82em;color:#94a3b8;line-height:1.6;margin:4px 0 8px;">Each cost category has a checkbox to remove it from the calc. Useful for: "what if I absorb this cost", "what if I quote this as a stripped-back special", or "show me labour-only profit".</p>
+  <ul style="font-size:0.82em;color:#94a3b8;line-height:1.6;padding-left:20px;margin:4px 0 8px;">
+    <li><strong>Min hrs floor</strong> — disable to let the calc go below 7.6h on tiny jobs</li>
+    <li><strong>STC Rebate</strong> — turn off to see price without solar rebate (e.g. quoting cash deals)</li>
+    <li><strong>Battery Rebate</strong> — same, for battery scheme</li>
+    <li><strong>Fixed Costs</strong> — turn off overheads + other wages. Shows raw labour+materials profit only</li>
+    <li><strong>Labour</strong> — strip labour cost (rare — used for material-only break-down)</li>
+    <li><strong>Sale Comms</strong> — turn off the commission payout</li>
+    <li><strong>Solar Materials (auto)</strong> — disable the $80/kW auto add</li>
+    <li><strong>Racking (auto)</strong> — disable the $60/kW auto add</li>
+    <li><strong>Battery Materials (auto)</strong> — disable the $500 flat add</li>
+  </ul>
+  <p style="font-size:0.82em;color:#94a3b8;line-height:1.6;margin:4px 0 8px;font-style:italic;">All ON by default. Turning anything off here doesn't affect the Price Map cards — only the P&amp;L Calc view.</p>
+
+  <p style="font-size:0.86em;color:#cbd5e1;margin:12px 0 4px;"><strong style="color:#5eead4;">⚙ STC inputs (per quote, override defaults)</strong></p>
+  <ul style="font-size:0.82em;color:#94a3b8;line-height:1.6;padding-left:20px;margin:4px 0 8px;">
+    <li><strong>STC Period</strong> — picks deeming years automatically (5 for 2026, 4 for 2027, etc)</li>
+    <li><strong>Solar deeming yrs</strong> — manual override if the period dropdown isn't quite right</li>
+    <li><strong>STC $/STC</strong> — default <strong style="color:#fcd34d;">$40</strong>. Market price; check before big quotes</li>
+    <li><strong>Battery STC factor</strong> — default <strong style="color:#fcd34d;">6.8</strong> certificates per kWh of battery</li>
+    <li><strong>Battery STC $/STC</strong> — default <strong style="color:#fcd34d;">$40</strong></li>
+    <li><strong>STC Zone</strong> — default <strong style="color:#fcd34d;">1.382 (Zone 3 SEQ)</strong>. Change if quoting outside SEQ — Zone 1 = 1.622, Zone 2 = 1.536, Zone 4 = 1.185</li>
+  </ul>
+
+  <p style="font-size:0.86em;color:#cbd5e1;margin:12px 0 4px;"><strong style="color:#5eead4;">⚙ Wage rate inputs (the breakdown panel)</strong></p>
+  <ul style="font-size:0.82em;color:#94a3b8;line-height:1.6;padding-left:20px;margin:4px 0 8px;">
+    <li><strong>Tradie / TA / Apprentice</strong> — individual hourly rates ($65 / $30 / $25 default)</li>
+    <li><strong>Super %</strong> — default <strong style="color:#fcd34d;">12%</strong>. Bump to 12.5%, 13% etc as super guarantee rises</li>
+    <li><strong>Workcover %</strong> — default <strong style="color:#fcd34d;">3%</strong>. State-specific</li>
+    <li><strong>Annual leave (wks)</strong> — default <strong style="color:#fcd34d;">4 wks</strong></li>
+    <li><strong>Sick leave (days)</strong> — default <strong style="color:#fcd34d;">10 days</strong></li>
+    <li><strong>Productive hrs</strong> (display only) — auto-calculated from leave inputs</li>
+    <li><strong>Leave-up</strong> (display only) — % cost uplift from non-productive hours</li>
+    <li><strong>Multiplier</strong> (display only) — final on-cost multiplier (~1.32 default)</li>
+    <li><strong>Crew rate $/hr</strong> (display only) — fully-loaded rate for ordinary hours</li>
+  </ul>
+
+  <p style="font-size:0.86em;color:#cbd5e1;margin:12px 0 4px;"><strong style="color:#5eead4;">⚙ Material rate overrides</strong></p>
+  <ul style="font-size:0.82em;color:#94a3b8;line-height:1.6;padding-left:20px;margin:4px 0 8px;">
+    <li><strong>Solar Mat $/kW</strong> — default $80, edit per quote if cabling unusual</li>
+    <li><strong>Racking $/kW</strong> — default $60, edit if tile/tin/ground mount</li>
+    <li><strong>Battery Mat $</strong> — default $500 flat, edit if extra cabling/protection</li>
+  </ul>
+
+  <p style="font-size:0.86em;color:#cbd5e1;margin:12px 0 4px;"><strong style="color:#5eead4;">⚙ Hours-per-component overrides</strong></p>
+  <ul style="font-size:0.82em;color:#94a3b8;line-height:1.6;padding-left:20px;margin:4px 0 8px;">
+    <li><strong>Hrs/string</strong> — default <strong style="color:#fcd34d;">1.5h per 7 panels</strong>. Bump for difficult roof access</li>
+    <li><strong>Hrs/battery module</strong> — default <strong style="color:#fcd34d;">0.5h per module</strong> (+ 1h base)</li>
+  </ul>
+
+  <p style="font-size:0.86em;color:#cbd5e1;margin:12px 0 4px;"><strong style="color:#5eead4;">⚙ Anchor day buttons (7.6 / 10 / 12 / 14)</strong></p>
+  <p style="font-size:0.82em;color:#94a3b8;line-height:1.6;margin:4px 0 8px;">Sets <strong>PLC_ANCHOR</strong> — the day length used for OT thresholds, fixed-cost day rounding, and travel hours. Default <strong style="color:#fcd34d;">12h</strong> = max-OT-day before resetting. Switch to:</p>
+  <ul style="font-size:0.82em;color:#94a3b8;line-height:1.6;padding-left:20px;margin:4px 0 8px;">
+    <li><strong>7.6h</strong> — strict 8-hour day (no OT, day flips at end of ordinary)</li>
+    <li><strong>10h</strong> — short OT day (caps OT at 2.4 hrs)</li>
+    <li><strong>12h</strong> — default, allows full 4.4 hrs OT before next day starts</li>
+    <li><strong>14h</strong> — long-day mode (rare; allows full OT bracket)</li>
+  </ul>
+
+  <p style="font-size:0.86em;color:#cbd5e1;margin:12px 0 4px;"><strong style="color:#5eead4;">⚙ Fixed cost daily rates</strong></p>
+  <ul style="font-size:0.82em;color:#94a3b8;line-height:1.6;padding-left:20px;margin:4px 0 8px;">
+    <li><strong>Overheads $/day</strong> — default <strong style="color:#fcd34d;">$800</strong>. Annual overheads ÷ working days/yr</li>
+    <li><strong>Other Wages $/day</strong> — default <strong style="color:#fcd34d;">$800</strong>. Office/sales staff annual ÷ working days</li>
+  </ul>
+  <p style="font-size:0.82em;color:#94a3b8;line-height:1.6;margin:4px 0 8px;">Both are <strong>non-GST</strong> (already net). Edit when business overhead structure changes — e.g. new vehicle, larger office.</p>
+
+  <p style="font-size:0.86em;color:#cbd5e1;margin:12px 0 4px;"><strong style="color:#5eead4;">⚙ Sale price &amp; reverse calc</strong></p>
+  <ul style="font-size:0.82em;color:#94a3b8;line-height:1.6;padding-left:20px;margin:4px 0 8px;">
+    <li><strong>Sale Price ex GST</strong> — type a quote price; profit, margin, ★ recalc live</li>
+    <li><strong>Target ★ + Set</strong> — type a target rating, click Set, sale price back-fills to hit it</li>
+    <li><strong>Margin %</strong> (display) — net profit ÷ sale price</li>
+    <li><strong>PPH</strong> (display) — profit per crew hour</li>
+    <li><strong>★ rating</strong> (display) — PPH ÷ 100, the headline quality metric</li>
+  </ul>
+
+  <p style="font-size:0.86em;color:#cbd5e1;margin:12px 0 4px;"><strong style="color:#5eead4;">⚙ Output rows (read-only)</strong></p>
+  <ul style="font-size:0.82em;color:#94a3b8;line-height:1.6;padding-left:20px;margin:4px 0 8px;">
+    <li>Materials Total · Overheads (with day mult) · Sale Coms · Battery Materials · Solar Materials · Racking</li>
+    <li><strong>Sum</strong> — all costs except labour/wages/rebates</li>
+    <li>Labour · Other Wages · Battery Rebate · STC Rebate</li>
+    <li><strong>Gross Profit</strong> — sale − materials</li>
+    <li><strong>Net Profit</strong> — sale − everything (the headline)</li>
+  </ul>
+
+  <h3 style="color:#5eead4;font-size:1.0em;margin:16px 0 8px;border-bottom:1px solid #334155;padding-bottom:6px;">7. Product Price Table</h3>
+  <p style="font-size:0.85em;color:#94a3b8;margin:6px 0;line-height:1.5;">Hidden by default. Toggle 💲 to show.</p>
+  <ul style="font-size:0.85em;color:#cbd5e1;line-height:1.7;padding-left:20px;margin:6px 0;">
+    <li><strong>Cost Price</strong> — what we pay (drives P&amp;L profit calcs)</li>
+    <li><strong>Sell Price</strong> — RRP / quote basis (drives Price Map cards)</li>
+    <li><strong>Edits live</strong> — no save button. Refresh page to revert.</li>
+  </ul>
+
+  <h3 style="color:#5eead4;font-size:1.0em;margin:16px 0 8px;border-bottom:1px solid #334155;padding-bottom:6px;">8. Workflow Tips</h3>
+  <ul style="font-size:0.85em;color:#cbd5e1;line-height:1.7;padding-left:20px;margin:6px 0;">
+    <li><strong>Customer present?</strong> Toggle off P&amp;L Calc, set Brand to single (not Compare), expand Solar &amp; Battery Tools only, hand the phone over.</li>
+    <li><strong>Oddball job?</strong> Skip Price Map, build line items in P&amp;L Calc, set target ★, click Set.</li>
+    <li><strong>Comparing GW vs Sigen?</strong> Brand → All · Compare. Cards render side-by-side.</li>
+    <li><strong>Pricing changed?</strong> Edit in Price Table, both Map and P&amp;L update instantly.</li>
+    <li><strong>New version?</strong> Just close and re-open the pinned tile — no-cache fetches fresh every load.</li>
+  </ul>
+
+  <p style="font-size:0.78em;color:#64748b;margin:18px 0 0;font-style:italic;text-align:center;border-top:1px solid #1e293b;padding-top:12px;">
+    Questions or bugs — Brooko.
+  </p>
 </div>
 
 </div><!-- end #internalTools -->
@@ -1597,8 +1909,8 @@ return null;
 function plcLookup(lid){return lookupById(lid)||{cost:0,notes:'',unit:'',watts:475};}
 /* ── Section visibility toggle ── */
 function toggleSection(key){
-var ids={pnl:'pnlSection',pkg:'pkgSection',lookup:'lookupSection'};
-var btnIds={pnl:'tg_pnl',pkg:'tg_pkg',lookup:'tg_lookup'};
+var ids={pnl:'pnlSection',pkg:'pkgSection',lookup:'lookupSection',help:'helpSection'};
+var btnIds={pnl:'tg_pnl',pkg:'tg_pkg',lookup:'tg_lookup',help:'tg_help'};
 var sec=document.getElementById(ids[key]);
 var btn=document.getElementById(btnIds[key]);
 if(!sec||!btn)return;
@@ -1606,6 +1918,28 @@ var nowHidden=sec.style.display==='none';
 sec.style.display=nowHidden?'':'none';
 btn.style.opacity=nowHidden?'1':'0.45';
 btn.style.textDecoration=nowHidden?'none':'line-through';
+}
+/* ── Package map sub-group toggle (Tools / Advanced) ── */
+function togglePkgGroup(key){
+var wrapId=key==='tools'?'pkg_toolsWrap':'pkg_advWrap';
+var chevId=key==='tools'?'pkg_tools_chev':'pkg_adv_chev';
+var wrap=document.getElementById(wrapId);
+var chev=document.getElementById(chevId);
+if(!wrap||!chev)return;
+var nowHidden=wrap.style.display==='none';
+wrap.style.display=nowHidden?'flex':'none';
+chev.innerHTML=nowHidden?'\u25B2':'\u25BC';
+}
+/* On mobile (<700px), collapse both pkg groups by default */
+if(typeof window!=='undefined'&&window.innerWidth&&window.innerWidth<700){
+setTimeout(function(){
+var t=document.getElementById('pkg_toolsWrap');
+var tc=document.getElementById('pkg_tools_chev');
+var a=document.getElementById('pkg_advWrap');
+var ac=document.getElementById('pkg_adv_chev');
+if(t){t.style.display='none';if(tc)tc.innerHTML='\u25BC';}
+if(a){a.style.display='none';if(ac)ac.innerHTML='\u25BC';}
+},0);
 }
 function plcSetRating(targetRating){
 /* Reverse-calculate sale price from target rating (net profit in $k) */
@@ -1931,8 +2265,8 @@ if(_flg){
       _modName='Lynx';
       _maxStack=6;  /* GoodWe Lynx D max 6 modules per stack */
     } else if(_batIsSigen){
-      _modName='Sigen BAT';
-      _maxStack=8;  /* SigenStor max 8 modules per stack */
+      _modName='Sigen BAT 8.0';
+      _maxStack=6;  /* SigenStor BAT 8.0 max 6 modules per stack (BAT 5.0 phased out, BAT 10.0 will be 5) */
     }
     if(_maxStack&&_bq>_maxStack){
       _flags.push(['⚠ '+_bq+' '+_modName+' modules exceeds inverter stack limit ('+_maxStack+' max) — needs parallel stacks','#f87171']);
