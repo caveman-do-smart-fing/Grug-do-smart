@@ -1,4 +1,16 @@
 <!DOCTYPE html>
+<!--
+═══════════════════════════════════════════════════════════════════════════
+  Caveman Energy Solar Pricing Calculator
+  Copyright © 2026 Caveman Energy. All rights reserved.
+
+  Licensed for use by paying subscribers only.
+  Unauthorised distribution, modification, reverse-engineering, or
+  commercial use of this calculator (in whole or in part) is prohibited.
+
+  Licensing enquiries: cavemannrg@gmail.com
+═══════════════════════════════════════════════════════════════════════════
+-->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -619,10 +631,25 @@ h1{font-size:1.3em;font-weight:800;color:#e2e8f0;margin-bottom:6px;}
       </div>
       <!-- Sale Price toggle -->
       <div style="background:#0f172a;padding:12px;border-top:2px solid #334155;">
-        <div style="font-size:0.7em;font-weight:700;text-transform:uppercase;color:#475569;margin-bottom:6px;">Sale Price (toggle up and down)</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;gap:8px;">
+          <div id="plc_saleLabel" style="font-size:0.7em;font-weight:700;text-transform:uppercase;color:#475569;">Sale Price (toggle up and down)</div>
+          <button id="plc_finToggle" type="button" onclick="toggleFinanceMode()" title="Toggle between Cash pricing and 0% Finance RRP (RRP = Cash × 1.25)"
+            style="background:#0d9488;color:#fff;border:none;border-radius:5px;padding:3px 9px;font-size:0.65em;font-weight:800;letter-spacing:0.08em;cursor:pointer;">CASH</button>
+        </div>
         <input id="plc_saleToggle" type="number" value="18000" step="250" oninput="plcCfg('salePrice',this);plcUpdate();"
           style="width:100%;font-size:2em;font-weight:900;text-align:right;background:transparent;color:#fbbf24;border:none;border-bottom:2px solid #334155;padding:4px 0;outline:none;">
-        <div style="font-size:0.7em;color:#475569;margin-top:4px;">Adjust to find the right margin</div>
+        <div id="plc_saleHint" style="font-size:0.7em;color:#475569;margin-top:4px;">Adjust to find the right margin</div>
+        <!-- Cash discount line — only visible in finance mode -->
+        <div id="plc_cashDiscRow" style="display:none;margin-top:8px;padding:6px 10px;background:#0c1929;border-left:3px solid #14b8a6;border-radius:3px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:0.78em;">
+            <span style="color:#94a3b8;font-weight:600;">Cash Buyer Discount</span>
+            <span id="plc_cashDiscVal" style="color:#14b8a6;font-weight:800;">-$0</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:0.74em;margin-top:3px;">
+            <span style="color:#64748b;">Cash net</span>
+            <span id="plc_cashNetVal" style="color:#fbbf24;font-weight:700;">$0</span>
+          </div>
+        </div>
       </div>
       <!-- Rebate rates (editable) -->
       <div style="padding:10px 12px;background:#0c1929;font-size:0.76em;color:#64748b;">
@@ -1122,6 +1149,29 @@ var PKG_FLOOR_SPC=1.0;   /* Min labour hours floor for addsolar special (bundled
 var PKG_TARGET_SPC=0.5;  /* Target rating for addsolar special (low — bundled with another job) */
 var PKG_CLIENT_MODE=false;  /* Hide all ratings/stars/hours/PPH on cards for clean client screenshots */
 var PKG_ROUND_BY_JOB={batt:500, combo:500, solar:100, addsolar:100};
+
+/* ── Finance mode: when ON, prices shown as RRP (cash × 1.25), with cash discount line.
+   When OFF, prices shown as cash net (default — what hits the bank).
+   ★ ratings, margins and P&L always computed from cash net regardless of toggle. ── */
+var FINANCE_MODE=false;
+var FINANCE_MULT=1.25;    /* RRP = cash × 1.25 (i.e., cash sale = 80% of RRP) */
+function rrpFromCash(cash){ return Math.round((cash||0)*FINANCE_MULT); }
+function cashDiscount(cash){ return rrpFromCash(cash)-(cash||0); }   /* RRP - cash = the saving */
+function displayPrice(cash){ return FINANCE_MODE ? rrpFromCash(cash) : (cash||0); }
+function toggleFinanceMode(){
+  FINANCE_MODE=!FINANCE_MODE;
+  var btn=document.getElementById('plc_finToggle');
+  if(btn){
+    btn.textContent=FINANCE_MODE?'0% FINANCE':'CASH';
+    btn.style.background=FINANCE_MODE?'#7c3aed':'#0d9488';
+  }
+  var lbl=document.getElementById('plc_saleLabel');
+  if(lbl){ lbl.textContent=FINANCE_MODE?'RRP (toggle up and down)':'Sale Price (toggle up and down)'; }
+  var hint=document.getElementById('plc_saleHint');
+  if(hint){ hint.textContent=FINANCE_MODE?'RRP includes 25% finance loading. Cash buyers save the difference.':'Adjust to find the right margin'; }
+  if(typeof plcUpdate==='function')plcUpdate();
+  if(typeof renderPackages==='function')renderPackages();
+}
 function pkgRound(jobType){return PKG_ROUND_BY_JOB[jobType]||500;}
 var PKG_EVENSTEP=true;
 var PKG_STEPS={gw:{low:2000,high:2000},sg:{low:3000,high:3000},su:{low:2000,high:3000}};
@@ -1288,8 +1338,8 @@ if(lockTarget-sn>=0.3)st+='\u2606';
 var ratingCol=lockTarget>=PKG_TARGETS.combo?'#4ade80':lockTarget>=PKG_TARGETS.combo-0.5?'#fbbf24':'#f87171';
 return '<div style="border-top:1px dashed #1e293b;margin-top:6px;padding-top:5px;">'
 +'<div style="font-size:9px;font-weight:700;color:#b46dfa;text-transform:uppercase;letter-spacing:.05em;">\ud83d\udd12 3-mo lock-in</div>'
-+'<div style="font-size:10px;color:#475569;">+$'+diff.toLocaleString()+' for '+solSizeStr+' kW solar</div>'
-+'<div style="font-size:11px;font-weight:700;color:#b46dfa;margin-top:2px;">$'+totalPrice.toLocaleString()+' total'+(PKG_CLIENT_MODE?'':' <span style="font-size:10px;color:'+ratingCol+';font-weight:600;">'+st+' '+lockTarget.toFixed(1)+'</span>')+'</div>'
++'<div style="font-size:10px;color:#475569;">+$'+displayPrice(diff).toLocaleString()+' for '+solSizeStr+' kW solar</div>'
++'<div style="font-size:11px;font-weight:700;color:#b46dfa;margin-top:2px;">$'+displayPrice(totalPrice).toLocaleString()+' total'+(PKG_CLIENT_MODE?'':' <span style="font-size:10px;color:'+ratingCol+';font-weight:600;">'+st+' '+lockTarget.toFixed(1)+'</span>')+'</div>'
 +'</div>';
 }
 function buildDealBlock(brand, jobType, phase, items, idx, target, solKwOverride){
@@ -1312,7 +1362,7 @@ var stayPrice=Math.max(0,regularPrice-stayDisc);
 var stayCalc=computePackagePrice(brand,jobType,phase,batKwh,solKw,target,false,stayPrice);
 var stayRatingCol=stayCalc.rating>=target?'#4ade80':stayCalc.rating>=target-0.5?'#fbbf24':'#f87171';
 stayHtml='<div style="font-size:10px;color:#475569;">Same size <span style="color:#4ade80;">(\u2212'+fmtK(stayDisc)+')</span></div>'
-+'<div style="font-size:13px;font-weight:700;color:#4ade80;">$'+stayCalc.price.toLocaleString()+(PKG_CLIENT_MODE?'':' <span style="font-size:10px;color:'+stayRatingCol+';">\u2605'+stayCalc.rating.toFixed(1)+'</span>')+'</div>';
++'<div style="font-size:13px;font-weight:700;color:#4ade80;">$'+displayPrice(stayCalc.price).toLocaleString()+(PKG_CLIENT_MODE?'':' <span style="font-size:10px;color:'+stayRatingCol+';">\u2605'+stayCalc.rating.toFixed(1)+'</span>')+'</div>';
 }
 /* Upgrade deal: next size up */
 var nextItem=items[idx+1];
@@ -1324,7 +1374,7 @@ var upPrice=Math.max(0,nextRegularPrice-upDisc);
 var upCalc=computePackagePrice(brand,jobType,phase,nextItem.k,solKw,target,false,upPrice);
 var upRatingCol=upCalc.rating>=target?'#4ade80':upCalc.rating>=target-0.5?'#fbbf24':'#f87171';
 upHtml='<div style="font-size:10px;color:#475569;'+(PKG_SPECIAL_STAY_ON?'margin-top:4px;':'')+'">Upgrade to '+nextItem.k+' kWh <span style="color:#4ade80;">(\u2212'+fmtK(upDisc)+')</span></div>'
-+'<div style="font-size:13px;font-weight:700;color:#4ade80;">$'+upCalc.price.toLocaleString()+(PKG_CLIENT_MODE?'':' <span style="font-size:10px;color:'+upRatingCol+';">\u2605'+upCalc.rating.toFixed(1)+'</span>')+'</div>';
++'<div style="font-size:13px;font-weight:700;color:#4ade80;">$'+displayPrice(upCalc.price).toLocaleString()+(PKG_CLIENT_MODE?'':' <span style="font-size:10px;color:'+upRatingCol+';">\u2605'+upCalc.rating.toFixed(1)+'</span>')+'</div>';
 }
 if(!stayHtml&&!upHtml)return '';
 return '<div style="border-top:1px dashed #334155;margin-top:8px;padding-top:6px;">'
@@ -1575,7 +1625,8 @@ var lockInHtml=(jobType==='batt')?buildLockInLine(B.id,phase,batKwh,target,CMP_C
 return '<div style="background:#0f172a;border:1px solid #1e293b;border-left:3px solid '+B.acc+';border-radius:8px;padding:10px 12px;">'
 +'<div style="font-size:11px;color:'+B.acc+';text-transform:uppercase;letter-spacing:0.1em;font-weight:800;margin-bottom:3px;">'+B.name+'</div>'
 +'<div style="font-size:12px;font-weight:700;color:'+B.txt+';margin-bottom:4px;line-height:1.3;">'+buildSystemHeadline(jobType,batKwh,solKw)+'</div>'
-+'<div style="font-size:17px;font-weight:800;color:'+B.acc+';">$'+calc.price.toLocaleString()+'</div>'
++'<div style="font-size:17px;font-weight:800;color:'+B.acc+';">$'+displayPrice(calc.price).toLocaleString()+'</div>'
++(FINANCE_MODE?'<div style="font-size:9px;color:#14b8a6;margin-top:2px;font-weight:600;">Cash save $'+cashDiscount(calc.price).toLocaleString()+'</div>':'')
 +(PKG_CLIENT_MODE?'':'<div style="font-size:11px;color:'+rCol+';margin-top:3px;">'+s+' <span style="color:#475569;">'+calc.rating.toFixed(1)+'</span></div>')
 +hrsHtml
 +specStr
@@ -1605,12 +1656,14 @@ html+='<div style="background:#0f172a;border:1px solid #1e293b;border-left:3px s
 +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">'
 +'<div style="border-right:1px solid #1e293b;padding-right:8px;">'
 +'<div style="font-size:9px;font-weight:700;color:#64748b;text-transform:uppercase;margin-bottom:2px;">Std</div>'
-+'<div style="font-size:15px;font-weight:700;color:#5eead4;">$'+stdC.price.toLocaleString()+'</div>'
++'<div style="font-size:15px;font-weight:700;color:#5eead4;">$'+displayPrice(stdC.price).toLocaleString()+'</div>'
++(FINANCE_MODE?'<div style="font-size:9px;color:#14b8a6;font-weight:600;">Cash save $'+cashDiscount(stdC.price).toLocaleString()+'</div>':'')
 +buildHrsPphLine(stdC)
 +'</div>'
 +'<div>'
 +'<div style="font-size:9px;font-weight:700;color:#b46dfa;text-transform:uppercase;margin-bottom:2px;">Special</div>'
-+'<div style="font-size:15px;font-weight:700;color:#b46dfa;">$'+spcC.price.toLocaleString()+'</div>'
++'<div style="font-size:15px;font-weight:700;color:#b46dfa;">$'+displayPrice(spcC.price).toLocaleString()+'</div>'
++(FINANCE_MODE?'<div style="font-size:9px;color:#14b8a6;font-weight:600;">Cash save $'+cashDiscount(spcC.price).toLocaleString()+'</div>':'')
 +buildHrsPphLine(spcC)
 +'</div>'
 +'</div>'
@@ -1693,13 +1746,15 @@ html+='<div style="background:#0f172a;border:1px solid #1e293b;border-left:3px s
 +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">'
 +'<div style="border-right:1px solid #1e293b;padding-right:8px;">'
 +'<div style="font-size:9px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px;">Standard</div>'
-+'<div style="font-size:16px;font-weight:700;color:#5eead4;">$'+stdCalc.price.toLocaleString()+'</div>'
++'<div style="font-size:16px;font-weight:700;color:#5eead4;">$'+displayPrice(stdCalc.price).toLocaleString()+'</div>'
++(FINANCE_MODE?'<div style="font-size:10px;color:#14b8a6;font-weight:600;">Cash save $'+cashDiscount(stdCalc.price).toLocaleString()+'</div>':'')
 +(PKG_CLIENT_MODE?'':'<div style="font-size:11px;color:'+stdCol+';">'+stdStars+' <span style="color:#475569;">'+stdCalc.rating.toFixed(1)+'</span></div>')
 +buildHrsPphLine(stdCalc)
 +'</div>'
 +'<div>'
 +'<div style="font-size:9px;font-weight:700;color:#b46dfa;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px;">Special \u00b7 same day</div>'
-+'<div style="font-size:16px;font-weight:700;color:#b46dfa;">$'+spcCalc.price.toLocaleString()+'</div>'
++'<div style="font-size:16px;font-weight:700;color:#b46dfa;">$'+displayPrice(spcCalc.price).toLocaleString()+'</div>'
++(FINANCE_MODE?'<div style="font-size:10px;color:#14b8a6;font-weight:600;">Cash save $'+cashDiscount(spcCalc.price).toLocaleString()+'</div>':'')
 +(PKG_CLIENT_MODE?'':'<div style="font-size:11px;color:'+spcCol+';">'+spcStars+' <span style="color:#475569;">'+spcCalc.rating.toFixed(1)+'</span></div>')
 +buildHrsPphLine(spcCalc)
 +'</div>'
@@ -1748,7 +1803,8 @@ var lockInHtml=(PKG_ST.job==='batt')?buildLockInLine(b,PKG_ST.phase,batKwh,targe
 html+='<div style="background:#0f172a;border:1px solid #1e293b;border-left:3px solid '+acc+';border-radius:8px;padding:10px 12px;">'
 +'<div style="font-size:12px;color:'+acc+';text-transform:uppercase;letter-spacing:0.1em;font-weight:800;margin-bottom:3px;">'+({gw:'GoodWe',sg:'Sigenergy',su:'Sungrow'}[b]||'')+'</div>'
 +'<div style="font-size:13px;font-weight:700;color:'+txt+';margin-bottom:4px;line-height:1.3;">'+buildSystemHeadline(PKG_ST.job,batKwh,solKw)+'</div>'
-+'<div style="font-size:18px;font-weight:800;color:'+acc+';">$'+price.toLocaleString()+'</div>'
++'<div style="font-size:18px;font-weight:800;color:'+acc+';">$'+displayPrice(price).toLocaleString()+'</div>'
++(FINANCE_MODE?'<div style="font-size:10px;color:#14b8a6;margin-top:2px;font-weight:600;">Cash buyer save $'+cashDiscount(price).toLocaleString()+'</div>':'')
 +(PKG_CLIENT_MODE?'':'<div style="font-size:12px;color:'+rCol+';margin-top:4px;">'+s+' <span style="font-size:11px;color:#475569;">'+rating.toFixed(1)+'</span></div>')
 +hrsHtml
 +specStr
@@ -2003,7 +2059,7 @@ var rnd=250; /* P&L uses $250 steps */
 var newPrice=Math.max(0,Math.round(grossInc/rnd)*rnd);
 s.salePrice=newPrice;
 var spEl=g('plc_saleToggle');
-if(spEl)spEl.value=newPrice;
+if(spEl)spEl.value=FINANCE_MODE?rrpFromCash(newPrice):newPrice;
 plcUpdate();
 }
 function plcNudgeRating(delta){
@@ -2013,7 +2069,7 @@ var step=500;
 var newPrice=Math.max(0,(s.salePrice||0)+delta*step);
 s.salePrice=newPrice;
 var spEl=g('plc_saleToggle');
-if(spEl)spEl.value=newPrice;
+if(spEl)spEl.value=FINANCE_MODE?rrpFromCash(newPrice):newPrice;
 plcUpdate();
 }
 function plcAnchorBtns(){
@@ -2169,7 +2225,19 @@ if(rEl){rEl.textContent=rat.toFixed(1);rEl.style.color=rat>=4.5?'#4ade80':rat>=2
 var riEl=g('plc_ratingInput');
 if(riEl&&riEl!==document.activeElement)riEl.value=rat.toFixed(1);
 if(riEl)riEl.style.color=rat>=4.5?'#4ade80':rat>=2.5?'#fbbf24':'#f87171';
-if(spEl&&spEl!==document.activeElement)spEl.value=s.salePrice;
+/* Sale price input: show RRP when finance mode on, cash when off. Internal s.salePrice is always cash. */
+if(spEl&&spEl!==document.activeElement){
+  spEl.value = FINANCE_MODE ? rrpFromCash(s.salePrice) : s.salePrice;
+}
+/* Cash discount panel (only visible when finance mode on) */
+var _cdRow=g('plc_cashDiscRow');
+if(_cdRow){
+  _cdRow.style.display = FINANCE_MODE ? '' : 'none';
+  if(FINANCE_MODE){
+    var _cdv=g('plc_cashDiscVal'); if(_cdv)_cdv.textContent='-$'+cashDiscount(s.salePrice).toLocaleString();
+    var _cnv=g('plc_cashNetVal');  if(_cnv)_cnv.textContent='$'+(s.salePrice||0).toLocaleString();
+  }
+}
 /* ── System Design Panel ── */
 var _plu2=plcLookup(s.panel.lid);
 var _blu2=plcLookup(s.battery.lid);
@@ -2371,7 +2439,13 @@ plcUpdate();
 }
 function plcQty(slot,el){PLC_STATE[slot].qty=parseFloat(el.value)||0;plcUpdate();}
 function plcPrice(slot,el){PLC_STATE[slot].unitCost=parseFloat(el.value)||0;plcUpdate();}
-function plcCfg(field,el){PLC_STATE[field]=parseFloat(el.value)||0;plcUpdate();}
+function plcCfg(field,el){
+  var v=parseFloat(el.value)||0;
+  /* Sale Price input shows RRP when finance mode on — convert back to cash for internal state */
+  if(field==='salePrice' && FINANCE_MODE) v = Math.round(v/FINANCE_MULT);
+  PLC_STATE[field]=v;
+  plcUpdate();
+}
 function plcDiff(el){PLC_STATE.balance.hrs=parseInt(el.value)||0;plcUpdate();}
 function renderLookup(){
 var el=g('lookupBody');if(!el)return;
