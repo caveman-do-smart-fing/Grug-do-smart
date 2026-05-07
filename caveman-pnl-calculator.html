@@ -160,7 +160,56 @@ h1{font-size:1.3em;font-weight:800;color:#e2e8f0;margin-bottom:6px;}
       </div>
     </div>
     <div>
-      <div style="font-size:10px;color:#475569;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;">Early Bird deal</div>
+      <div style="font-size:10px;color:#475569;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;">RRP / 0% Finance</div>
+      <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+        <div style="display:flex;flex-direction:column;align-items:center;">
+          <div style="font-size:9px;color:#475569;letter-spacing:.04em;">Markup %</div>
+          <input id="pkg_rrp_markup" type="number" value="25" step="1" min="0" max="100"
+            style="width:50px;text-align:center;background:#1e293b;color:#7c3aed;border:1px solid #334155;border-radius:5px;padding:3px 4px;font-size:12px;font-weight:700;outline:none;">
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;">
+          <div style="font-size:9px;color:#475569;letter-spacing:.04em;">Round RRP $</div>
+          <div style="display:flex;gap:3px;" id="pkg_rrpround_row">
+            <button id="pkg_rrpr_0" style="padding:3px 8px;border-radius:4px;border:1px solid #334155;background:#1e293b;color:#64748b;cursor:pointer;font-size:10px;">None</button>
+            <button id="pkg_rrpr_100" style="padding:3px 8px;border-radius:4px;border:1px solid #334155;background:#1e293b;color:#64748b;cursor:pointer;font-size:10px;">100</button>
+            <button id="pkg_rrpr_250" style="padding:3px 8px;border-radius:4px;border:1px solid #334155;background:#1e293b;color:#64748b;cursor:pointer;font-size:10px;">250</button>
+            <button id="pkg_rrpr_500" style="padding:3px 8px;border-radius:4px;border:2px solid #7c3aed;background:#2e1065;color:#7c3aed;cursor:pointer;font-size:10px;font-weight:700;">500</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:10px;color:#475569;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;">Small-system half-step</div>
+      <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+        <button id="pkg_halftier_btn" style="padding:5px 10px;border-radius:6px;border:2px solid #22d3ee;background:#083344;color:#22d3ee;cursor:pointer;font-size:11px;font-weight:600;" title="When ON, systems at or below the threshold use a reduced per-module step.">ON</button>
+        <div style="display:flex;flex-direction:column;align-items:center;">
+          <div style="font-size:9px;color:#475569;letter-spacing:.04em;">&le; kWh</div>
+          <input id="pkg_halftier_thresh" type="number" value="10" step="1" min="0"
+            style="width:50px;text-align:center;background:#1e293b;color:#22d3ee;border:1px solid #334155;border-radius:5px;padding:3px 4px;font-size:11px;font-weight:700;outline:none;">
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;">
+          <div style="font-size:9px;color:#475569;letter-spacing:.04em;">% of step</div>
+          <input id="pkg_halftier_pct" type="number" value="50" step="5" min="0" max="100"
+            style="width:50px;text-align:center;background:#1e293b;color:#22d3ee;border:1px solid #334155;border-radius:5px;padding:3px 4px;font-size:11px;font-weight:700;outline:none;">
+        </div>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:10px;color:#475569;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;">Large-system multi-step</div>
+      <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+        <button id="pkg_largetier_btn" style="padding:5px 10px;border-radius:6px;border:1px solid #334155;background:#1e293b;color:#64748b;cursor:pointer;font-size:11px;font-weight:600;" title="When ON, systems at or above the threshold use an INCREASED per-module step (default 150% = 1.5×).">OFF</button>
+        <div style="display:flex;flex-direction:column;align-items:center;">
+          <div style="font-size:9px;color:#475569;letter-spacing:.04em;">&ge; kWh</div>
+          <input id="pkg_largetier_thresh" type="number" value="40" step="1" min="0"
+            style="width:50px;text-align:center;background:#1e293b;color:#fb7185;border:1px solid #334155;border-radius:5px;padding:3px 4px;font-size:11px;font-weight:700;outline:none;">
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;">
+          <div style="font-size:9px;color:#475569;letter-spacing:.04em;">% of step</div>
+          <input id="pkg_largetier_pct" type="number" value="150" step="10" min="100" max="500"
+            style="width:50px;text-align:center;background:#1e293b;color:#fb7185;border:1px solid #334155;border-radius:5px;padding:3px 4px;font-size:11px;font-weight:700;outline:none;">
+        </div>
+      </div>
+    </div>
       <div style="display:flex;gap:6px;align-items:center;">
         <div style="display:flex;flex-direction:column;align-items:center;">
           <button id="pkg_special_stay_btn" style="padding:5px 10px;border-radius:6px;border:2px solid #4ade80;background:#1a3a2a;color:#4ade80;cursor:pointer;font-size:11px;font-weight:600;">Stay ON</button>
@@ -479,20 +528,60 @@ h1{font-size:1.3em;font-weight:800;color:#e2e8f0;margin-bottom:6px;}
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px;">
         <div style="background:#1e293b;border-radius:8px;padding:12px;">
           <div style="font-size:0.7em;font-weight:700;text-transform:uppercase;color:#475569;margin-bottom:6px;">Labour Configuration</div>
-          <div style="font-size:0.76em;color:#6366f1;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;">Crew Base Rates ($/hr)</div>
-          <div style="font-size:0.8em;color:#94a3b8;line-height:2.1;">
-            <div style="display:flex;justify-content:space-between;align-items:center;">
-              <span>Tradie</span>
-              <input type="number" value="65" id="plc_tradie" onchange="PLC_TRADIE=parseFloat(this.value)||65;plcUpdate();" style="width:65px;text-align:right;background:#0f172a;color:#fbbf24;border:1px solid #334155;border-radius:4px;padding:2px 5px;font-weight:700;">
+          <div style="font-size:0.76em;color:#6366f1;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;">Crew Base Rates ($/hr) <span style="font-size:0.8em;color:#64748b;font-weight:500;text-transform:none;letter-spacing:0;">— toggle each level on/off (1 person per ON)</span></div>
+          <div style="font-size:0.78em;color:#94a3b8;">
+
+            <!-- TRADIES -->
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:3px;">
+              <span style="color:#fbbf24;font-weight:700;min-width:62px;">Tradie</span>
+              <div style="display:flex;gap:2px;">
+                <button id="crew_tr_0" onclick="setCrewLevel('tradie',0)" style="padding:2px 6px;border-radius:3px;border:2px solid #fbbf24;background:#451a03;color:#fbbf24;cursor:pointer;font-size:0.85em;font-weight:700;" title="Toggle Tradie L1 (1 person at rate shown)">L1</button>
+                <button id="crew_tr_1" onclick="setCrewLevel('tradie',1)" style="padding:2px 6px;border-radius:3px;border:1px solid #334155;background:#1e293b;color:#64748b;cursor:pointer;font-size:0.85em;" title="Toggle Tradie L2">L2</button>
+                <button id="crew_tr_2" onclick="setCrewLevel('tradie',2)" style="padding:2px 6px;border-radius:3px;border:1px solid #334155;background:#1e293b;color:#64748b;cursor:pointer;font-size:0.85em;" title="Toggle Tradie L3">L3</button>
+                <button id="crew_tr_3" onclick="setCrewLevel('tradie',3)" style="padding:2px 6px;border-radius:3px;border:1px solid #334155;background:#1e293b;color:#64748b;cursor:pointer;font-size:0.85em;" title="Toggle Tradie L4">L4</button>
+              </div>
             </div>
-            <div style="display:flex;justify-content:space-between;align-items:center;">
-              <span>Trade Assistant</span>
-              <input type="number" value="30" id="plc_ta" onchange="PLC_TA=parseFloat(this.value)||30;plcUpdate();" style="width:65px;text-align:right;background:#0f172a;color:#fbbf24;border:1px solid #334155;border-radius:4px;padding:2px 5px;font-weight:700;">
+            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:3px;margin-bottom:6px;padding-left:62px;">
+              <input type="number" value="65" id="crew_tr_rate0" onchange="setCrewRate('tradie',0,this.value)" title="Tradie L1 $/hr" style="text-align:right;background:#0f172a;color:#fbbf24;border:1px solid #334155;border-radius:3px;padding:2px 4px;font-size:0.78em;font-weight:600;">
+              <input type="number" value="70" id="crew_tr_rate1" onchange="setCrewRate('tradie',1,this.value)" title="Tradie L2 $/hr" style="text-align:right;background:#0f172a;color:#94a3b8;border:1px solid #334155;border-radius:3px;padding:2px 4px;font-size:0.78em;font-weight:600;">
+              <input type="number" value="75" id="crew_tr_rate2" onchange="setCrewRate('tradie',2,this.value)" title="Tradie L3 $/hr" style="text-align:right;background:#0f172a;color:#94a3b8;border:1px solid #334155;border-radius:3px;padding:2px 4px;font-size:0.78em;font-weight:600;">
+              <input type="number" value="80" id="crew_tr_rate3" onchange="setCrewRate('tradie',3,this.value)" title="Tradie L4 $/hr" style="text-align:right;background:#0f172a;color:#94a3b8;border:1px solid #334155;border-radius:3px;padding:2px 4px;font-size:0.78em;font-weight:600;">
             </div>
-            <div style="display:flex;justify-content:space-between;align-items:center;">
-              <span>Apprentice</span>
-              <input type="number" value="25" id="plc_apprentice" onchange="PLC_APPRENTICE=parseFloat(this.value)||25;plcUpdate();" style="width:65px;text-align:right;background:#0f172a;color:#fbbf24;border:1px solid #334155;border-radius:4px;padding:2px 5px;font-weight:700;">
+
+            <!-- TRADE ASSISTANT -->
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:3px;">
+              <span style="color:#fbbf24;font-weight:700;min-width:62px;">TA</span>
+              <div style="display:flex;gap:2px;">
+                <button id="crew_ta_0" onclick="setCrewLevel('ta',0)" style="padding:2px 6px;border-radius:3px;border:2px solid #fbbf24;background:#451a03;color:#fbbf24;cursor:pointer;font-size:0.85em;font-weight:700;" title="Toggle TA L1 (1 person at rate shown)">L1</button>
+                <button id="crew_ta_1" onclick="setCrewLevel('ta',1)" style="padding:2px 6px;border-radius:3px;border:1px solid #334155;background:#1e293b;color:#64748b;cursor:pointer;font-size:0.85em;" title="Toggle TA L2">L2</button>
+                <button id="crew_ta_2" onclick="setCrewLevel('ta',2)" style="padding:2px 6px;border-radius:3px;border:1px solid #334155;background:#1e293b;color:#64748b;cursor:pointer;font-size:0.85em;" title="Toggle TA L3">L3</button>
+                <button id="crew_ta_3" onclick="setCrewLevel('ta',3)" style="padding:2px 6px;border-radius:3px;border:1px solid #334155;background:#1e293b;color:#64748b;cursor:pointer;font-size:0.85em;" title="Toggle TA L4">L4</button>
+              </div>
             </div>
+            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:3px;margin-bottom:6px;padding-left:62px;">
+              <input type="number" value="30" id="crew_ta_rate0" onchange="setCrewRate('ta',0,this.value)" title="TA L1 $/hr" style="text-align:right;background:#0f172a;color:#fbbf24;border:1px solid #334155;border-radius:3px;padding:2px 4px;font-size:0.78em;font-weight:600;">
+              <input type="number" value="35" id="crew_ta_rate1" onchange="setCrewRate('ta',1,this.value)" title="TA L2 $/hr" style="text-align:right;background:#0f172a;color:#94a3b8;border:1px solid #334155;border-radius:3px;padding:2px 4px;font-size:0.78em;font-weight:600;">
+              <input type="number" value="40" id="crew_ta_rate2" onchange="setCrewRate('ta',2,this.value)" title="TA L3 $/hr" style="text-align:right;background:#0f172a;color:#94a3b8;border:1px solid #334155;border-radius:3px;padding:2px 4px;font-size:0.78em;font-weight:600;">
+              <input type="number" value="45" id="crew_ta_rate3" onchange="setCrewRate('ta',3,this.value)" title="TA L4 $/hr" style="text-align:right;background:#0f172a;color:#94a3b8;border:1px solid #334155;border-radius:3px;padding:2px 4px;font-size:0.78em;font-weight:600;">
+            </div>
+
+            <!-- APPRENTICES -->
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:3px;">
+              <span style="color:#fbbf24;font-weight:700;min-width:62px;">Apprent.</span>
+              <div style="display:flex;gap:2px;">
+                <button id="crew_ap_0" onclick="setCrewLevel('app',0)" style="padding:2px 6px;border-radius:3px;border:2px solid #fbbf24;background:#451a03;color:#fbbf24;cursor:pointer;font-size:0.85em;font-weight:700;" title="Toggle Apprentice L1 (1st year, 1 person)">L1</button>
+                <button id="crew_ap_1" onclick="setCrewLevel('app',1)" style="padding:2px 6px;border-radius:3px;border:1px solid #334155;background:#1e293b;color:#64748b;cursor:pointer;font-size:0.85em;" title="Toggle Apprentice L2 (2nd year)">L2</button>
+                <button id="crew_ap_2" onclick="setCrewLevel('app',2)" style="padding:2px 6px;border-radius:3px;border:1px solid #334155;background:#1e293b;color:#64748b;cursor:pointer;font-size:0.85em;" title="Toggle Apprentice L3 (3rd year)">L3</button>
+                <button id="crew_ap_3" onclick="setCrewLevel('app',3)" style="padding:2px 6px;border-radius:3px;border:1px solid #334155;background:#1e293b;color:#64748b;cursor:pointer;font-size:0.85em;" title="Toggle Apprentice L4 (4th year)">L4</button>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:3px;margin-bottom:4px;padding-left:62px;">
+              <input type="number" value="25" id="crew_ap_rate0" onchange="setCrewRate('app',0,this.value)" title="Apprentice L1 $/hr" style="text-align:right;background:#0f172a;color:#fbbf24;border:1px solid #334155;border-radius:3px;padding:2px 3px;font-size:0.74em;font-weight:600;">
+              <input type="number" value="30" id="crew_ap_rate1" onchange="setCrewRate('app',1,this.value)" title="Apprentice L2 $/hr" style="text-align:right;background:#0f172a;color:#94a3b8;border:1px solid #334155;border-radius:3px;padding:2px 3px;font-size:0.74em;font-weight:600;">
+              <input type="number" value="35" id="crew_ap_rate2" onchange="setCrewRate('app',2,this.value)" title="Apprentice L3 $/hr" style="text-align:right;background:#0f172a;color:#94a3b8;border:1px solid #334155;border-radius:3px;padding:2px 3px;font-size:0.74em;font-weight:600;">
+              <input type="number" value="40" id="crew_ap_rate3" onchange="setCrewRate('app',3,this.value)" title="Apprentice L4 $/hr" style="text-align:right;background:#0f172a;color:#94a3b8;border:1px solid #334155;border-radius:3px;padding:2px 3px;font-size:0.74em;font-weight:600;">
+            </div>
+
             <div style="border-top:1px solid #334155;margin-top:3px;padding-top:6px;">
               <div style="font-size:0.73em;color:#6366f1;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;">On-cost build-up</div>
               <div style="display:flex;justify-content:space-between;align-items:center;">
@@ -767,7 +856,7 @@ h1{font-size:1.3em;font-weight:800;color:#e2e8f0;margin-bottom:6px;}
       <thead>
         <tr style="background:#1e293b;color:#94a3b8;">
           <th style="padding:8px 10px;text-align:left;font-size:0.72em;text-transform:uppercase;letter-spacing:0.05em;">Product Name</th>
-          <th style="padding:8px 8px;text-align:right;width:100px;font-size:0.72em;text-transform:uppercase;letter-spacing:0.05em;">Cost Price $</th>
+          <th style="padding:8px 8px;text-align:right;width:100px;font-size:0.72em;text-transform:uppercase;letter-spacing:0.05em;">Cost Price $ <span style="color:#5eead4;font-size:0.85em;">(ex GST)</span></th>
           <th style="padding:8px 8px;text-align:right;width:100px;font-size:0.72em;text-transform:uppercase;letter-spacing:0.05em;">Sell Price $</th>
           <th style="padding:8px 8px;text-align:center;width:70px;font-size:0.72em;text-transform:uppercase;letter-spacing:0.05em;">Unit</th>
           <th style="padding:8px 8px;text-align:left;font-size:0.72em;text-transform:uppercase;letter-spacing:0.05em;">Notes / Action</th>
@@ -777,8 +866,7 @@ h1{font-size:1.3em;font-weight:800;color:#e2e8f0;margin-bottom:6px;}
     </table>
   </div>
   <div style="margin-top:14px;padding:10px 14px;background:#1e293b;border-radius:8px;font-size:0.78em;color:#64748b;line-height:1.8;">
-    <strong style="color:#94a3b8;">How prices flow:</strong> Cost Price = what we pay → used in P&L Calculator for profit calculations.
-    Sell Price = RRP or customer quote basis. Changes here update live in the P&L Calculator.
+    <strong style="color:#94a3b8;">How prices flow:</strong> Cost Price (ex GST) = what we pay supplier net of GST. Sale Price in P&L is inc-GST; calc strips GST automatically (÷1.10). STC rebates are GST-handled by Mitch. Costs above must always be entered ex-GST.
   </div>
 </div>
 
@@ -791,6 +879,9 @@ h1{font-size:1.3em;font-weight:800;color:#e2e8f0;margin-bottom:6px;}
   </div>
 
   <h3 style="color:#5eead4;font-size:1.0em;margin:16px 0 8px;border-bottom:1px solid #334155;padding-bottom:6px;">1. Top Toggle Bar</h3>
+  <div style="background:#1e1b4b;border-left:4px solid #14b8a6;border-radius:6px;padding:10px 12px;margin:8px 0 10px;font-size:0.82em;line-height:1.6;color:#cbd5e1;">
+    <strong style="color:#5eead4;">GST treatment (important):</strong> All Lookup costs are entered <strong>ex-GST</strong> (matches what suppliers list net of GST). The P&amp;L Sale Price input is <strong>inc-GST</strong> — calc strips GST automatically (÷ 1.10). STC rebate handling is owned by Mitch's BAS process; the calculator's gross profit is from his perspective (sales contractor's commission is separate at 7% + GST on the customer-paid amount).
+  </div>
   <p style="font-size:0.85em;color:#94a3b8;margin:6px 0;line-height:1.5;">Four buttons at the top control which sections show:</p>
   <ul style="font-size:0.85em;color:#cbd5e1;line-height:1.7;padding-left:20px;margin:6px 0;">
     <li><strong style="color:#5eead4;">📦 Price Map</strong> — customer-facing package grid (default ON)</li>
@@ -822,15 +913,31 @@ h1{font-size:1.3em;font-weight:800;color:#e2e8f0;margin-bottom:6px;}
       <th style="text-align:left;padding:5px 8px;">Control</th>
       <th style="text-align:left;padding:5px 8px;">What it does</th>
     </tr>
-    <tr style="border-top:1px solid #334155;"><td style="padding:5px 8px;color:#94a3b8;font-weight:600;">Round to</td><td style="padding:5px 8px;color:#cbd5e1;">$100 / $250 / $500 final card price granularity</td></tr>
+    <tr style="border-top:1px solid #334155;"><td style="padding:5px 8px;color:#94a3b8;font-weight:600;">Round to</td><td style="padding:5px 8px;color:#cbd5e1;">$100 / $250 / $500 final card price granularity (cash net)</td></tr>
     <tr style="border-top:1px solid #334155;"><td style="padding:5px 8px;color:#94a3b8;font-weight:600;">Even steps</td><td style="padding:5px 8px;color:#cbd5e1;">Forces consistent +$1500/+$2500 step pricing past the boundary kWh</td></tr>
+    <tr style="border-top:1px solid #334155;"><td style="padding:5px 8px;color:#7c3aed;font-weight:600;">RRP / 0% Finance</td><td style="padding:5px 8px;color:#cbd5e1;"><strong style="color:#7c3aed;">Markup %</strong> = how much RRP sits above cash (default 25% → RRP = cash × 1.25). <strong style="color:#7c3aed;">Round RRP $</strong> = independent rounding of RRP display (None / 100 / 250 / 500). When changed, cash discount auto-adjusts so RRP − discount = cash net.</td></tr>
+    <tr style="border-top:1px solid #334155;"><td style="padding:5px 8px;color:#22d3ee;font-weight:600;">Small-system half-step</td><td style="padding:5px 8px;color:#cbd5e1;"><strong style="color:#22d3ee;">Default ON.</strong> Toggle + <strong style="color:#22d3ee;">≤ kWh</strong> threshold (default 10) + <strong style="color:#22d3ee;">% of step</strong> (default 50%). Packages at or below the threshold use a reduced per-module step. Example: normal step $1500 → at 50% = $750. Keeps small systems competitive.</td></tr>
+    <tr style="border-top:1px solid #334155;"><td style="padding:5px 8px;color:#fb7185;font-weight:600;">Large-system multi-step</td><td style="padding:5px 8px;color:#cbd5e1;">Default OFF. Toggle + <strong style="color:#fb7185;">≥ kWh</strong> threshold (default 40) + <strong style="color:#fb7185;">% of step</strong> (default 150%). Packages at or above the threshold use an increased step. Example: normal step $1500 → at 150% = $2250. For when commercial-grade systems should price higher per module.</td></tr>
     <tr style="border-top:1px solid #334155;"><td style="padding:5px 8px;color:#94a3b8;font-weight:600;">Early Bird</td><td style="padding:5px 8px;color:#cbd5e1;">Stay (lock today's price) + Upgrade (sign for upgrade) — $500 off each</td></tr>
     <tr style="border-top:1px solid #334155;"><td style="padding:5px 8px;color:#94a3b8;font-weight:600;">3-mo Lock-in</td><td style="padding:5px 8px;color:#cbd5e1;">Lavender note on battery cards — solar top-up window. GW + Sigen only</td></tr>
     <tr style="border-top:1px solid #334155;"><td style="padding:5px 8px;color:#94a3b8;font-weight:600;">Client view</td><td style="padding:5px 8px;color:#cbd5e1;">Hides ★, hours, PPH for clean customer screenshots</td></tr>
     <tr style="border-top:1px solid #334155;"><td style="padding:5px 8px;color:#94a3b8;font-weight:600;">Hrs floor</td><td style="padding:5px 8px;color:#cbd5e1;">Min labour hours per job; stops tiny jobs being underpriced</td></tr>
   </table>
 
-  <h3 style="color:#5eead4;font-size:1.0em;margin:16px 0 8px;border-bottom:1px solid #334155;padding-bottom:6px;">3. Reading a Card</h3>
+  <h3 style="color:#7c3aed;font-size:1.0em;margin:16px 0 8px;border-bottom:1px solid #7c3aed;padding-bottom:6px;">3. Cash vs 0% Finance Toggles</h3>
+  <p style="font-size:0.86em;color:#cbd5e1;line-height:1.65;margin:6px 0;">There are two independent finance toggles. Both are display-only — internally the calculator always works from cash net (the real margin). ★ ratings, P&amp;L margin and gross profit never change with the toggles.</p>
+  <table style="width:100%;border-collapse:collapse;font-size:0.82em;margin:8px 0;">
+    <tr style="background:#1e293b;color:#94a3b8;">
+      <th style="text-align:left;padding:5px 8px;">Toggle</th>
+      <th style="text-align:left;padding:5px 8px;">Where</th>
+      <th style="text-align:left;padding:5px 8px;">What it does</th>
+    </tr>
+    <tr style="border-top:1px solid #334155;"><td style="padding:5px 8px;color:#7c3aed;font-weight:600;">P&amp;L finance toggle</td><td style="padding:5px 8px;color:#cbd5e1;">Top-right of P&amp;L Sale Price box</td><td style="padding:5px 8px;color:#cbd5e1;">CASH (teal) ↔ 0% FINANCE (purple). When ON, the Sale Price input shows RRP (cash × markup%). A small panel appears below showing Cash Buyer Discount + Cash net. Useful for quoting an RRP and seeing the cash discount you'd pass through.</td></tr>
+    <tr style="border-top:1px solid #334155;"><td style="padding:5px 8px;color:#7c3aed;font-weight:600;">Map finance toggle</td><td style="padding:5px 8px;color:#cbd5e1;">Top-right of package map (next to "Battery capacity — target ★…")</td><td style="padding:5px 8px;color:#cbd5e1;">Cash (teal) ↔ 0% Finance (purple). When ON, every card shows the cash price (big, unchanged) plus two small teal lines: <strong>$X RRP</strong> and <strong>−$X cash discount</strong>. Customer-facing — useful for screenshots.</td></tr>
+  </table>
+  <p style="font-size:0.82em;color:#94a3b8;line-height:1.65;margin:6px 0;"><strong style="color:#7c3aed;">Markup % &amp; RRP Round</strong> sit in the package map advanced settings. Default 25% / round to $500. Both editable. When you change either, RRP and cash discount update everywhere live.</p>
+
+  <h3 style="color:#5eead4;font-size:1.0em;margin:16px 0 8px;border-bottom:1px solid #334155;padding-bottom:6px;">4. Reading a Card</h3>
   <ul style="font-size:0.85em;color:#cbd5e1;line-height:1.7;padding-left:20px;margin:6px 0;">
     <li><strong style="color:#2563eb;">Brand name</strong> (top, deep colour) — GoodWe blue, Sigen gold, Add Panels teal</li>
     <li><strong>System headline</strong> — e.g. "13.3 kW solar + 16 kWh battery"</li>
@@ -896,7 +1003,7 @@ h1{font-size:1.3em;font-weight:800;color:#e2e8f0;margin-bottom:6px;}
   <p style="font-size:0.82em;color:#94a3b8;line-height:1.6;margin:4px 0 8px;">This is why the battery rebate per kWh shrinks as systems get bigger — it's tapered, not flat. Driven by the CER battery scheme rules.</p>
 
   <p style="font-size:0.86em;color:#cbd5e1;margin:12px 0 4px;"><strong style="color:#5eead4;">⚙ Wage rates &amp; on-cost multiplier</strong></p>
-  <p style="font-size:0.82em;color:#94a3b8;line-height:1.6;margin:4px 0 8px;">Crew base hourly: <strong style="color:#fcd34d;">Tradie $65 + TA $30 + Apprentice $25 = $120/hr</strong> (productive hours, ordinary time). The base is multiplied by <strong style="color:#fcd34d;">PLC_MULTIPLIER</strong> for ordinary hours — covers leave, sick days, super, workcover.</p>
+  <p style="font-size:0.82em;color:#94a3b8;line-height:1.6;margin:4px 0 8px;">Crew base hourly: pick which levels are <strong style="color:#fcd34d;">ON</strong> for each role. Each ON level = 1 person at that rate. So toggling Tradie L1 + L2 ON = 1 tradie at $65 + 1 tradie at $70 = $135/hr tradie cost. Default state is L1 ON for each role (Tradie $65 + TA $30 + Apprentice $25 = $120/hr base) — same as before. Each role has 4 levels (L1-L4) with rates incrementing $5 by default. Total base × <strong style="color:#fcd34d;">PLC_MULTIPLIER</strong> covers super, leave, workcover. All rates editable per company.</p>
   <p style="font-size:0.82em;color:#94a3b8;line-height:1.6;margin:4px 0 8px;">Multiplier formula:</p>
   <ul style="font-size:0.82em;color:#94a3b8;line-height:1.6;padding-left:20px;margin:4px 0 8px;">
     <li><strong>Paid hours/yr</strong> = 38 × 52 = <strong style="color:#fcd34d;">1,976</strong></li>
@@ -1159,9 +1266,23 @@ var PKG_ROUND_BY_JOB={batt:500, combo:500, solar:100, addsolar:100};
    ★ ratings, margins and P&L always computed from cash net regardless of toggle. ── */
 var FINANCE_MODE=false;
 var MAP_FINANCE_MODE=false;  /* Independent toggle just for package map cards */
-var FINANCE_MULT=1.25;    /* RRP = cash × 1.25 (i.e., cash sale = 80% of RRP) */
-function rrpFromCash(cash){ return Math.round((cash||0)*FINANCE_MULT); }
-function cashDiscount(cash){ return rrpFromCash(cash)-(cash||0); }   /* RRP - cash = the saving */
+var FINANCE_MARKUP_PCT=25;   /* RRP markup % above cash. RRP = cash × (1 + pct/100). Default 25%. Adjustable. */
+var RRP_ROUND=500;           /* Round RRP to nearest $X. 0 = no rounding. Independent of cash rounding. */
+/* ── Small-system half-step (package map): when ON, systems at or below threshold use a reduced step. ── */
+var HALFTIER_ON=true;            /* Default ON */
+var HALFTIER_THRESHOLD_KWH=10;   /* Adjustable. Systems ≤ this size get the reduced step. */
+var HALFTIER_PCT=50;             /* Adjustable. Step at small sizes = main step × (HALFTIER_PCT/100). */
+/* ── Large-system multi-step (package map): when ON, systems at or above threshold use an INCREASED step. ── */
+var LARGETIER_ON=false;          /* Default OFF */
+var LARGETIER_THRESHOLD_KWH=40;  /* Adjustable. Systems ≥ this size get the increased step. */
+var LARGETIER_PCT=150;           /* Adjustable. Step at large sizes = main step × (LARGETIER_PCT/100). */
+
+function rrpFromCash(cash){
+  var raw=(cash||0)*(1+FINANCE_MARKUP_PCT/100);
+  if(RRP_ROUND>0) return Math.round(raw/RRP_ROUND)*RRP_ROUND;
+  return Math.round(raw);
+}
+function cashDiscount(cash){ return rrpFromCash(cash)-(cash||0); }   /* RRP (rounded) - cash = the saving */
 function displayPrice(cash){ return FINANCE_MODE ? rrpFromCash(cash) : (cash||0); }
 function toggleFinanceMode(){
   FINANCE_MODE=!FINANCE_MODE;
@@ -1173,7 +1294,7 @@ function toggleFinanceMode(){
   var lbl=document.getElementById('plc_saleLabel');
   if(lbl){ lbl.textContent=FINANCE_MODE?'RRP (toggle up and down)':'Sale Price (toggle up and down)'; }
   var hint=document.getElementById('plc_saleHint');
-  if(hint){ hint.textContent=FINANCE_MODE?'RRP includes 25% finance loading. Cash buyers save the difference.':'Adjust to find the right margin'; }
+  if(hint){ hint.textContent=FINANCE_MODE?('RRP includes '+FINANCE_MARKUP_PCT+'% finance loading. Cash buyers save the difference.'):'Adjust to find the right margin'; }
   if(typeof plcUpdate==='function')plcUpdate();
   if(typeof renderPackages==='function')renderPackages();
 }
@@ -1278,6 +1399,21 @@ var rnd=pkgRound(jobType);
 var steps=PKG_STEPS[brand]||PKG_STEPS.gw;
 var stepLow=steps.low||0;
 var stepHigh=steps.high||0;
+/* Half-tier: when ON, return a smaller step for sizes ≤ threshold. Applied multiplicatively to whichever
+   tier (low/high) was already selected for this size. Default 50% × low/high step.
+   Large-tier: when ON, return a larger step for sizes ≥ threshold. Default 150%.
+   The step "lives between" two adjacent sizes. We use the SMALLER of the two for the half-tier check
+   (so walks down trigger correctly) and the LARGER for the large-tier check. */
+function _stepForBoundary(smallerKwh, biggerKwh){
+  var base=(biggerKwh<=PKG_STEP_BOUNDARY)?stepLow:stepHigh;
+  if(HALFTIER_ON && smallerKwh<=HALFTIER_THRESHOLD_KWH){
+    return Math.round(base*(HALFTIER_PCT/100));
+  }
+  if(LARGETIER_ON && biggerKwh>=LARGETIER_THRESHOLD_KWH){
+    return Math.round(base*(LARGETIER_PCT/100));
+  }
+  return base;
+}
 /* Find anchor index = size closest to PKG_STEP_ANCHOR_KWH */
 var anchorIdx=0,minDiff=Infinity;
 for(var k=0;k<items.length;k++){
@@ -1289,12 +1425,14 @@ if(idx===anchorIdx)return anchorPrice;
 var price=anchorPrice;
 if(idx>anchorIdx){
 for(var j=anchorIdx+1;j<=idx;j++){
-var stF=(items[j].k<=PKG_STEP_BOUNDARY)?stepLow:stepHigh;
+/* Step from items[j-1] up to items[j]. Smaller=items[j-1], Bigger=items[j]. */
+var stF=_stepForBoundary(items[j-1].k, items[j].k);
 price+=stF;
 }
 }else{
 for(var j2=anchorIdx-1;j2>=idx;j2--){
-var stB=(items[j2+1].k<=PKG_STEP_BOUNDARY)?stepLow:stepHigh;
+/* Step down from items[j2+1] to items[j2]. Smaller=items[j2], Bigger=items[j2+1]. */
+var stB=_stepForBoundary(items[j2].k, items[j2+1].k);
 price-=stB;
 }
 }
@@ -1837,7 +1975,83 @@ function wirePackageInputs(){}
 
 /* ── Crew count & rates ── */
 var PLC_CREWS=2;
-var PLC_TRADIE=65, PLC_TA=30, PLC_APPRENTICE=25, PLC_MULTIPLIER=1.3;
+/* ── Crew rates: each level is an independent ON/OFF toggle. Each ON level = 1 person at that rate.
+   Default state: only L1 ON for each role → total = $65+$30+$25 = $120/hr (matches v22 defaults).
+   Backward-compat aliases below preserve `PLC_TRADIE+PLC_TA+PLC_APPRENTICE` semantics in calcCrewLabour. ── */
+var PLC_APPRENTICE_RATES=[25,30,35,40];     /* L1, L2, L3, L4 — each +$5 */
+var PLC_TA_RATES=[30,35,40,45];             /* L1, L2, L3, L4 — each +$5 */
+var PLC_TRADIE_RATES=[65,70,75,80];         /* L1, L2, L3, L4 — each +$5 */
+var PLC_APPRENTICE_ON=[true,false,false,false];   /* L1 default ON, others OFF */
+var PLC_TA_ON=[true,false,false,false];
+var PLC_TRADIE_ON=[true,false,false,false];
+var PLC_MULTIPLIER=1.3;
+function _sumOnRates(rates, ons){
+  var s=0;
+  for(var i=0;i<rates.length;i++){ if(ons[i]) s+=(rates[i]||0); }
+  return s;
+}
+function _crewBaseHourly(){
+  return _sumOnRates(PLC_TRADIE_RATES, PLC_TRADIE_ON)
+       + _sumOnRates(PLC_TA_RATES, PLC_TA_ON)
+       + _sumOnRates(PLC_APPRENTICE_RATES, PLC_APPRENTICE_ON);
+}
+function _crewSizeTotal(){
+  function _count(arr){ var n=0; for(var i=0;i<arr.length;i++){ if(arr[i]) n++; } return n; }
+  return _count(PLC_TRADIE_ON)+_count(PLC_TA_ON)+_count(PLC_APPRENTICE_ON);
+}
+/* Legacy aliases — keep `PLC_TRADIE+PLC_TA+PLC_APPRENTICE` summation working transparently. */
+Object.defineProperty(window,'PLC_TRADIE',{get:function(){return _sumOnRates(PLC_TRADIE_RATES, PLC_TRADIE_ON);},set:function(v){/* no-op: setting is per-level via setCrewRate */}});
+Object.defineProperty(window,'PLC_TA',{get:function(){return _sumOnRates(PLC_TA_RATES, PLC_TA_ON);},set:function(v){/* no-op */}});
+Object.defineProperty(window,'PLC_APPRENTICE',{get:function(){return _sumOnRates(PLC_APPRENTICE_RATES, PLC_APPRENTICE_ON);},set:function(v){/* no-op */}});
+
+/* Crew level toggle / rate / display helpers */
+function _refreshCrewLevelBtns(){
+  var groups=[
+    {prefix:'crew_tr_', count:4, ons:PLC_TRADIE_ON, colorOn:'#fbbf24', bgOn:'#451a03'},
+    {prefix:'crew_ta_', count:4, ons:PLC_TA_ON,     colorOn:'#fbbf24', bgOn:'#451a03'},
+    {prefix:'crew_ap_', count:4, ons:PLC_APPRENTICE_ON, colorOn:'#fbbf24', bgOn:'#451a03'}
+  ];
+  groups.forEach(function(g){
+    for(var i=0;i<g.count;i++){
+      var b=document.getElementById(g.prefix+i);
+      if(!b)continue;
+      if(g.ons[i]){
+        b.style.border='2px solid '+g.colorOn;
+        b.style.background=g.bgOn;
+        b.style.color=g.colorOn;
+        b.style.fontWeight='700';
+      } else {
+        b.style.border='1px solid #334155';
+        b.style.background='#1e293b';
+        b.style.color='#64748b';
+        b.style.fontWeight='400';
+      }
+      var ri=document.getElementById(g.prefix+'rate'+i);
+      if(ri) ri.style.color = g.ons[i] ? '#fbbf24' : '#94a3b8';
+    }
+  });
+}
+function setCrewLevel(role, idx){
+  /* Toggle the level ON/OFF — independent of other levels in the same role group. */
+  var arr;
+  if(role==='tradie') arr=PLC_TRADIE_ON;
+  else if(role==='ta') arr=PLC_TA_ON;
+  else if(role==='app') arr=PLC_APPRENTICE_ON;
+  else return;
+  arr[idx]=!arr[idx];
+  _refreshCrewLevelBtns();
+  if(typeof plcUpdate==='function')plcUpdate();
+  if(typeof renderPackages==='function')renderPackages();
+}
+function setCrewRate(role, idx, val){
+  var v=parseFloat(val);
+  if(isNaN(v)||v<0)return;
+  if(role==='tradie') PLC_TRADIE_RATES[idx]=v;
+  else if(role==='ta') PLC_TA_RATES[idx]=v;
+  else if(role==='app') PLC_APPRENTICE_RATES[idx]=v;
+  if(typeof plcUpdate==='function')plcUpdate();
+  if(typeof renderPackages==='function')renderPackages();
+}
 
 /* Recompute on-cost multiplier from breakdown inputs.
    Multiplier = (Paid hrs / Productive hrs) × (1 + super% + workcover%)
@@ -2168,9 +2382,12 @@ var labourCost=_labourOn?calcCrewLabour(totalHrs):0;
 var _fc=calcFixedCosts(solKw,s.battery.qty,totalHrs);
 var overheads =_fixedOn?_fc.overheads:0;
 var otherWages=_fixedOn?_fc.otherWages:0;
-/* Update crew rate display */
+/* Update crew rate display — shows total crew $/hr including counts and overhead multiplier */
 var _crewEl=g('plc_crewRate');
-if(_crewEl)_crewEl.textContent='$'+Math.round((PLC_TRADIE+PLC_TA+PLC_APPRENTICE)*PLC_MULTIPLIER)+'/hr';
+if(_crewEl){
+  var crewSize=_crewSizeTotal();
+  _crewEl.textContent='$'+Math.round((PLC_TRADIE+PLC_TA+PLC_APPRENTICE)*PLC_MULTIPLIER)+'/hr · '+crewSize+'-pers';
+}
 /* Update OT hour breakdown display */
 var sv_=function(id,v){var e=g(id);if(e)e.textContent=v;};
 sv_('plc_ordHrs', ordHrs.toFixed(1));
@@ -2459,7 +2676,7 @@ function plcPrice(slot,el){PLC_STATE[slot].unitCost=parseFloat(el.value)||0;plcU
 function plcCfg(field,el){
   var v=parseFloat(el.value)||0;
   /* Sale Price input shows RRP when finance mode on — convert back to cash for internal state */
-  if(field==='salePrice' && FINANCE_MODE) v = Math.round(v/FINANCE_MULT);
+  if(field==='salePrice' && FINANCE_MODE) v = Math.round(v/(1+FINANCE_MARKUP_PCT/100));
   PLC_STATE[field]=v;
   plcUpdate();
 }
@@ -2780,6 +2997,100 @@ if(bndStepEl){
     var v=parseFloat(this.value);
     if(!isNaN(v)&&v>=0)PKG_STEP_BOUNDARY=v;
     renderPackages();
+  });
+}
+/* RRP markup % input */
+var rrpMarkupEl=document.getElementById('pkg_rrp_markup');
+if(rrpMarkupEl){
+  rrpMarkupEl.addEventListener('input',function(){
+    var v=parseFloat(this.value);
+    if(!isNaN(v)&&v>=0&&v<=100){
+      FINANCE_MARKUP_PCT=v;
+      /* If P&L is in finance mode, refresh the input field to reflect new RRP */
+      if(typeof plcUpdate==='function')plcUpdate();
+      renderPackages();
+    }
+  });
+}
+/* RRP rounding selector — None / 100 / 250 / 500. Independent of cash rounding. */
+var _RRPR_ON={border:'2px solid #7c3aed',background:'#2e1065',color:'#7c3aed',fontWeight:'700'};
+var _RRPR_OFF={border:'1px solid #334155',background:'#1e293b',color:'#64748b',fontWeight:'400'};
+function _refreshRrpRoundBtns(){
+  ['0','100','250','500'].forEach(function(v){
+    var el=document.getElementById('pkg_rrpr_'+v);
+    if(!el)return;
+    applyStyle(el, parseInt(v,10)===RRP_ROUND?_RRPR_ON:_RRPR_OFF);
+  });
+}
+wire('pkg_rrpr_0',function(){RRP_ROUND=0; _refreshRrpRoundBtns(); if(typeof plcUpdate==='function')plcUpdate(); renderPackages();});
+wire('pkg_rrpr_100',function(){RRP_ROUND=100; _refreshRrpRoundBtns(); if(typeof plcUpdate==='function')plcUpdate(); renderPackages();});
+wire('pkg_rrpr_250',function(){RRP_ROUND=250; _refreshRrpRoundBtns(); if(typeof plcUpdate==='function')plcUpdate(); renderPackages();});
+wire('pkg_rrpr_500',function(){RRP_ROUND=500; _refreshRrpRoundBtns(); if(typeof plcUpdate==='function')plcUpdate(); renderPackages();});
+_refreshRrpRoundBtns();
+/* Half-tier toggle + threshold + percentage */
+var halftierBtn=document.getElementById('pkg_halftier_btn');
+if(halftierBtn){
+  halftierBtn.addEventListener('click',function(){
+    HALFTIER_ON=!HALFTIER_ON;
+    if(HALFTIER_ON){
+      halftierBtn.textContent='ON';
+      halftierBtn.style.border='2px solid #22d3ee';
+      halftierBtn.style.background='#083344';
+      halftierBtn.style.color='#22d3ee';
+    } else {
+      halftierBtn.textContent='OFF';
+      halftierBtn.style.border='1px solid #334155';
+      halftierBtn.style.background='#1e293b';
+      halftierBtn.style.color='#64748b';
+    }
+    renderPackages();
+  });
+}
+var halftierThreshEl=document.getElementById('pkg_halftier_thresh');
+if(halftierThreshEl){
+  halftierThreshEl.addEventListener('input',function(){
+    var v=parseFloat(this.value);
+    if(!isNaN(v)&&v>=0){HALFTIER_THRESHOLD_KWH=v; renderPackages();}
+  });
+}
+var halftierPctEl=document.getElementById('pkg_halftier_pct');
+if(halftierPctEl){
+  halftierPctEl.addEventListener('input',function(){
+    var v=parseFloat(this.value);
+    if(!isNaN(v)&&v>=0&&v<=100){HALFTIER_PCT=v; renderPackages();}
+  });
+}
+/* Large-tier toggle + threshold + percentage */
+var largetierBtn=document.getElementById('pkg_largetier_btn');
+if(largetierBtn){
+  largetierBtn.addEventListener('click',function(){
+    LARGETIER_ON=!LARGETIER_ON;
+    if(LARGETIER_ON){
+      largetierBtn.textContent='ON';
+      largetierBtn.style.border='2px solid #fb7185';
+      largetierBtn.style.background='#450a0a';
+      largetierBtn.style.color='#fb7185';
+    } else {
+      largetierBtn.textContent='OFF';
+      largetierBtn.style.border='1px solid #334155';
+      largetierBtn.style.background='#1e293b';
+      largetierBtn.style.color='#64748b';
+    }
+    renderPackages();
+  });
+}
+var largetierThreshEl=document.getElementById('pkg_largetier_thresh');
+if(largetierThreshEl){
+  largetierThreshEl.addEventListener('input',function(){
+    var v=parseFloat(this.value);
+    if(!isNaN(v)&&v>=0){LARGETIER_THRESHOLD_KWH=v; renderPackages();}
+  });
+}
+var largetierPctEl=document.getElementById('pkg_largetier_pct');
+if(largetierPctEl){
+  largetierPctEl.addEventListener('input',function(){
+    var v=parseFloat(this.value);
+    if(!isNaN(v)&&v>=100&&v<=500){LARGETIER_PCT=v; renderPackages();}
   });
 }
 /* Round-to selector — per-job-type (each job remembers its own round) */
